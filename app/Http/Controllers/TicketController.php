@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Models\Ticket;
 use App\Models\User;
@@ -21,7 +22,8 @@ class TicketController extends Controller
 
     public function raiseTicket()
     {
-        return view('customer.raise-ticket');
+        $categories = Category::where('status',1)->get();
+        return view('customer.raise-ticket')->with('categories',$categories);
     }
 
     /**
@@ -109,7 +111,7 @@ class TicketController extends Controller
 
     public function list()
     {
-        $tickets = Ticket::where('raised_by',Auth::user()->id)->orderBy('id', 'desc');
+        $tickets = Ticket::with('category')->where('raised_by',Auth::user()->id)->orderBy('id', 'desc');
 
         // dd($tickets);
 
@@ -125,18 +127,7 @@ class TicketController extends Controller
                     return $row->created_at;
                 })
                 ->addColumn('category', function($row){
-                    if ($row->category == 1) {
-                        return 'Application';
-                    }
-                    elseif ($row->category == 2) {
-                        return 'OS';
-                    }
-                    elseif ($row->category == 3) {
-                        return 'Network';
-                    }
-                    else {
-                        return 'Others';
-                    }
+                        return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
                 })
                 ->addColumn('description', function($row){
                     return $row->summary;

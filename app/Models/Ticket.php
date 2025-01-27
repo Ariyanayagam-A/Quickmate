@@ -22,4 +22,9 @@ class Ticket extends Model
     {
         return $this->belongsTo(User::class, 'raised_by');
     }
+
+    public function Category()
+    {
+        return $this->hasOne(Category::class, 'id', 'category');
+    }
 }

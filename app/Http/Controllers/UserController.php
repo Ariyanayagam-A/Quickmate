@@ -20,14 +20,18 @@ class UserController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            if(Auth::user()->role == 1){
-                return redirect()->route('supporttickets.view')->with('success', 'Logged in successfully.');;
+            if(Auth::user()->role == 1)
+            {
+                return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
             }
-            else if(Auth::user()->role == 2){
-                return redirect()->route('customer.tickets')->with('success', 'Logged in successfully.');;
+            if(Auth::user()->role == 2){
+                return redirect()->route('supporttickets.view')->with('success', 'Logged in successfully.');
+            }
+            else if(Auth::user()->role == 3){
+                return redirect()->route('customer.tickets')->with('success', 'Logged in successfully.');
             }
             else{
-                return redirect()->route('agenttickets.view')->with('success', 'Logged in successfully.');;
+                return redirect()->route('agenttickets.view')->with('success', 'Logged in successfully.');
             }
         }
 
