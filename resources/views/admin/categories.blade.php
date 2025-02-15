@@ -367,6 +367,8 @@
     <!-- Custom JS files -->
     <script type="text/javascript">
         $(function() {
+
+          categoryAjax("initial",[])
             console.log($('.tickets')); // Ensure it logs the table element
 
             var table = $('.categories').DataTable({
@@ -458,21 +460,21 @@
            });
 
             $.ajax({
-            url: `category/${type}`,
-            type: 'POST',
-            data: JSON.stringify(data), 
-            contentType: 'application/json',
+            url: `http://127.0.0.1:5000/api/v1/event/15621/photos?limit=10&page=0`,
+            type: 'GET',
+            // data: JSON.stringify(data), 
+            // contentType: 'application/json',
             success: function(response){
               console.log('response : ',response);
-              if(response.status == 'success')
-              {
-                $('#myModal').hide();
-                alert(response.message)
-                setTimeout(()=> $('#table').DataTable().ajax.reload(),1000);
-              }
-              else{
-                alert('Something went wrong');
-              }
+              // if(response.status == 'success')
+              // {
+              //   $('#myModal').hide();
+              //   alert(response.message)
+              //   setTimeout(()=> $('#table').DataTable().ajax.reload(),1000);
+              // }
+              // else{
+              //   alert('Something went wrong');
+              // }
 
             },
             error: function(error){
