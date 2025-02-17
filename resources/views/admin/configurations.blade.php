@@ -16,7 +16,24 @@
       name="keywords"
       content="bootstrap 5"
     />
-
+    <!--end::Primary Meta Tags-->
+    <!--begin::Fonts-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+      integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
+      crossorigin="anonymous"
+    />
+    <!--end::Fonts-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css"
+      integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg="
+      crossorigin="anonymous"
+    />
+    <!--end::Third Party Plugin(OverlayScrollbars)-->
+    <!--begin::Third Party Plugin(Bootstrap Icons)-->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
@@ -28,20 +45,18 @@
     <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css')}}" />
     <!--end::Required Plugin(AdminLTE)-->
     <!-- apexcharts -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
+      crossorigin="anonymous"
+    />
 
-
-<style>
-   #lticketsPriorityData {
-        width: 100%;
-        height: 220px;
-    }
-    #avgTimeData {
-        width: 100%;
-        height: 220px;
-    }
-</style>
+    <link rel="stylesheet" href="{{ asset('assets/dist/css/setup.css')}}">
  
 <!-- chart line -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ asset('assets/dist/js/setupmain.js') }}"></script>
 
 
 
@@ -61,7 +76,7 @@
                 <i class="bi bi-list"></i>
               </a>
             </li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link" style="font-weight: 700;">Dashboard</a></li>
+            <li class="nav-item d-none d-md-block"><a href="{{ route('admin.dashboard') }}" class="nav-link">Dashboard</a></li>
             <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Schedular</a></li>
             <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tech Availability Chart</a></li>
             <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tasks</a></li>
@@ -79,10 +94,9 @@
             </li>
             <!--end::Navbar Search-->
             <!--begin::Messages Dropdown Menu-->
-            
-            <li class="nav-item ">
-              <a class="nav-link" href="{{ route('admin.configurations') }}">
-                <i class="bi bi-gear"></i>
+            <li class="nav-item dropdown gear-icon">
+              <a class="nav-link" href="./setup.html">
+                <i class="bi bi-gear-fill " ></i>
               </a>
           
             </li>
@@ -116,21 +130,18 @@
             </li>
             <!--end::Notifications Dropdown Menu-->
             <!--begin::Fullscreen Toggle-->
-
             <li class="nav-item">
-              <a class="nav-link" href="javascript:void(0);" id="fullscreenToggle">
-                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen" id="maximizeIcon"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" id="minimizeIcon" style="display: none;"></i>
+              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
               </a>
             </li>
-            
-            
             <!--end::Fullscreen Toggle-->
             <!--begin::User Menu Dropdown-->
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img
-                  src="{{  asset('assets/dist/assets/img/user2-160x160.jpg') }}"
+                  src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
@@ -140,13 +151,13 @@
                 <!--begin::User Image-->
                 <li class="user-header text-bg-primary">
                   <img
-                    src="{{ asset('assets/dist/assets/img/user2-160x160.jpg')}}"
+                    src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
                     class="rounded-circle shadow"
                     alt="User Image"
                   />
-                  <p>
-                    Alexander Pierce
-                    <small>Alex@gmail.com</small>
+                    <p>
+                     Admin
+                    <small>admin@yopmail.com</small>
                   </p>
                 </li>
                 <!--end::User Image-->
@@ -184,7 +195,7 @@
           <a href="{{ route('admin.dashboard') }}" class="brand-link">
             <!--begin::Brand Image-->
             <img
-              src="{{  asset('assets/dist/assets/img/AdminLTELogo.png') }}"
+              src="{{ asset('assets/dist/assets/img/AdminLTELogo.png') }}"
               alt="AdminLTE Logo"
               class="brand-image opacity-75 shadow"
             />
@@ -207,7 +218,7 @@
               data-accordion="false"
             >
               <li class="nav-item ">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link active">
+                <a href="{{ route('admin.dashboard') }}" class="nav-link">
                   <i class="nav-icon bi bi-speedometer"></i>
                   <p>
                     Home
@@ -215,15 +226,6 @@
                   </p>
                 </a>
               </li>
-              <!-- <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-activity"></i>
-                  <p>
-                    Activities
-                  </p>
-                </a>
-              </li> -->
-
               <li class="nav-item">
                 <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-activity"></i>
@@ -260,7 +262,6 @@
                  
                 </ul>
               </li>
-
               <li class="nav-item ">
                 <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-ticket-detailed"></i>
@@ -377,129 +378,248 @@
       </aside>
       <!--end::Sidebar-->
       <!--begin::App Main-->
-      <main class="app-main">
-        <!--begin::App Content Header-->
-        <div class="app-content-header">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-              <div class="col-sm-6"><h3 class="mb-0">Helpdesk Dashboard</h3></div>
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
-                </ol>
-              </div>
-            </div>
-            <!--end::Row-->
+      <main class="app-main" style="flex-direction: column !important;">
+        <div>
+          <div class="search-container">
+            <input type="text" id="searchBoxx" class="form-control" placeholder="Search in Setup...">
+            <div id="results" class="dropdown-results"></div>
           </div>
-          <!--end::Container-->
         </div>
-        <div class="app-content">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="card mb-4">
-                  <div class="card-header border-0">
-                    <div class="d-flex justify-content-between">
-                      <h3 class="card-title">Requests Last week</h3>
-                      <a
-                        href="javascript:void(0);"
-                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                        >View Report</a
-                      >
-                    </div>
-                  </div>
-                  <div class="card-body">
-             
-                    <div class="position-relative mb-4"><div id="visitors-chart"></div></div>
-                    <div class="d-flex flex-row justify-content-end">
-                      <span class="me-2">
-                        <i class="bi bi-square-fill text-primary"></i> Inbound
-                      </span>
-                      <span> <i class="bi bi-square-fill text-secondary"></i> Complete </span>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header border-0">
-                    <h3 class="card-title">Open Requests by Mode</h3>
-                    <div class="card-tools">
-                      <a href="#" class="btn btn-tool btn-sm"> <i class="bi bi-download"></i> </a>
-                      <a href="#" class="btn btn-tool btn-sm"> <i class="bi bi-list"></i> </a>
-                    </div>
-                  </div>
-                  
+       
+        <div class="container-fluid text-center">
+          <!-- <input type="text" id="searchBox" class="form-control w-50 mx-auto m-4" placeholder="Search settings..."> -->
+         
 
-                   <div id="lticketsPriorityData"></div>
-                   <div class="d-flex justify-content-center gap-4 my-4">
-                    <div class="d-flex align-items-center">
-                      High
-                      <span class="badge rounded-pill ms-2" style="background-color: #E87609;">15</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      Medium
-                      <span class="badge rounded-pill bg-dark ms-2">18</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      Low
-                      <span class="badge rounded-pill bg-secondary ms-2">21</span>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card -->
+          <div class="row">
+            <div class="col">
+              <div>
+              <i class="bi bi-building icn-setup"></i>
               </div>
-              <!-- /.col-md-6 -->
-              <div class="col-lg-6">
-                <div class="card mb-4">
-                  <div class="card-header border-0">
-                    <div class="d-flex justify-content-between">
-                      <h3 class="card-title">SLA Violation by Technician</h3>
-                      <a
-                        href="javascript:void(0);"
-                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                        >View Report</a
-                      >
-                    </div>
-                  </div>
-                  <div class="card-body">
-                
-                    <div class="position-relative mb-4"><div id="sales-chart"></div></div>
-                    <div class="d-flex flex-row justify-content-end">
-                      <span class="me-2">
-                        <i class="bi bi-square-fill text-primary"></i> This year
-                      </span>
-                      <span> <i class="bi bi-square-fill text-secondary"></i> Last year </span>
-                    </div>
-                  </div>
-                </div>
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header border-0">
-                    <h3 class="card-title">Request Complete in Last Week</h3>
-                    <div class="card-tools">
-                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-download"></i> </a>
-                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-list"></i> </a>
-                    </div>
-                  </div>
-                  <div id="avgTimeData"></div>
-                </div>
+              <div>
+                <a href="" style="color: chocolate">Instance Configuration</a>
               </div>
-              <!-- /.col-md-6 -->
+              <div>
+              <a href="./setup/inastance.html">Instance Settings |</a>
+              <a href="./setup/region.html">Regions |</a>
+              <a href="./setup/sites.html">Sites |</a>
+              <a href="./setup/operational-hours.html">Operational Hours |</a>
+              <a href="./setup/holiday-groups.html">Holiday Groups |</a>
+              <a href="./setup/unavailability-types.html">Unavailability Types |</a>
+              <a href="./setup/department.html">Departments |</a>
+              <a href="./setup/organization-roles.html">Organization Roles</a>
+              </div>
             </div>
-            <!--end::Row-->
+            <div class="col ">
+              <div>
+              <i class="bi bi-person-square icn-setup"></i>
+              </div>
+              <div>
+                <a href="" style="color: chocolate">Users & Permissions</a>
+              </div>
+              <div>
+              <a href="./setup/roles.html">Roles |</a>
+              <a href="./setup/users.html">Users |</a>
+              <a href="./setup/user-groups.html">User Groups |</a>
+              <a href="./setup/technician-groups.html">Technician Groups |</a>
+              <a href="./setup/privacy-settings.html">Privacy Settings</a>
+              </div>
+            </div>
+            
+            <div class="col ">
+              <div>
+                <i class="bi bi-envelope-at icn-setup"></i>
+              </div>
+              <div>
+                <a href="" style="color: chocolate">Mail Settings</a>
+              </div>
+              <div>
+              <a href="./setup/mail-server.html">Mail Server Settings |</a>
+              <a href="./setup/mailaddress.html">Mail Addresses |</a>
+              <a href="./setup/mail-box.html">Mail Box |</a>
+              <a href="./setup/mail-filter.html">Mail Filter |</a>
+              <a href="./setup/email-command.html">Email Command</a>
+              </div>
+            </div>
+            
+    
+            <div class="col ">
+              <div>
+                <i class="bi bi-magic icn-setup"></i>
+              </div>
+               <div>
+                <a href="" style="color: chocolate">Customization</a>
+              </div>
+              <div>
+              <a href="./setup/Helpdesk.html">Helpdesk |</a>
+              <a href="./setup/Solution-Management-custom.html">Solution Management |</a>
+              <a href="./setup/Additional-Fields.html">Additional Fields |</a>
+              <a href="./setup/Checklists-custom.html">Checklists |</a>
+              <a href="./setup/Announcement-custom.html">Announcement</a>
+              </div>
+            </div>
           </div>
-          <!--end::Container-->
         </div>
-        <!--end::App Content-->
+        <div class="container-fluid text-center mt-4">
+          <!-- <input type="text" id="searchBox" class="form-control w-50 mx-auto m-4" placeholder="Search settings..."> -->
+
+          <div class="row">
+            <div class="col">
+              <div>
+                <i class="bi bi-file-earmark-bar-graph icn-setup"></i>
+              </div>
+              <div>
+                <a href="" style="color: chocolate">Templates & Forms</a>
+              </div>
+              <div>
+              <a href="./setup/Service-Category.html">Service Category |</a>
+              <a href="./setup/Incident-Template.html">Incident Template |</a>
+              <a href="./setup/Solution-Template.html">Solution Template |</a>
+              <a href="./setup/Task-Template-Layout.html">Task Template & Layout |</a>
+              <a href="./setup/Reply-Template.html">Reply Template |</a>
+              <a href="./setup/Resolution-Template.html">Resolution Template |</a>
+              <a href="./setup/Form-Rules.html">Form Rules |</a>
+              <a href="./setup/Custom-Scripts.html">Custom Scripts</a>
+              </div>
+              
+
+            </div>
+            <div class="col ">
+              <div>
+              <i class="bi bi-robot icn-setup"></i>
+              </div>
+              <div>
+                <a href="" style="color: chocolate">Automation</a>
+              </div>
+              <div>
+              <a href="./setup/Business-Rules.html">Business Rules |</a>
+              <a href="./setup/Service-Level-Agreements.html">Service Level Agreements |</a>
+              <a href="./setup/Life-Cycles.html">Life Cycles |</a>
+              <a href="./setup/Triggers.html">Triggers |</a>
+              <a href="./setup/Custom-Actions.html">Custom Actions |</a>
+              <a href="./setup/Notification-Rules.html">Notification Rules |</a>
+              <a href="./setup/Closure-Rules.html">Closure Rules |</a>
+              <a href="./setup/Delegation.html">Delegation |</a>
+              <a href="./setup/Workflows.html">Workflows</a>
+
+              </div>
+              
+
+            </div>
+            
+            <div class="col ">
+              <div>
+                <i class="bi bi-file-earmark-richtext icn-setup"></i>
+              </div>
+              <div>
+                <a href="" style="color: chocolate">User Survey</a>
+              </div>
+              <div>
+              <a href="./setup/Survey-Settings.html">Survey Settings |</a>
+              <a href="./setup/Define-Survey.html">Define Survey |</a>
+              <a href="./setup/Survey-Preview.html">Survey Preview |</a>
+              <a href="./setup/Survey-Results.html">Survey Results</a>
+              </div>
+            </div>
+            
+            
+            
+            <div class="col ">
+              <div>
+                <i class="bi bi-collection icn-setup"></i>
+              </div>
+               <div>
+                <a href="" style="color: chocolate">Data Administration</a>
+              </div>
+              <div>
+              <a href="./setup/Data-Archive.html">Data Archive |</a>
+              <a href="./setup/Audit-Log.html">Audit Log |</a>
+              <a href="./setup/System-Log.html">System Log |</a>
+              <a href="./setup/PII-ePHI-Log.html">PII/ePHI Log |</a>
+              <a href="./setup/Import-Data.html">Import Data |</a>
+              <a href="./setup/Export-Data.html">Export Data</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="container-fluid text-center mt-4">
+          <!-- <input type="text" id="searchBox" class="form-control w-50 mx-auto m-4" placeholder="Search settings..."> -->
+
+          <div class="row">
+            <div class="col">
+              <div>
+                <i class="bi bi-gear icn-setup"></i>
+              </div>
+              <div>
+                <a href="" style="color: chocolate">General Settings</a>
+              </div>
+              <div>
+              <a href="./setup/Advanced-Portal-Settings.html">Advanced Portal Settings |</a>
+              <a href="./setup/Requester-Portal.html">Requester Portal |</a>
+              <a href="./setup/Theme-Settings.html">Theme Settings |</a>
+              <a href="./setup/Cloud-Attachments.html">Cloud Attachments |</a>
+              <a href="./setup/Approval-Settings.html">Approval Settings</a>
+              
+              </div>
+              
+
+
+            </div>
+           
+            
+            <div class="col ">
+              <div>
+                <i class="bi bi-puzzle icn-setup"></i>
+              </div>
+              <div>
+                <a href="" style="color: chocolate">Apps & Add-ons</a>
+              </div>
+              <div>
+              <a href="./setup/Chat-Settings.html">Chat Settings |</a>
+              <a href="./setup/Analytics-PlusProjects.html">Analytics PlusProjects |</a>
+              <a href="./setup/SMS-Settings.html">SMS Settings |</a>
+              <a href="./setup/Third-Party-Integrations.html">Third Party Integrations |</a>
+              <a href="./setup/Quickmate-Survey.html">Quickmate Survey</a>
+              </div>
+            </div>
+            
+            
+            <div class="col ">
+              <div>
+                <i class="bi bi-code-slash icn-setup"></i>
+              </div>
+               <div>
+                <a href="" style="color: chocolate">Developer Space</a>
+              </div>
+              <div>
+              <a href="./setup/Custom-Menu.html">Custom Menu |</a>
+              <a href="./setup/Global-Variables.html">Global Variables </a>
+              </div>
+            </div>
+            
+            <div class="col ">
+              <div>
+              <i class="bi bi-chat-quote icn-setup"></i>
+              </div>
+              <div>
+                <a href="" style="color: chocolate">Zia</a>
+              </div>
+              <div>
+              <a href="./setup/Artificial-Intelligence.html">Artificial Intelligence |</a>
+              <a href="./setup/Zia-Chatbot.html">Zia Chatbot </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
       </main>
       <!--end::App Main-->
       <!--begin::Footer-->
       <footer class="app-footer">
+        <!--begin::To the end-->
+        <!-- <div class="float-end d-none d-sm-inline">Anything you want</div> -->
+        <!--end::To the end-->
+        <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2024-2025&nbsp;
           <a href="www.azeusbros.com" class="text-decoration-none">Azeus Bros</a>.
@@ -509,11 +629,11 @@
       </footer>
       <!--end::Footer-->
     </div>
+    <!--end::App Wrapper-->
+    <!--begin::Script-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
 
 
-    <script src="{{ asset('assets/dist/js/ticketsPriorityData.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-    <script src="{{ asset('assets/dist/js/avgTimeData.js') }}"></script>
 
 
     <script
@@ -556,138 +676,19 @@
         }
       });
     </script>
-
+    <!--end::OverlayScrollbars Configure-->
+    <!-- OPTIONAL SCRIPTS -->
+    <!-- apexcharts -->
     <script
       src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js"
       integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8="
       crossorigin="anonymous"
     ></script>
-    <script>
-
-      const visitors_chart_options = {
-        series: [
-          {
-            name: 'High - 2023',
-            data: [100, 120, 170, 167, 180, 177, 160],
-          },
-          {
-            name: 'Low - 2023',
-            data: [60, 80, 70, 67, 80, 77, 100],
-          },
-        ],
-        chart: {
-          height: 200,
-          type: 'line',
-          toolbar: {
-            show: false,
-          },
-        },
-        colors: ['#0d6efd', '#adb5bd'],
-        stroke: {
-          curve: 'smooth',
-        },
-        grid: {
-          borderColor: '#e7e7e7',
-          row: {
-            colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
-            opacity: 0.5,
-          },
-        },
-        legend: {
-          show: false,
-        },
-        markers: {
-          size: 1,
-        },
-        xaxis: {
-          categories: ['22th', '23th', '24th', '25th', '26th', '27th', '28th'],
-        },
-      };
-
-      const visitors_chart = new ApexCharts(
-        document.querySelector('#visitors-chart'),
-        visitors_chart_options,
-      );
-      visitors_chart.render();
-
-      const sales_chart_options = {
-        series: [
-          {
-            name: 'Net Profit',
-            data: [44, 55, 57, 56, 61, 58, 63, 60, 66],
-          },
-          {
-            name: 'Revenue',
-            data: [76, 85, 101, 98, 87, 105, 91, 114, 94],
-          },
-          {
-            name: 'Free Cash Flow',
-            data: [35, 41, 36, 26, 45, 48, 52, 53, 41],
-          },
-        ],
-        chart: {
-          type: 'bar',
-          height: 200,
-        },
-        plotOptions: {
-          bar: {
-            horizontal: false,
-            columnWidth: '55%',
-            endingShape: 'rounded',
-          },
-        },
-        legend: {
-          show: false,
-        },
-        colors: ['#0d6efd', '#20c997', '#ffc107'],
-        dataLabels: {
-          enabled: false,
-        },
-        stroke: {
-          show: true,
-          width: 2,
-          colors: ['transparent'],
-        },
-        xaxis: {
-          categories: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
-        },
-        fill: {
-          opacity: 1,
-        },
-        tooltip: {
-          y: {
-            formatter: function (val) {
-              return '$ ' + val + ' thousands';
-            },
-          },
-        },
-      };
-
-      const sales_chart = new ApexCharts(
-        document.querySelector('#sales-chart'),
-        sales_chart_options,
-      );
-      sales_chart.render();
-    </script>
-     <script id="rendered-js">
-      Highcharts.chart('containerchart', {
-        xAxis: {
-          type: 'datetime',
-          dateTimeLabelFormats: {
-            week: '%e of %b' } },
-      
-      
-      
-        series: [{
-          data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 330, 222, 338, 42, 33, 48, 193, 282, 118],
-          pointStart: Date.UTC(2019, 0, 7),
-          pointInterval: 24 * 3600 * 1000 * 7 // one week
-        }] });
-      //# sourceURL=pen.js
-          </script>
+ 
 
     <!--end::Script-->
   </body>
-  <!--end::Body-->
-</html>
 
+  <!--end::Body-->
+
+</html>
