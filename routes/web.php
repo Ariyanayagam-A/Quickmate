@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TicketController;     
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Auth\AzureAuthController;
 
 Route::get('/', function () {
     return redirect('user/login');
@@ -18,7 +19,7 @@ Route::get('user/register', [UserController::class,'register'])->name('customer.
 Route::post('user/register', [UserController::class,'store'])->name('customer.store');
 
 Route::middleware('user.auth')->prefix('user')->group(function () {
-    Route::get('dashboard', [UserController::class,'index'])->name('customer.dashboard');
+    Route::get('dashboard', [UserController::class,'dashboard'])->name('customer.dashboard');
     Route::post('logout', [UserController::class,'logout'])->name('customer.logout');
     Route::post('create-ticket', [TicketController::class,'create'])->name('raise.ticket');
     Route::get('raise-ticket', [TicketController::class,'raiseTicket'])->name('ticketform');
@@ -42,6 +43,7 @@ Route::middleware('user.auth')->prefix('supportdesk')->group(function () {
 
 Route::middleware('user.auth')->prefix('admin')->group(function () {
     Route::get('dashboard', [AdminController::class,'index'])->name('admin.dashboard');
+    Route::get('configurations', [AdminController::class,'configurations'])->name('admin.configurations');
     Route::get('tickets', [AdminController::class,'getTickets'])->name('admin.tickets');
     Route::get('categories', [CategoryController::class,'index'])->name('admin.categories');
     Route::get('category/list',[CategoryController::class,'list'])->name('categories.list');
@@ -58,3 +60,8 @@ Route::middleware('user.auth')->prefix('agent')->group(function () {
     Route::get('ticket/view/{id}', [TicketController::class,'getTicketById'])->name('ticket.view');
     Route::post('ticket/solve', [TicketController::class,'resolveTicket'])->name('solveticket');
 });
+
+// Azure AD Authentication routes
+
+Route::get('/auth/azure', [AzureAuthController::class, 'redirectToAzure'])->name('azure.login');
+Route::get('/auth/azure/callback', [AzureAuthController::class, 'handleAzureCallback']);

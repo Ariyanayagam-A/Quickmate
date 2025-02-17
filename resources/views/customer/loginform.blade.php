@@ -4,7 +4,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title> Qicktick</title>
+		<title> Quicktick</title>
 
 		<!-- Meta -->
 		<meta name="description" content="Marketplace for Bootstrap Admin Dashboards" />
@@ -40,9 +40,9 @@
                         @csrf
 						<div class="card p-md-4 p-sm-3">
 							<div class="login-form">
-								<a href="index.html" class="mb-4 d-flex">
+								<!-- <a href="index.html" class="mb-4 d-flex">
 									<img src="{{ asset('assets/images/logo-qickmate.png') }}" class="img-fluid login-logo" alt="Bootstrap Gallery" />
-								</a>
+								</a> -->
 								<h2 class="mt-4 mb-4">Login</h2>
                                 @if (session('error'))
 								<div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -80,14 +80,15 @@
 									<button type="button" class="btn btn-sm btn-outline-light">
 										Google
 									</button>
+									<a href="{{ route('azure.login') }}">
 									<button type="button" class="btn btn-sm btn-outline-light">
-										Facebook
-									</button>
+										Microsoft
+									</button> </a>
 									<button type="button" class="btn btn-sm btn-outline-light">
 										Twitter
 									</button>
 								</div>
-								<div class="text-center pt-4">
+								<div class="text-center pt-4" style="display:none;">
 									<span>Not registered?</span>
 									<a href="{{ route('customer.register')}}" class="text-success text-decoration-underline">
 										SignUp</a>

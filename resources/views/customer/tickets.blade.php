@@ -198,7 +198,10 @@
                   <div class="dropdown ms-2">
                     <a class="dropdown-toggle d-flex align-items-center user-settings" href="#!" role="button"
                       data-bs-toggle="dropdown" aria-expanded="false">
-                      <span class="d-none d-md-block">{{ auth()->user()->name}}</span>
+                      @php
+                      $user = session('user');
+                     @endphp
+                      <span class="d-none d-md-block">{{ $user['username']}}</span>
                       <img src="{{ asset('assets/images/user3.png')}}" class="img-3x m-2 me-0 rounded-5" alt="Bootstrap Gallery" />
                     </a>
                     <form id="logout-form" action="{{ route('customer.logout')}}" method="POST" style="display: none;">

@@ -54,6 +54,10 @@ class UserController extends Controller
        return view('customer.tickets');
     }
 
+    public function dashboard()
+    {
+        return view('customer.dashboard');
+    }  
     /**
      * Show the form for creating a new resource.
      */

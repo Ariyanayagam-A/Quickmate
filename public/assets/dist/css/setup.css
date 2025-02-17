@@ -1,0 +1,228 @@
+main{
+    display: flex;
+    overflow-x: hidden !important;
+    flex-direction: row !important;
+}
+.sidebar {
+    width: 200px !important;
+    background-color: rgb(52, 58, 64);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    color: #f04c4c;
+    margin-bottom: 20px;
+}
+
+.menu-item {
+    padding: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #c2c7d0;
+}
+
+.menu-item:hover, .menu-item.active {
+    background-color: rgba(255, 255, 255, 0.1);
+
+}
+
+
+.menu-item i {
+    transition: transform 0.3s;
+}
+
+.menu-item.expand i {
+    transform: rotate(90deg);
+}
+
+.submenu {
+    display: none;
+    padding-left: 20px;
+}
+
+
+.menu-item.expand + .submenu {
+    display: block;
+}
+
+
+.content-container {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #fff;
+    width: 100%;
+}
+
+.content {
+    display: none;
+}
+
+.content.active {
+    display: block;
+}
+
+
+
+.container1 {
+    padding: 20px;
+    border-radius: 10px;
+    flex: 6;
+}
+
+.settings-box {
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.server-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-size: 0.7em;
+}
+
+.icon1 {
+    width: 50px;
+    height: 50px;
+}
+
+.deactivate-btn, .save-btn {
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.save-btn {
+    background-color: #5cb85c;
+    display: block;
+    margin-top: 20px;
+}
+.reply-settings{
+    display: flex;
+}
+.reply-settings label, .incoming-settings label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+input, select {
+
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #555;
+}
+.replayy{
+    padding: 20px;
+}
+.container2{
+    flex: 0;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    border: 2px solid gray;
+}
+.container2 p{
+    line-height: 1.6;
+}
+.gear-icon {
+    display: inline-block;
+    transition: transform 0.3s ease-in-out;
+}
+
+.gear-icon:hover {
+    transform: rotate(90deg);
+}
+.icn-setup{
+    font-size: 40px;
+}
+.row a{
+    text-decoration: none;
+}
+@media (max-width: 768px) {
+    #mail-server{
+        overflow-x: auto;
+    
+    }
+    .deactivate-btn, .save-btn, .reply-settings label, .incoming-settings label, input, select {
+        font-size: 1.4em;
+    }
+}
+@media (max-width: 1300px) {
+    #mail-server{
+        overflow-x: hidden;
+    
+    }
+    .bod-media {
+        font-size: 0.5em;
+    }
+    .deactivate-btn, .save-btn, .reply-settings label, .incoming-settings label, input, select {
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 480px) {
+    .bod-media {
+        font-size: 0.5em;
+    }
+    #mail-server{
+        overflow-x: auto;
+    
+    }
+    .deactivate-btn, .save-btn, .reply-settings label, .incoming-settings label, input, select {
+        font-size: 1.3em;
+    }
+}
+
+
+/* setup main */
+    .search-container {
+        position: relative;
+        max-width: 400px;
+        margin: 20px auto;
+    }
+    #searchBoxx {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #444;
+        /* background-color: #222;
+        color: white; */
+    }
+    .dropdown-results {
+        position: absolute;
+        width: 100%;
+        background-color: #1e1e1e;
+        border: 1px solid #444;
+        border-radius: 5px;
+        max-height: 300px;
+        overflow-y: auto;
+        display: none; /* Initially hidden */
+        z-index: 1000;
+        font-size: 13px;
+    }
+    .dropdown-results a {
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        color: white;
+        border-bottom: 1px solid #333;
+    }
+    .dropdown-results a:hover {
+        background-color: #333;
+    }
+    .category {
+        font-weight: bold;
+        color: #ff8c00;
+        padding: 10px;
+        border-bottom: 1px solid #444;
+    }
