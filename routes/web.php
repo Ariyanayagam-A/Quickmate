@@ -45,6 +45,7 @@ Route::middleware('user.auth')->prefix('admin')->group(function () {
     Route::get('dashboard', [AdminController::class,'index'])->name('admin.dashboard');
     Route::get('configurations', [AdminController::class,'configurations'])->name('admin.configurations');
     Route::get('tickets', [AdminController::class,'getTickets'])->name('admin.tickets');
+    Route::get('tickets/list', [TicketController::class,'adminTicketsList'])->name('tickets.adminlist');
     Route::get('categories', [CategoryController::class,'index'])->name('admin.categories');
     Route::get('category/list',[CategoryController::class,'list'])->name('categories.list');
     Route::post('category/add', [CategoryController::class,'store'])->name('add.category');

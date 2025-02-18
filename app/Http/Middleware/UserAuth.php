@@ -17,8 +17,8 @@ class UserAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-       // if (!Auth::check() || Session::put('user') == null) {
-        if (Session::get('user') == null) {
+        if (!Auth::check()) 
+        {
             return redirect()->route('customer.loginform');
         }
 
