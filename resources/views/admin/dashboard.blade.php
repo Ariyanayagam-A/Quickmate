@@ -234,7 +234,7 @@
                 </a>
                 <ul class="nav nav-treeview">
                   <li class="nav-item">
-                    <a href="./all-my-activities/all-ticket.html" class="nav-link">
+                    <a href="{{ route('admin.tickets') }}" class="nav-link">
                       <i class="nav-icon bi bi-ticket-perforated"></i>
                       <p>All My Activities</p>
                     </a>

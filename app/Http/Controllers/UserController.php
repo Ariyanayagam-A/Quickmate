@@ -12,14 +12,16 @@ class UserController extends Controller
 {
     public function verifylogin(Request $request)
     {
+
         $credentials = $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
 
+            $request->session()->regenerate();
+            // dd(Auth::user()->role);
             if(Auth::user()->role == 1)
             {
                 return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
@@ -35,6 +37,7 @@ class UserController extends Controller
             }
         }
 
+        // dd('invalid!!');
         return back()->with('error', 'Invalid email or password.')->withInput(); 
     }
     public function login()

@@ -111,9 +111,15 @@ class TicketController extends Controller
 
     public function list()
     {
-        $tickets = Ticket::with('category')->where('raised_by',Auth::user()->id)->orderBy('id', 'desc');
+        if(Auth::user()->role == 1 )
+        {
+            $tickets = Ticket::with('category')->orderBy('id', 'desc');
 
-        // dd($tickets);
+        }
+        else
+        {
+            $tickets = Ticket::with('category')->where('raised_by',Auth::user()->id)->orderBy('id', 'desc');
+        }
 
         return Datatables::of($tickets)
                 ->addIndexColumn()
@@ -179,8 +185,99 @@ class TicketController extends Controller
                 })
                 ->rawColumns(['action','status','level'])
                 ->make(true);
-
         // return view('admin.tickets', compact('tickets'));
+    }
+
+    public function adminTicketsList()
+    {
+
+        $tickets = Ticket::with('category','user')->orderBy('id', 'desc');
+
+        return Datatables::of($tickets)
+                ->addIndexColumn()
+                ->addColumn('ticket_no', function($row){
+                    return $row->ticket_id;
+                })
+               ->addColumn('requested_by', function($row){
+                    return $row->user->name;
+                })
+                ->addColumn('email', function($row){
+                    return $row->user->email;
+                })
+                ->addColumn('title', function($row){
+                    return $row->subject;
+                })
+                // ->addColumn('created_at', function($row){
+                //     return $row->created_at;
+                // })
+                ->addColumn('category', function($row){
+                        return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
+                })
+                ->addColumn('assigned_to', function($row){
+                    if($row->assignee == '4')
+                    {
+                        return 'Karthikeyan';
+                    }
+                    else if($row->assignee == '3')
+                    {
+                        return 'Sabari';
+                    }
+                    else{
+                        return '-';
+                    }
+                })
+                
+                ->addColumn('indicator', function($row){
+                    return '-';
+                })
+                ->addColumn('level', function($row){
+                   $level_html = is_null($row->priority) ? '-' : '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
+                                data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary"
+                                data-bs-title="Edit">
+                                <i class="">L'.$row->priority.'</i>
+                              </button>';
+                    return $level_html;
+                })
+                ->addColumn('status', function($row){
+                    if ($row->status == 0) {
+                        $status_btn = '<span class="badge bg-danger">Pending</span>';
+                    }
+                    elseif ($row->status == 1) {
+                        $status_btn = '<span class="badge bg-info">On Progress</span>';
+                    }
+                    elseif ($row->status == 2) {
+                        $status_btn = '<span class="badge bg-primary">Closed</span>';
+                    }
+                    elseif($row->status == 3) {
+                        $status_btn = '<span class="badge bg-warning">Rejected</span>';
+                    }
+                    else{
+                        $status_btn = '<span class="badge bg-secondary">On Hold</span>';
+                    }
+                    return $status_btn;
+                })
+                ->addColumn('created_at', function($row){
+                    return $row->created_at;
+                })
+                ->addColumn('action', function($row){
+   
+                    $btn = '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placemeznt="top" data-bs-custom-class="custom-tooltip-primary" title="View Ticket">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                    <br/>
+                    <button class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-warning" title="Edit Ticket">
+                    <a href="'.route('edit.ticket', $row->id).'"> 
+                    <i class="bi bi-pencil-square"></i>
+                    </button><br/>
+                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-danger" title="Delete Ticket">
+                      <a href="'.route('delete.ticket', $row->id).'"> 
+                        <i class="bi bi-trash"></i>
+                    </button>';
+                
+                    return $btn;
+                })
+                ->rawColumns(['action','status','level'])
+                ->make(true);
     }
     public function ticketsView()
     {

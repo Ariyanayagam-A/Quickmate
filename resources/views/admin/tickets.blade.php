@@ -1,355 +1,576 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
+  <!--begin::Head-->
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin <?=
-   isset($activeLink) && !empty($activeLink) ? ucfirst($activeLink) : ''?> </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Admin | my-activites | All Ticket</title>
+    <!--begin::Primary Meta Tags-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="title" content="Admin | Dashboard" />
+    <meta name="author" content="ColorlibHQ" />
+    <meta
+      name="description"
+      content="Admin is a Free Bootstrap 5 Admin Dashboard"
+    />
+    <meta
+      name="keywords"
+      content="bootstrap 5"
+    />
+    <!--end::Primary Meta Tags-->
+    <!--begin::Fonts-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+      integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
+      crossorigin="anonymous"
+    />
+    <!--end::Fonts-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css"
+      integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg="
+      crossorigin="anonymous"
+    />
+    <!--end::Third Party Plugin(OverlayScrollbars)-->
+    <!--begin::Third Party Plugin(Bootstrap Icons)-->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
+      crossorigin="anonymous"
+    />
+    <!--end::Third Party Plugin(Bootstrap Icons)-->
+    <!--begin::Required Plugin(AdminLTE)-->
+    <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css') }}" />
+    <!--end::Required Plugin(AdminLTE)-->
+    <!-- apexcharts -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.css"
+      integrity="sha256-4MX+61mt9NVvvuPjUWdUdyfZfxSB1/Rf9WtqRHgG5S0="
+      crossorigin="anonymous"
+    />
+    <!-- <link rel="stylesheet" href="./dist/css/tickets/main.min.css" /> -->
+    <!-- <link rel="stylesheet" href="./dist/css/tickets/OverlayScrollbars.min.css" /> -->
+    <!-- <link rel="stylesheet" href="./dist/css/main.min.css"> -->
 
-    <!-- Meta -->
-    <meta name="description" content="Marketplace for Bootstrap Admin Dashboards" />
-    <meta name="author" content="Bootstrap Gallery" />
-    <link rel="canonical" href="https://www.bootstrap.gallery/">
-    <meta property="og:url" content="https://www.bootstrap.gallery">
-    <meta property="og:title" content="Admin Templates - Dashboard Templates | Bootstrap Gallery">
-    <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
-    <meta property="og:type" content="Website">
-    <meta property="og:site_name" content="Bootstrap Gallery">
-    <link rel="shortcut icon" href="assets/images/favicon.svg" />
+<!-- chart line -->
 
-    <!-- *************
-			************ CSS Files *************
-		************* -->
-    <!-- Icomoon Font Icons css -->
-    <link rel="stylesheet" href="{{ asset('assets/fonts/icomoon/style.css') }}" />
+<style>
+  main{
+    overflow-x: hidden !important;
+  }
+  .table-striped tbody tr td{
+    text-align: center;
+  }
+  .table-striped thead tr th{
+    text-align: center;
+  }
+</style>
 
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/main.min.css')}}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <!-- datatables -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
-
   </head>
-
-  <body>
-
-    <!-- Page wrapper start -->
-    <div class="page-wrapper">
-
-      <!-- App container starts -->
-      <div class="app-container">
-
-        <!-- App header starts -->
-        <div class="app-header d-flex align-items-center">
-
-          <!-- Container starts -->
-          <div class="container">
-
-            <!-- Row starts -->
-            <div class="row">
-              <div class="col-md-3 col-2">
-
-                <!-- App brand starts -->
-                <div class="app-brand">
-                  <a href="index.html" class="d-lg-block d-none">
-                    <img src="{{ asset('assets/images/logo-qickmate.png')}}" class="logo" alt="Bootstrap Gallery" />
-                  </a>
-                  <a href="index.html" class="d-lg-none d-md-block">
-                    <img src="{{ asset('assets/images/logo-qickmate.png') }}" class="logo" alt="Bootstrap Gallery" />
-                  </a>
-                </div>
-                <!-- App brand ends -->
-
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <!--begin::App Wrapper-->
+    <div class="app-wrapper">
+      <!--begin::Header-->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <!--begin::Container-->
+        <div class="container-fluid">
+          <!--begin::Start Navbar Links-->
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                <i class="bi bi-list"></i>
+              </a>
+            </li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link" style="font-weight: 700;">Dashboard</a></li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Schedular</a></li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tech Availability Chart</a></li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tasks</a></li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Remainders</a></li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Announcements</a></li>
+          </ul>
+          <!--end::Start Navbar Links-->
+          <!--begin::End Navbar Links-->
+          <ul class="navbar-nav ms-auto">
+            <!--begin::Navbar Search-->
+            <li class="nav-item">
+              <a class="nav-link" data-widget="navbar-search" href="#" role="button">
+                <i class="bi bi-search"></i>
+              </a>
+            </li>
+            <!--end::Navbar Search-->
+            <!--begin::Messages Dropdown Menu-->
+            
+            <li class="nav-item ">
+              <a class="nav-link" href="../setup.html">
+                <i class="bi bi-gear"></i>
+              </a>
+          
+            </li>
+            <!--end::Messages Dropdown Menu-->
+            <!--begin::Notifications Dropdown Menu-->
+            <li class="nav-item dropdown">
+              <a class="nav-link" data-bs-toggle="dropdown" href="#">
+                <i class="bi bi-bell"></i>
+                <span class="navbar-badge badge text-bg-warning">15</span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                <span class="dropdown-item dropdown-header">15 Notifications</span>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">
+                  <i class="bi bi-envelope me-2"></i> 4 new messages
+                  <span class="float-end text-secondary fs-7">3 mins</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">
+                  <i class="bi bi-people-fill me-2"></i> 8 friend requests
+                  <span class="float-end text-secondary fs-7">12 hours</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">
+                  <i class="bi bi-file-earmark-fill me-2"></i> 3 new reports
+                  <span class="float-end text-secondary fs-7">2 days</span>
+                </a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
               </div>
-
-              <div class="col-md-9 col-10">
-                <!-- App header actions start -->
-                <div class="header-actions d-flex align-items-center justify-content-end">
-
-                  <!-- Search container start -->
-                  <!-- <div class="search-container d-none d-lg-block">
-                    <input type="text" class="form-control" placeholder="Search" />
-                    <i class="icon-search"></i>
-                  </div> -->
-                  <!-- Search container end -->
-
-                  <!-- <div class="dropdown">
-                    <a class="dropdown-toggle d-flex p-3 position-relative" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <img src="assets/images/flags/1x1/br.svg" class="flag-img" alt="Brazil" />
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end shadow-sm dropdown-menu-mini">
-                      <div class="country-container">
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/us.svg" alt="USA" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/in.svg" alt="India" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/tr.svg" alt="Turkey" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/gb.svg" alt="Great Britain" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/id.svg" alt="Indonesia" />
-                        </a>
-                      </div>
-                    </div>
-                  </div> -->
-                  <div class="dropdown d-sm-block d-none">
-                    <a class="dropdown-toggle d-flex p-3 position-relative" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa-regular fa-envelope"></i>
-                      <span class="count rounded-circle bg-danger">9</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-md shadow-sm">
-                      <h5 class="fw-semibold px-3 py-2 m-0">Messages</h5>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <div class="p-3 bg-danger rounded-circle me-3">
-                            MS
-                          </div>
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Moory Sammy</h6>
-                            <p class="mb-1">Sent a mail.</p>
-                            <p class="small m-0 opacity-50">3 Mins Ago</p>
-                          </div>
-                        </div>
-                      </a>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <div class="p-3 bg-primary rounded-circle me-3">
-                            KY
-                          </div>
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Kyle Yomaha</h6>
-                            <p class="mb-1">Need support.</p>
-                            <p class="small m-0 opacity-50">5 Mins Ago</p>
-                          </div>
-                        </div>
-                      </a>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <div class="p-3 bg-success rounded-circle me-3">
-                            SB
-                          </div>
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Srinu Basava</h6>
-                            <p class="mb-1">Purchased a NotePad.</p>
-                            <p class="small m-0 opacity-50">7 Mins Ago</p>
-                          </div>
-                        </div>
-                      </a>
-                      <div class="d-grid p-3 border-top">
-                        <a href="javascript:void(0)" class="btn btn-outline-primary">View all</a>
-                      </div>
-                    </div>
+            </li>
+            <!--end::Notifications Dropdown Menu-->
+            <!--begin::Fullscreen Toggle-->
+            <li class="nav-item">
+              <a class="nav-link" href="javascript:void(0);" id="fullscreenToggle">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen" id="maximizeIcon"></i>
+                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" id="minimizeIcon" style="display: none;"></i>
+              </a>
+            </li>
+            
+            
+            <!--end::Fullscreen Toggle-->
+            <!--begin::User Menu Dropdown-->
+            <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img
+                  src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
+                  class="user-image rounded-circle shadow"
+                  alt="User Image"
+                />
+                <!-- <span class="d-none d-md-inline">Alexander Pierce</span> -->
+              </a>
+              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                <!--begin::User Image-->
+                <li class="user-header text-bg-primary">
+                  <img
+                    src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
+                    class="rounded-circle shadow"
+                    alt="User Image"
+                  />
+                  <p>
+                    Alexander Pierce
+                    <small>Alex@gmail.com</small>
+                  </p>
+                </li>
+                <!--end::User Image-->
+                <!--begin::Menu Body-->
+                <li class="user-body">
+                  <!--begin::Row-->
+                  <div class="row">
+                    <div class="col-4 text-center"><a href="#">Account</a></div>
+                    <!-- <div class="col-4 text-center"><a href="#">Sales</a></div> -->
+                    <div class="col-4 text-center"><a href="#">Personalize</a></div>
                   </div>
-                  <div class="dropdown d-sm-block d-none">
-                    <a class="dropdown-toggle d-flex p-3 position-relative" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa-regular fa-message"></i>
-                      <span class="count rounded-circle bg-danger">5</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-md shadow-sm">
-                      <h5 class="fw-semibold px-3 py-2 m-0">Notifications</h5>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <img src="assets/images/user.png" class="img-3x me-3 rounded-3" alt="Admin Themes" />
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Sophie Michiels</h6>
-                            <p class="mb-1">Membership has been ended.</p>
-                            <p class="small m-0 opacity-50">Today, 07:30pm</p>
-                          </div>
-                        </div>
-                      </a>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <img src="assets/images/user2.png" class="img-3x me-3 rounded-3" alt="Admin Theme" />
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Sophie Michiels</h6>
-                            <p class="mb-1">Congratulate, James for new job.</p>
-                            <p class="small m-0 opacity-50">Today, 08:00pm</p>
-                          </div>
-                        </div>
-                      </a>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <img src="assets/images/user1.png" class="img-3x me-3 rounded-3" alt="Admin Theme" />
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Sophie Michiels</h6>
-                            <p class="mb-1">
-                              Lewis added new schedule release.
-                            </p>
-                            <p class="small m-0 opacity-50">Today, 09:30pm</p>
-                          </div>
-                        </div>
-                      </a>
-                      <div class="d-grid p-3 border-top">
-                        <a href="javascript:void(0)" class="btn btn-outline-primary">View all</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="dropdown ms-2">
-                    <a class="dropdown-toggle d-flex align-items-center user-settings" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <span class="d-none d-md-block">{{ auth()->user()->name}}</span>
-                      <img src="{{ asset('assets/images/user3.png')}}" class="img-3x m-2 me-0 rounded-5" alt="Bootstrap Gallery" />
-                    </a>
-                    <form id="logout-form" action="{{ route('customer.logout')}}" method="POST" style="display: none;">
-                    @csrf    
-                    </form>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-sm shadow-sm gap-3">
-                      <a class="dropdown-item d-flex align-items-center py-2" href="agent-profile.html">User Profile</a>
-                      <a class="dropdown-item d-flex align-items-center py-2" href="account-settings.html">
-                          Account
-                        Settings</a>
-                        <a href="#" class="dropdown-item d-flex align-items-center py-2" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                      
-                    </div>
-                  </div>
-
-                  <!-- Toggle Menu starts -->
-                  <button class="btn btn-success btn-sm ms-3 d-lg-none d-md-block" type="button"
-                    data-bs-toggle="offcanvas" data-bs-target="#MobileMenu">
-                    <i class="icon-menu"></i>
-                  </button>
-                  <!-- Toggle Menu ends -->
-
-                </div>
-                <!-- App header actions end -->
-
-              </div>
-            </div>
-            <!-- Row ends -->
-
-          </div>
-          <!-- Container ends -->
-
+                  <!--end::Row-->
+                </li>
+                <!--end::Menu Body-->
+                <!--begin::Menu Footer-->
+                <li class="user-footer">
+                  <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
+                  <a href="#" class="btn btn-default btn-flat ">Sign out</a>
+                </li>
+                <!--end::Menu Footer-->
+              </ul>
+            </li>
+            <!--end::User Menu Dropdown-->
+          </ul>
+          <!--end::End Navbar Links-->
         </div>
-        <!-- App header ends -->
+        <!--end::Container-->
+      </nav>
+      <!--end::Header-->
+      <!--begin::Sidebar-->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <!--begin::Sidebar Brand-->
+        <div class="sidebar-brand">
+          <!--begin::Brand Link-->
+          <a href="{{ route('admin.dashboard') }}" class="brand-link">
+            <!--begin::Brand Image-->
+            <img
+              src="{{  asset('assets/dist/assets/img/AdminLTELogo.png') }}"
+              alt="AdminLTE Logo"
+              class="brand-image opacity-75 shadow"
+            />
+            <!--end::Brand Image-->
+            <!--begin::Brand Text-->
+            <span class="brand-text fw-light">Admin</span>
+            <!--end::Brand Text-->
+          </a>
+          <!--end::Brand Link-->
+        </div>
+        <!--end::Sidebar Brand-->
+        <!--begin::Sidebar Wrapper-->
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <!--begin::Sidebar Menu-->
+            <ul
+              class="nav sidebar-menu flex-column"
+              data-lte-toggle="treeview"
+              role="menu"
+              data-accordion="false"
+            >
+              <li class="nav-item ">
+                <a href="{{ route('admin.dashboard') }}" class="nav-link ">
+                  <i class="nav-icon bi bi-speedometer"></i>
+                  <p>
+                    Home
+                    <!-- <i class="nav-arrow bi bi-chevron-right"></i> -->
+                  </p>
+                </a>
+              </li>
+              <!-- <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-activity"></i>
+                  <p>
+                    Activities
+                  </p>
+                </a>
+              </li> -->
 
-        <!-- App navbar starts -->
-        @include('admin.layouts.navbar')
-        <!-- App Navbar ends -->
-
-        <!-- App body starts -->
-        <div class="app-body">
-
-          <!-- Container starts -->
-          <div class="container">
-
-            <!-- Row start -->
-            <div class="row">
-              <div class="col-12 col-xl-6">
-
-                <!-- Breadcrumb start -->
-                <ol class="breadcrumb mb-3">
-                  <li class="breadcrumb-item">
-                    <i class="fa-solid fa-house"></i>
-                    <a href="agents.html" class="text-decoration-none">Home</a>
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-activity"></i>
+                  <p>
+                    Activities
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview" style="display: block;">
+                  <li class="nav-item">
+                    <a href="{{ route('admin.tickets') }}" class="nav-link active">
+                      <i class="nav-icon bi bi-ticket-perforated"></i>
+                      <p>All My Activities</p>
+                    </a>
                   </li>
-                  <li class="breadcrumb-item text-light">
-                    <i class="fa-solid fa-greater-than"></i>
-                    Admin</li>
-                    <li class="breadcrumb-item text-light">
-                    <i class="fa-solid fa-greater-than"></i>
-                    Tickets</li>
-                </ol>
-              </div>
-            </div>
-            <!-- Row end -->
+                  <li class="nav-item">
+                    <a href="../my-group-pending-activities/all-ticket.html" class="nav-link">
+                      <i class="nav-icon bi bi-ticket-perforated"></i>
+                      <p>My Group Pending Activities</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../my-group-pending-activities/all-ticket.html" class="nav-link">
+                      <i class="nav-icon bi bi-ticket-perforated"></i>
+                      <p>My Pending Activities</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../My-Pending-&-Group-Unsigned/all-ticket.html" class="nav-link">
+                      <i class="nav-icon bi bi-ticket-perforated"></i>
+                      <p>My pending & Group Unsigned</p>
+                    </a>
+                  </li>
+                 
+                </ul>
+              </li>
 
-            <!-- Row start -->
-            <div class="row">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
-              <label for="ticket" class="form-label">Select Ticket Mode</label>
-              <select class="form-select" id="ticket" aria-label="Select Ticket Mode">
-                <option selected>Filter by</option>
-                <option value="1">Pending</option>
-                <option value="2">Closed</option>
-                <option value="3">Solved</option>
-              </select>
-            </div>
-              <div class="col-12 mt-2">
-                <div class="card mb-2">
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-striped align-middle m-0 tickets">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Ticket.no</th>
-                            <th>Title</th>
-                            <th>Created On</th>
-                            <th>Category</th>
-                            <th>Description</th>
-                            <th>Updated On</th>
-                            <th>level</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody></tbody>
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-ticket-detailed"></i>
+                  <p>
+                    Requests
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-bug"></i>
+                  <p>
+                    Problems
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-arrow-left-right"></i>
+                  <p>
+                    Changes
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-pencil-square"></i>
+                  <p>
+                    Projects
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-rocket-takeoff"></i>
+                  <p>
+                    Releases
+                  </p>
+                </a>
+              </li> 
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-book"></i>
+                  <p>
+                    Solutions
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-box"></i>
+                  <p>
+                    assets
+                  </p>
+                </a>
+              </li> 
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-database"></i>
+                  <p>
+                    CMDB
+                  </p>
+                </a>
+              </li> 
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-currency-dollar"></i>
+                  <p>
+                    purchases
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-flag"></i>
+                  <p>
+                    Reports
+                  </p>
+                </a>
+              </li>
+              
 
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Row end -->
 
-          </div>
-          <!-- Container ends -->
+         
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-three-dots"></i>
+                  <p>
+                    More
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="" class="nav-link">
+                      <i class="nav-icon bi bi-clipboard2-check"></i>
+                      <p>Contract</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="" class="nav-link">
+                      <i class="nav-icon bi bi-wrench"></i>
+                      <p>Maintenance</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
 
+            </ul>
+            <!--end::Sidebar Menu-->
+          </nav>
         </div>
-        <!-- App body ends -->
+        <!--end::Sidebar Wrapper-->
+      </aside>
+      <!--end::Sidebar-->
+      <!--begin::App Main-->
+    <main class="app-main">
 
-        <!-- App footer start -->
-        <div class="app-footer">
-          <div class="container">
-            <span>© Azeusbros</span>
-          </div>
-        </div>
-        <!-- App footer end -->
+       <!-- Row start -->
+       <div class="dropdown m-3">
+        <button class="btn btn-drp dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Tickets
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark-bg">
+          <li><a class="dropdown-item active drp-clr" href="./all-ticket.html">All-Tickets</a></li>
+          <li><a class="dropdown-item drp-clr" href="./canceled-ticket.html">canceled</a></li>
+          <li><a class="dropdown-item drp-clr" href="./solved-ticket.html">Solved</a></li>
+          <li><a class="dropdown-item drp-clr" href="./inprogress-ticket.html">Inprogress</a></li>
+          <li><a class="dropdown-item drp-clr" href="./onhold-ticket.html">On-Hold</a></li>
 
+          <!-- <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Separated link</a></li> -->
+        </ul>
       </div>
-      <!-- App container ends -->
 
+       <div class="row">
+        <div class="col-12 col-xl-6">
+
+          <!-- Breadcrumb start -->
+         
+
+          <ol class="breadcrumb m-3">
+            <li class="breadcrumb-item ">
+              Activities
+            </li>
+            <li class="breadcrumb-item ">
+              All My Activities
+            </li>
+            <li class="breadcrumb-item ">
+              All Ticket
+            </li>
+          </ol>
+          <!-- Breadcrumb end -->
+
+        </div>
+      </div>
+      <input type="text" id="searchBox" onkeyup="searchTable()" class="form-control mb-3" placeholder="Search ..">
+
+       <div class="row">
+        <div class="col-12">
+          <div class="card mb-2">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table id="dataTable" class="table ticketstable table-bordered table-striped align-middle m-0">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Ticket ID</th>
+                      <th>Requested by</th>
+                      <th>Email</th>
+                      <th>Subject</th>
+                      <th>Category </th>
+                      <th>Engineer</th>
+                      <th>Indicator</th>
+                      <th>Level</th>
+                      <th>Status</th>
+                      <th>Created At</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                   <tbody>
+
+                   </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row end -->
+    
+
+    </main>
+      <!--end::App Main-->
+      <!--begin::Footer-->
+      <footer class="app-footer">
+        <!--begin::To the end-->
+        <!-- <div class="float-end d-none d-sm-inline">Anything you want</div> -->
+        <!--end::To the end-->
+        <!--begin::Copyright-->
+        <strong>
+          Copyright &copy; 2024-2025&nbsp;
+          <a href="www.azeusbros.com" class="text-decoration-none">Azeus Bros</a>.
+        </strong>
+        All rights reserved.
+        <!--end::Copyright-->
+      </footer>
+      <!--end::Footer-->
     </div>
-    <!-- Page wrapper end -->
+    <!--end::App Wrapper-->
+    <!--begin::Script-->
+    <!--begin::Third Party Plugin(OverlayScrollbars)-->
 
-    <!-- Custom JS files -->
-    <script type="text/javascript">
-        $(function() {
-            console.log($('.tickets')); // Ensure it logs the table element
+  
 
-        var table = $('.tickets').DataTable({
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js"
+      integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ="
+      crossorigin="anonymous"
+    ></script>
+    <!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Required Plugin(popperjs for Bootstrap 5)-->
+    <script
+      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+      crossorigin="anonymous"
+    ></script>
+    <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+      integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+   $(function() {
+
+      const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
+      const Default = {
+        scrollbarTheme: 'os-theme-light',
+        scrollbarAutoHide: 'leave',
+        scrollbarClickScroll: true,
+      };
+      document.addEventListener('DOMContentLoaded', function () {
+        const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+        if (sidebarWrapper && typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== 'undefined') {
+          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+            scrollbars: {
+              theme: Default.scrollbarTheme,
+              autoHide: Default.scrollbarAutoHide,
+              clickScroll: Default.scrollbarClickScroll,
+            },
+          });
+        }
+      });
+
+        console.log($('.tickets')); // Ensure it logs the table element
+
+        var table = $('.ticketstable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('tickets.list') }}",
+        ajax: "{{ route('tickets.adminlist') }}",
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             {data : 'ticket_no', name: 'ticket_no'},
+            {data : 'requested_by', name: 'requested_by'},
+            {data : 'email', name: 'email'},
             {data: 'title', name: 'title'},
-            {data: 'created_at', name: 'created_at'},
             {data: 'category', name: 'category'},
-            {data: 'description', name: 'description'},
-            {data: 'updated_at', name: 'updated_at'},
+            {data: 'assigned_to', name: 'assigned_to'},
+            {data: 'indicator', name: 'indicator'},
             {data: 'level', name: 'level'},
             {data: 'status', name: 'status'},
+            {data: 'created_at', name: 'created_at'},
+            
+            // {data: 'description', name: 'description'},
+            // {data: 'updated_at', name: 'updated_at'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });  
-        });
+
+    });
+    
     </script>
   </body>
-
 </html>
