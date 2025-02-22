@@ -66,3 +66,14 @@ Route::middleware('user.auth')->prefix('agent')->group(function () {
 
 Route::get('/auth/azure', [AzureAuthController::class, 'redirectToAzure'])->name('azure.login');
 Route::get('/auth/azure/callback', [AzureAuthController::class, 'handleAzureCallback']);
+
+
+
+//Categories Store Route
+Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+
+Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
+Route::get('/categories/edit/{id}', [CategoryController::class, 'categoriesedit'])->name('categories.edit');
+Route::post('/categories/update/{id}', [CategoryController::class, 'categoriesupdate'])->name('categories.update');
+Route::delete('/categories/delete/{id}', [CategoryController::class, 'categoriesDelete'])->name('categories.delete');
+
