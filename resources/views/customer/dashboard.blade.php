@@ -242,7 +242,8 @@
                   />
                   <p>
                     
-                    <small> {{ $user['email']  }}</small>
+                    <small>{{ isset($user['email']) ? $user['email'] : 'N/A' }}</small>
+
                   </p>
                 </li>
                 <!--end::User Image-->
@@ -286,7 +287,9 @@
             />
             <!--end::Brand Image-->
             <!--begin::Brand Text-->
-            <span class="brand-text fw-light"> {{  $user['username'] }}</span>
+            <small>{{ isset($user['username']) ? $user['username'] : 'N/A' }}</small>
+
+            {{-- <span class="brand-text fw-light"> {{  $user['username'] }}</span> --}}
             <!--end::Brand Text-->
           </a>
           <!--end::Brand Link-->

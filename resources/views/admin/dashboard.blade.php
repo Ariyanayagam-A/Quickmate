@@ -1,381 +1,9 @@
-<!doctype html>
-<html lang="en">
-  <!--begin::Head-->
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Admin | Dashboard </title>
-    <!--begin::Primary Meta Tags-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="title" content="Admin | Dashboard" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta
-      name="description"
-      content="Admin is a Free Bootstrap 5 Admin Dashboard"
-    />
-    <meta
-      name="keywords"
-      content="bootstrap 5"
-    />
+@extends('newlayout.app')
 
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-      integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
-      crossorigin="anonymous"
-    />
-    <!--end::Third Party Plugin(Bootstrap Icons)-->
-    <!--begin::Required Plugin(AdminLTE)-->
-    <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css')}}" />
-    <!--end::Required Plugin(AdminLTE)-->
-    <!-- apexcharts -->
+@section('title', 'Dashboard')
 
+@section('content')
 
-<style>
-   #lticketsPriorityData {
-        width: 100%;
-        height: 220px;
-    }
-    #avgTimeData {
-        width: 100%;
-        height: 220px;
-    }
-</style>
- 
-<!-- chart line -->
-
-
-
-
-  </head>
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-    <!--begin::App Wrapper-->
-    <div class="app-wrapper">
-      <!--begin::Header-->
-      <nav class="app-header navbar navbar-expand bg-body">
-        <!--begin::Container-->
-        <div class="container-fluid">
-          <!--begin::Start Navbar Links-->
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                <i class="bi bi-list"></i>
-              </a>
-            </li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link" style="font-weight: 700;">Dashboard</a></li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Schedular</a></li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tech Availability Chart</a></li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tasks</a></li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Remainders</a></li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Announcements</a></li>
-          </ul>
-          <!--end::Start Navbar Links-->
-          <!--begin::End Navbar Links-->
-          <ul class="navbar-nav ms-auto">
-            <!--begin::Navbar Search-->
-            <li class="nav-item">
-              <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                <i class="bi bi-search"></i>
-              </a>
-            </li>
-            <!--end::Navbar Search-->
-            <!--begin::Messages Dropdown Menu-->
-            
-            <li class="nav-item ">
-              <a class="nav-link" href="{{ route('admin.configurations') }}">
-                <i class="bi bi-gear"></i>
-              </a>
-          
-            </li>
-            <!--end::Messages Dropdown Menu-->
-            <!--begin::Notifications Dropdown Menu-->
-            <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">
-                <i class="bi bi-bell"></i>
-                <span class="navbar-badge badge text-bg-warning">15</span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <span class="dropdown-item dropdown-header">15 Notifications</span>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-envelope me-2"></i> 4 new messages
-                  <span class="float-end text-secondary fs-7">3 mins</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-people-fill me-2"></i> 8 friend requests
-                  <span class="float-end text-secondary fs-7">12 hours</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-file-earmark-fill me-2"></i> 3 new reports
-                  <span class="float-end text-secondary fs-7">2 days</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
-              </div>
-            </li>
-            <!--end::Notifications Dropdown Menu-->
-            <!--begin::Fullscreen Toggle-->
-
-            <li class="nav-item">
-              <a class="nav-link" href="javascript:void(0);" id="fullscreenToggle">
-                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen" id="maximizeIcon"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" id="minimizeIcon" style="display: none;"></i>
-              </a>
-            </li>
-            
-            
-            <!--end::Fullscreen Toggle-->
-            <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img
-                  src="{{  asset('assets/dist/assets/img/user2-160x160.jpg') }}"
-                  class="user-image rounded-circle shadow"
-                  alt="User Image"
-                />
-                <!-- <span class="d-none d-md-inline">Alexander Pierce</span> -->
-              </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <!--begin::User Image-->
-                <li class="user-header text-bg-primary">
-                  <img
-                    src="{{ asset('assets/dist/assets/img/user2-160x160.jpg')}}"
-                    class="rounded-circle shadow"
-                    alt="User Image"
-                  />
-                  <p>
-                    Alexander Pierce
-                    <small>Alex@gmail.com</small>
-                  </p>
-                </li>
-                <!--end::User Image-->
-                <!--begin::Menu Body-->
-                <li class="user-body">
-                  <!--begin::Row-->
-                  <div class="row">
-                    <div class="col-4 text-center"><a href="#">Account</a></div>
-                    <!-- <div class="col-4 text-center"><a href="#">Sales</a></div> -->
-                    <div class="col-4 text-center"><a href="#">Personalize</a></div>
-                  </div>
-                  <!--end::Row-->
-                </li>
-                <!--end::Menu Body-->
-                <!--begin::Menu Footer-->
-                <li class="user-footer">
-                  <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
-                  <a href="#" class="btn btn-default btn-flat ">Sign out</a>
-                </li>
-                <!--end::Menu Footer-->
-              </ul>
-            </li>
-            <!--end::User Menu Dropdown-->
-          </ul>
-          <!--end::End Navbar Links-->
-        </div>
-        <!--end::Container-->
-      </nav>
-      <!--end::Header-->
-      <!--begin::Sidebar-->
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <!--begin::Sidebar Brand-->
-        <div class="sidebar-brand">
-          <!--begin::Brand Link-->
-          <a href="{{ route('admin.dashboard') }}" class="brand-link">
-            <!--begin::Brand Image-->
-            <img
-              src="{{  asset('assets/dist/assets/img/AdminLTELogo.png') }}"
-              alt="AdminLTE Logo"
-              class="brand-image opacity-75 shadow"
-            />
-            <!--end::Brand Image-->
-            <!--begin::Brand Text-->
-            <span class="brand-text fw-light">Admin</span>
-            <!--end::Brand Text-->
-          </a>
-          <!--end::Brand Link-->
-        </div>
-        <!--end::Sidebar Brand-->
-        <!--begin::Sidebar Wrapper-->
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="menu"
-              data-accordion="false"
-            >
-              <li class="nav-item ">
-                <a href="{{ route('admin.dashboard') }}" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>
-                    Home
-                    <!-- <i class="nav-arrow bi bi-chevron-right"></i> -->
-                  </p>
-                </a>
-              </li>
-              <!-- <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-activity"></i>
-                  <p>
-                    Activities
-                  </p>
-                </a>
-              </li> -->
-
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-activity"></i>
-                  <p>
-                    Activities
-                    <i class="nav-arrow bi bi-chevron-right"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="{{ route('admin.tickets') }}" class="nav-link">
-                      <i class="nav-icon bi bi-ticket-perforated"></i>
-                      <p>All My Activities</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="./my-group-pending-activities/all-ticket.html" class="nav-link">
-                      <i class="nav-icon bi bi-ticket-perforated"></i>
-                      <p>My Group Pending Activities</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="./My-Pending-Activities/all-ticket.html" class="nav-link">
-                      <i class="nav-icon bi bi-ticket-perforated"></i>
-                      <p>My Pending Activities</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="./My-Pending-&-Group-Unsigned/all-ticket.html" class="nav-link">
-                      <i class="nav-icon bi bi-ticket-perforated"></i>
-                      <p>My Pencing & Group Unsigned</p>
-                    </a>
-                  </li>
-                 
-                </ul>
-              </li>
-
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-ticket-detailed"></i>
-                  <p>
-                    Requests
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-bug"></i>
-                  <p>
-                    Problems
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-arrow-left-right"></i>
-                  <p>
-                    Changes
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-pencil-square"></i>
-                  <p>
-                    Projects
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-rocket-takeoff"></i>
-                  <p>
-                    Releases
-                  </p>
-                </a>
-              </li> 
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-book"></i>
-                  <p>
-                    Solutions
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-box"></i>
-                  <p>
-                    assets
-                  </p>
-                </a>
-              </li> 
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-database"></i>
-                  <p>
-                    CMDB
-                  </p>
-                </a>
-              </li> 
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-currency-dollar"></i>
-                  <p>
-                    purchases
-                  </p>
-                </a>
-              </li>
-              <li class="nav-item ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-flag"></i>
-                  <p>
-                    Reports
-                  </p>
-                </a>
-              </li>
-              
-
-
-         
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-three-dots"></i>
-                  <p>
-                    More
-                    <i class="nav-arrow bi bi-chevron-right"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="" class="nav-link">
-                      <i class="nav-icon bi bi-clipboard2-check"></i>
-                      <p>Contract</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="" class="nav-link">
-                      <i class="nav-icon bi bi-wrench"></i>
-                      <p>Maintenance</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-
-            </ul>
-            <!--end::Sidebar Menu-->
-          </nav>
-        </div>
-        <!--end::Sidebar Wrapper-->
-      </aside>
-      <!--end::Sidebar-->
       <!--begin::App Main-->
       <main class="app-main">
         <!--begin::App Content Header-->
@@ -499,19 +127,33 @@
       </main>
       <!--end::App Main-->
       <!--begin::Footer-->
-      <footer class="app-footer">
-        <strong>
-          Copyright &copy; 2024-2025&nbsp;
-          <a href="www.azeusbros.com" class="text-decoration-none">Azeus Bros</a>.
-        </strong>
-        All rights reserved.
-        <!--end::Copyright-->
-      </footer>
-      <!--end::Footer-->
     </div>
+      <!--end::Footer-->
 
 
-    <script src="{{ asset('assets/dist/js/ticketsPriorityData.js') }}"></script>
+
+      <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+    <script>
+      const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
+      const Default = {
+        scrollbarTheme: 'os-theme-light',
+        scrollbarAutoHide: 'leave',
+        scrollbarClickScroll: true,
+      };
+      document.addEventListener('DOMContentLoaded', function () {
+        const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+        if (sidebarWrapper && typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== 'undefined') {
+          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+            scrollbars: {
+              theme: Default.scrollbarTheme,
+              autoHide: Default.scrollbarAutoHide,
+              clickScroll: Default.scrollbarClickScroll,
+            },
+          });
+        }
+      });
+    </script>
+ <script src="{{ asset('assets/dist/js/ticketsPriorityData.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="{{ asset('assets/dist/js/avgTimeData.js') }}"></script>
 
@@ -535,28 +177,6 @@
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="{{ asset('assets/dist/js/adminlte.js') }}"></script>
-    <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
-    <script>
-      const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
-      const Default = {
-        scrollbarTheme: 'os-theme-light',
-        scrollbarAutoHide: 'leave',
-        scrollbarClickScroll: true,
-      };
-      document.addEventListener('DOMContentLoaded', function () {
-        const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
-        if (sidebarWrapper && typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== 'undefined') {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: {
-              theme: Default.scrollbarTheme,
-              autoHide: Default.scrollbarAutoHide,
-              clickScroll: Default.scrollbarClickScroll,
-            },
-          });
-        }
-      });
-    </script>
-
     <script
       src="https://cdn.jsdelivr.net/npm/apexcharts@3.37.1/dist/apexcharts.min.js"
       integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8="
@@ -685,9 +305,4 @@
         }] });
       //# sourceURL=pen.js
           </script>
-
-    <!--end::Script-->
-  </body>
-  <!--end::Body-->
-</html>
-
+@endsection
