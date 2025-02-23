@@ -30,32 +30,68 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        try
-        {
-
-        $category = [
-            'name' => $request->category,
-            'status' => $request->status
-        ];
-
-        $has_created = Category::create($category);
-
-        
-        if($has_created)
-        {
-            return Response(['status' => 'success','message' => 'Category Created Successfully!'],200);
-        }
-        else
-        {
-            return Response(['status' => 'failed','message' => 'Something Went Wrong!'],500);
-        }
-
-        }
-        catch(\Exception $e)
-        {
-            return Response(['status' => 'failed','message' => 'Something Went Wrong!'],500);
-        }
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_active' => 'required|in:0,1',
+        ]);
+  
+        Category::create([
+            'org_id' => 1, // Default org_id
+            'name' => $request->name,
+            'description' => $request->description,
+            'is_active' => $request->is_active ?? 1,
+        ]);
+  
+        return response()->json(['success' => 'Category added successfully']);
     }
+
+
+  // Store function
+  public function categoriesStore(Request $request)
+  {
+      $request->validate([
+          'name' => 'required|string|max:255',
+          'description' => 'nullable|string',
+          'is_active' => 'required|in:0,1',
+      ]);
+
+      Category::create([
+          'org_id' => 1, // Default org_id
+          'name' => $request->name,
+          'description' => $request->description,
+          'is_active' => $request->is_active ?? 1,
+      ]);
+
+      return response()->json(['success' => 'Category added successfully']);
+  }
+
+  // Fetch category for editing
+  public function categoriesedit($id)
+  {
+      $category = Category::findOrFail($id);
+      return response()->json($category);
+  }
+
+  // Update function
+  public function categoriesupdate(Request $request, $id)
+  {
+      // Validate and update your category
+      $data = $request->validate([
+          'name' => 'required|string|max:255',
+          'description' => 'nullable|string',
+          'is_active' => 'required|boolean',
+      ]);
+  
+      $category = Category::findOrFail($id);
+      $category->update($data);
+  
+      return response()->json(['success' => true, 'message' => 'Category updated successfully']);
+  }
+  
+
+
+
 
     /**
      * Display the specified resource.
@@ -95,19 +131,21 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request)
+    public function categoriesDelete($id)
     {
 
-        $hasDeleted = Category::find($request->id)->delete();
-        if($hasDeleted){
-            return Response(['status' => 'success','message' => "Category Deleted Successfully!"],200);
+        // dd('wsdsadd');
+        $category = Category::find($id);
+    
+        if (!$category) {
+            return response()->json(['error' => 'Category not found!'], 404);
         }
-        else
-        {
-            return Response(['status' => 'failed','message' => 'Something Went Wrong!'],500);
-        }
+    
+        $category->delete();
+    
+        return response()->json(['success' => 'Category deleted successfully!']);
     }
-
+    
     public function list()
     {
         $categories = Category::all();

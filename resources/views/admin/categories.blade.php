@@ -285,14 +285,14 @@
                     <div class="table-responsive">
                       <table id="table" class="table table-bordered table-striped align-middle m-0 categories">
                         <thead>
-                          <tr>
+                          <tr style="text-align: center;">
                             <th>#</th>
                             <th>Category</th>
                             <th>Status</th>
                             <th>Action</th>
                           </tr>
                         </thead>
-                        <tbody></tbody>
+                        <tbody style="text-align: center; "></tbody>
 
                       </table>
                     </div>
@@ -328,25 +328,44 @@
 
                     <!-- Modal Body -->
                     <div class="modal-body">
-                      <div class="form-group mb-3">
-                        <label for="agent" class="form-label"> Category Name </label>
-                        <input type="text" id="category" name="category" class="form-control" required>
-                      </div>
+                      <form id="categoryForm">
+                        <div class="modal-body">
+                            {{-- <div class="form-group mb-3">
+                                <label class="form-label">Organization ID</label>
+                                <input type="number" id="org_id" name="org_id" class="form-control" required>
+                            </div> --}}
+                            
+                            <div class="form-group mb-3">
+                                <label class="form-label">Category Name</label>
+                                <input type="text" id="name" name="name" class="form-control" required>
+                            </div>
+                    
+                            <div class="form-group mb-3">
+                                <label class="form-label">Description</label>
+                                <textarea id="description" name="description" class="form-control"></textarea>
+                            </div>
+                            
+                            <div class="form-group mb-3">
+                                <label class="form-label">Status</label>
+                                <select id="is_active" name="is_active" class="form-select" required>
+                                    <option value="">--Select Status--</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                            </div>
+                    
+                            <input type="hidden" name="is_edit" id="editaction" value="0">
+                    
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" id="submitBtn" class="btn btn-primary btn-sm">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                    
                       
-                      <div class="form-group mb-3">
-                        <label for="status" class="form-label">Status</label>
-                        <select id="status" name="status" class="form-select" required >
-                          <option value="" selected >--Select Status ---</option>
-                          <option value="1">Active</option>
-                          <option value="0">Inactive</option>
-                        </select>
-                      </div>
-                      
-                      <input type="hidden" name="is_edit" id="editaction" data-editid="" value="0">
+                      {{-- <input type="hidden" name="is_edit" id="editaction" data-editid="" value="0"> --}}
 
-                      <div class="d-flex justify-content-center">
-                        <button id="submitBtn" class="btn btn-primary btn-sm">Submit</button>
-                      </div>
+                     
                     </div>
 
                     <!-- Modal Footer -->
@@ -366,6 +385,9 @@
 
     <!-- Custom JS files -->
     <script type="text/javascript">
+
+
+//categories list
         $(function() {
             console.log($('.tickets')); // Ensure it logs the table element
 
@@ -373,12 +395,41 @@
             processing: true,
             serverSide: true,
             ajax: "{{ route('categories.list') }}",
-            columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-                {data : 'category', name: 'category'},
-                {data: 'status', name: 'status'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
-            ]
+            // columns: [
+            //     { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            //     {data : 'category', name: 'category'},
+            //     {data: 'status', name: 'status'},
+            //     {data: 'action', name: 'action', orderable: false, searchable: false},
+                columns: [
+       { data: 'name', name: 'name' },
+      { data: 'description', name: 'description' },
+    { data: 'is_active', name: 'is_active' },
+    {
+        data: 'id',
+        name: 'id',
+        orderable: false,
+        searchable: false,
+        render: function (data, type, row) {
+            return `
+                <button class="btn btn-warning btn-sm"
+                        onclick="CategoryModalAction(this, ${data})"
+                        data-action="edit"
+                        data-name="${row.name}"
+                        data-description="${row.description}"
+                        data-current="${row.is_active}">
+                    Edit
+                </button>
+
+
+            <button class="btn btn-danger btn-sm"
+                        onclick="deleteCategory(${data})">
+                    Delete
+                </button>
+            `;
+        }
+    }
+]
+            
         });  
 
         $('.close').click(function()
@@ -399,55 +450,26 @@
 
       });
 
-        function CategoryModalAction(element,id)
-        {
-            let actionType = $(element).data('action');
-            console.log('action : ',actionType);
+      function CategoryModalAction(element, id) {
+  
+    $('#editaction').val(1);
+    $('#editaction').data('editid', id);
 
-            if(actionType == 'status')
-            {
-                var message = `Are you sure you want to ${$(element).data('current') ? 'Disable' : 'Enable' } this Category ?`;
+    
+    $('#name').val($(element).data('name'));
+    $('#description').val($(element).data('description'));
 
-                if(confirm(message))
-                {
-                    let payload = {
-                        'status' : $(element).data('current') ? '0' : '1',
-                        'id'     : id
-                    }
+    let currentStatus = $(element).data('current');
+    if (currentStatus !== undefined) {
+        $(`#is_active option[value="${currentStatus}"]`).prop('selected', true);
+    }
 
-                    categoryAjax(actionType,payload)
-                }
-            }
-            else if(actionType == 'delete')
-            {
-                var message = `Are you sure you want to Delete this Category ?`;
+   
+    $('#myModal').show();
+}
 
-                if(confirm(message))
-                {
-                    let payload = {
-                        'id'     : id
-                    }
-                    
-                    categoryAjax(actionType,payload)
-                }
-            }
-            else if(actionType == 'add')
-            {
-                $('#category').val('')
-                $(`#status option[value=""]`).prop('selected', true);
-                $('#editaction').val(0)
-                $('#editaction').data('editid',null)
-                $('#myModal').show();
-            }
-            else{
-                $('#editaction').val(1)
-                $('#editaction').data('editid',id)
-                $('#category').val($(element).data('name'))
-                $(`#status option[value=${$(element).data('current')}]`).prop('selected', true);
-                $('#myModal').show();
-            }
 
-        }
+
 
         function categoryAjax(type,data){
 
@@ -479,8 +501,159 @@
               console.log(error);
             }
           });
+
+
+
         }
+
+
+
+
+
+
+// debugger
+$('#categoryForm').on('submit', function(e) {
+    e.preventDefault();
+    // Retrieve the edit ID from your hidden element or any other place
+    var categoryId = $('#editaction').data('editid');
+    
+    // Construct the update URL using the stored categoryId
+    var updateUrl = '/categories/update/' + categoryId;
+    
+    // Optionally, if you’re using Laravel’s route helper in Blade,
+    // you can set a placeholder and then replace it:
+    // var updateUrl = "{{ route('categories.update', ':id') }}".replace(':id', categoryId);
+    
+    // Gather form data
+    var formData = $(this).serialize();
+
+    // Send the AJAX request
+    $.ajax({
+        url: updateUrl,
+        type: 'POST',
+        data: formData,
+        success: function(response) {
+            console.log('Category updated successfully');
+            // Optionally close the modal and refresh the category list
+            $('#table').DataTable().ajax.reload(null, false);
+            $('#myModal').hide();
+        },
+        error: function(error) {
+            console.error('Error updating category:', error);
+        }
+    });
+});
+
+
+    $('#categoryForm').on('submit', function(e) {
+    e.preventDefault();
+    var isEditMode = $('#editaction').val() == 1;
+    var categoryId = $('#editaction').data('editid');
+    
+    var formData = $(this).serialize(); // or collect data manually
+
+    if (isEditMode && categoryId) {
+        // Update existing record
+        $.ajax({
+            url: '/updateCategory',  // your update endpoint
+            type: 'POST',
+            data: formData + '&id=' + categoryId,
+            success: function(response) {
+                console.log('Category updated successfully');
+                $('#myModal').css('display', 'none');
+
+// Reload DataTable 
+       $('#table').DataTable().ajax.reload(null, false);
+                // Optionally close modal and refresh data
+            },
+            error: function(error) {
+                console.error('Error updating category:', error);
+            }
+        });
+    } else {
+        // Insert new record
+       
+        $.ajax({
+            url: "{{ route('categories.store') }}",
+            type: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            success: function (response) {
+               console.log('resposne'+response)
+                $('#categoryForm')[0].reset();
+                // $('#categoryForm').close();
+
+                $('#myModal').css('display', 'none');
+
+// Reload DataTable 
+       $('#table').DataTable().ajax.reload(null, false);
+            },
+            error: function(error) {
+                console.error('Error creating category:', error);
+            }
+        });
+    }
+});
+
+    function deleteCategory(categoryId) {
+        if (confirm("Are you sure you want to delete this category?")) {
+            $.ajax({
+                url: `/categories/delete/${categoryId}`,
+                type: 'DELETE',
+                data: { _token: $('meta[name="csrf-token"]').attr('content') },
+                success: function (response) {
+                    alert(response.success);
+                    $('#myModal').hide();
+                    $('#table').DataTable().ajax.reload(null, false);
+                    $('#categoryTable').DataTable().ajax.reload(); 
+                },
+                error: function () {
+                    alert("Error deleting category!");
+                }
+            });
+        }
+    }
+
+
+//stoer the categores
+//         $('#categoryForm').submit(function (e) {
+//         e.preventDefault();
+
+//         $.ajax({
+//             url: "{{ route('categories.store') }}",
+//             type: "POST",
+//             data: $(this).serialize(),
+//             dataType: "json",
+//             headers: {
+//                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+//             },
+//             success: function (response) {
+//                console.log('resposne'+response)
+//                 $('#categoryForm')[0].reset();
+//                 // $('#categoryForm').close();
+
+//                 $('#myModal').css('display', 'none');
+
+// // Reload DataTable 
+//        $('#table').DataTable().ajax.reload(null, false);
+//             },
+//             error: function (xhr) {
+//                 alert("Error: " + xhr.responseJSON.message);
+//             }
+//         });
+//     });
+
+
+
+
     </script>
+
+
+
+  
   </body>
 
 </html>
