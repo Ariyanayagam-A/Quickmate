@@ -6,6 +6,8 @@ use App\Http\Controllers\TicketController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\AzureAuthController;
+use App\Http\Controllers\Auth\LdapController;
+use App\Http\Controllers\Auth\AuthController;
 
 Route::get('/', function () {
     return redirect('user/login');
@@ -14,7 +16,7 @@ Route::get('/', function () {
 // user routes 
 
 Route::get('user/login', [UserController::class,'login'])->name('customer.loginform');
-Route::post('user/login', [UserController::class,'verifylogin'])->name('customer.login');
+Route::post('user/login', [AuthController::class,'checkAuth'])->name('customer.login');
 Route::get('user/register', [UserController::class,'register'])->name('customer.register');
 Route::post('user/register', [UserController::class,'store'])->name('customer.store');
 
@@ -66,3 +68,7 @@ Route::middleware('user.auth')->prefix('agent')->group(function () {
 
 Route::get('/auth/azure', [AzureAuthController::class, 'redirectToAzure'])->name('azure.login');
 Route::get('/auth/azure/callback', [AzureAuthController::class, 'handleAzureCallback']);
+
+// LDAP routes
+
+Route::get('/ldap/users', [LdapController::class, 'getUsers']);

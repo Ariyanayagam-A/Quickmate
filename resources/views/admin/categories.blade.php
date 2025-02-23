@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Admin <?=
-   isset($activeLink) && !empty($activeLink) ? ucfirst($activeLink) : ''?> </title>
+     isset($activeLink) && !empty($activeLink) ? ucfirst($activeLink) : ''?> </title>
 
     <!-- Meta -->
     <meta name="description" content="Marketplace for Bootstrap Admin Dashboards" />
