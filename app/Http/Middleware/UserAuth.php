@@ -19,6 +19,7 @@ class UserAuth
     {
         // if (!Auth::check()) 
         // {
+            // return redirect()->route('customer.loginform');
         //     return redirect()->route('customer.loginform');
         // }
 

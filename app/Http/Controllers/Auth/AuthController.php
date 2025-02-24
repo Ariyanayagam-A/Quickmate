@@ -29,6 +29,7 @@ class AuthController extends Controller
 
         $isAuthenticated = $this->ldapController->checkLDAPAuthentication($request->name_email);
 
+        // dd($isAuthenticated);
         // if (Auth::attempt($credentials)) {
             
         if ($isAuthenticated) 
@@ -37,6 +38,7 @@ class AuthController extends Controller
         // dd(Auth::user()->role);
         if(true)
         {
+            // dd('redirect');
             return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
         }
         if(Auth::user()->role == 2){

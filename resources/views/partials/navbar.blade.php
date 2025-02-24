@@ -1,4 +1,9 @@
 <nav class="app-header navbar navbar-expand bg-body">
+  @php
+      $user = Session::get('user');
+      $azureUser = isset($user['username']) ? $user['username']  : 'Admin';
+      $azureMail = isset($user['email']) ?  $user['email'] :  'admin@kloudstacks.com';
+@endphp
     <!--begin::Container-->
     <div class="container-fluid">
       <!--begin::Start Navbar Links-->
@@ -91,8 +96,8 @@
                 alt="User Image"
               />
               <p>
-                Alexander Pierce
-                <small>Alex@gmail.com</small>
+                 {{ $azureUser }}
+                <small> {{ $azureMail }} </small>
               </p>
             </li>
             <!--end::User Image-->
@@ -110,7 +115,7 @@
             <!--begin::Menu Footer-->
             <li class="user-footer">
               <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
-              <a href="#" class="btn btn-default btn-flat ">Sign out</a>
+              <a href="{{ route('customer.loginform')}}" class="btn btn-default btn-flat ">Sign out</a>
             </li>
             <!--end::Menu Footer-->
           </ul>
