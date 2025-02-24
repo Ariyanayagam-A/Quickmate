@@ -22,7 +22,7 @@ class TicketController extends Controller
 
     public function raiseTicket()
     {
-        $categories = Category::where('status',1)->get();
+        $categories = Category::where('is_active',1)->get();
         return view('customer.raise-ticket')->with('categories',$categories);
     }
 
@@ -31,42 +31,49 @@ class TicketController extends Controller
      */
     public function create(Request $request)
     {
-     try{
-        // dd($request->all());
-       $validator =  Validator::make($request->all(), [
-        'title' => 'required',
-        'desc' => 'required',
-        'category' => 'required',
-    ]);
-
-        if ($validator->fails()) {
-            // die('error');
-            return redirect()->back()->withErrors($validator)->withInput();
+        try {
+            // Validate input
+            $validator = Validator::make($request->all(), [
+                'title' => 'required',
+                'desc' => 'required',
+                'category' => 'required',
+                'ticket_file' => 'nullable|mimes:jpg,jpeg,png,pdf|max:2048', // Limit file type & size
+            ]);
+    
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+    
+            // Create new ticket
+            $ticket = new Ticket();
+            $ticket->subject = $request->title;
+            $ticket->ticket_id = 'TKT' . rand(100000, 999999);
+            $ticket->category = $request->category;
+            $ticket->summary = $request->desc;
+            // $ticket->status = 0;
+            // $ticket->raised_by = Auth::id(1); // Store the logged-in user's ID
+    
+            // // Handle file upload
+            // if ($request->hasFile('ticket_file')) {
+            //     $file = $request->file('ticket_file');
+            //     $fileName = time() . '_' . $file->getClientOriginalName();
+            //     $filePath = $file->storeAs('uploads/tickets', $fileName, 'public');
+            //     $ticket->image = $filePath;
+            // }
+    
+            // Save ticket
+            if ($ticket->save()) {
+                return redirect('/user/tickets')->with('success', 'Ticket created successfully.');
+            } else {
+                return redirect()->back()->with('error', 'Ticket creation failed.');
+            }
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
 
-        $ticket = new Ticket();
-        $ticket->subject = $request->title;
-        $ticket->ticket_id = 'TKT'.rand(100000,999999);
-        // $ticket->image = $request->image;
-        $ticket->raised_by = Auth::user()->id;
-        $ticket->category = $request->category;
-        $ticket->summary = $request->desc;
-        $ticket->status =  0;
-        
-        $ticket_save = $ticket->save();
 
-        if ($ticket_save) {
-            // die('saved');
-            return redirect()->back()->with('success', 'Ticket created successfully.');
-        }
-        else {
-            return redirect()->back()->with('error', 'Ticket creation failed.');
-        }
     }
-    catch (\Exception $e) {
-        die('error'.$e->getMessage());
-    }
-   }
+    
 
     /**
      * Store a newly created resource in storage.
@@ -109,84 +116,55 @@ class TicketController extends Controller
     }
 
 
+
+
     public function list()
     {
-        if(Auth::user()->role == 1 )
-        {
-            $tickets = Ticket::with('category')->orderBy('id', 'desc');
-
-        }
-        else
-        {
-            $tickets = Ticket::with('category')->where('raised_by',Auth::user()->id)->orderBy('id', 'desc');
-        }
-
-        return Datatables::of($tickets)
-                ->addIndexColumn()
-                ->addColumn('ticket_no', function($row){
-                    return $row->ticket_id;
-                })
-                ->addColumn('title', function($row){
-                    return $row->subject;
-                })
-                ->addColumn('created_at', function($row){
-                    return $row->created_at;
-                })
-                ->addColumn('category', function($row){
-                        return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
-                })
-                ->addColumn('description', function($row){
-                    return $row->summary;
-                })
-                ->addColumn('updated_at', function($row){
-                    return $row->updated_at;
-                })
-                ->addColumn('level', function($row){
-                   $level_html = is_null($row->priority) ? '-' : '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
-                                data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary"
-                                data-bs-title="Edit">
-                                <i class="">L'.$row->priority.'</i>
-                              </button>';
-                    return $level_html;
-                })
-                ->addColumn('status', function($row){
-                    if ($row->status == 0) {
-                        $status_btn = '<span class="badge bg-danger">Pending</span>';
-                    }
-                    elseif ($row->status == 1) {
-                        $status_btn = '<span class="badge bg-info">On Progress</span>';
-                    }
-                    elseif ($row->status == 2) {
-                        $status_btn = '<span class="badge bg-primary">Closed</span>';
-                    }
-                    elseif($row->status == 3) {
-                        $status_btn = '<span class="badge bg-warning">Rejected</span>';
-                    }
-                    else{
-                        $status_btn = '<span class="badge bg-secondary">On Hold</span>';
-                    }
-                    return $status_btn;
-                })
-                ->addColumn('action', function($row){
-   
-                    $btn = '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" title="View Ticket">
-                        <i class="fa-regular fa-eye"></i>
-                    </button>
-                    <button class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-warning" title="Edit Ticket">
-                    <a href="'.route('edit.ticket', $row->id).'"> 
-                    <i class="fa-regular fa-pen-to-square"></i>
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-danger" title="Delete Ticket">
-                      <a href="'.route('delete.ticket', $row->id).'"> 
-                        <i class="fa-regular fa-trash-can"></i>
-                    </button>';
-                
-                    return $btn;
-                })
-                ->rawColumns(['action','status','level'])
-                ->make(true);
-        // return view('admin.tickets', compact('tickets'));
+        // dd('asasasas');
+        // Fetch all tickets with the related category
+        $tickets = Ticket::with('category')->orderBy('id', 'desc')->get();
+    
+        return DataTables::of($tickets)
+            ->addIndexColumn()
+            ->addColumn('ticket_id', function($row) {
+                return $row->ticket_id;
+            })
+            // ->addColumn('subject', function($row) {
+            //     return $row->subject;
+            // })
+            // ->addColumn('created_at', function($row) {
+            //     return $row->created_at->format('Y-m-d H:i:s'); // Formatting the date
+            // })
+            ->addColumn('category', function($row) {
+                return $row->Category->name ?? '-';
+            })
+            // ->addColumn('description', function($row) {
+            //     return $row->summary;
+            // })
+            // ->addColumn('updated_at', function($row) {
+            //     return $row->updated_at ? $row->updated_at->format('Y-m-d H:i:s') : '-';
+            // })
+            // ->addColumn('level', function($row) {
+            //     return $row->priority ? '<span class="badge bg-info">L' . $row->priority . '</span>' : '-';
+            // })
+            // ->addColumn('status', function($row) {
+            //     $statuses = [
+            //         0 => '<span class="badge bg-danger">Pending</span>',
+            //         1 => '<span class="badge bg-info">On Progress</span>',
+            //         2 => '<span class="badge bg-primary">Closed</span>',
+            //         3 => '<span class="badge bg-warning">Rejected</span>',
+            //         4 => '<span class="badge bg-secondary">On Hold</span>'
+            //     ];
+            //     return $statuses[$row->status] ?? '<span class="badge bg-dark">Unknown</span>';
+            // })
+            // ->addColumn('action', function($row) {
+            //     return '<a href="' . route('edit.ticket', $row->id) . '" class="btn btn-warning btn-sm">Edit</a>
+            //             <a href="' . route('delete.ticket', $row->id) . '" class="btn btn-danger btn-sm">Delete</a>';
+            // })
+            // ->rawColumns(['status', 'level', 'action'])
+            ->make(true);
     }
+    
 
     public function adminTicketsList()
     {

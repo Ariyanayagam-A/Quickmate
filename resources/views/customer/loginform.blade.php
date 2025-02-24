@@ -69,8 +69,8 @@
 			</div>
 			@endif
             <div class="mb-3">
-			<label class="form-label">Email</label>
-			<input type="text" name="email" required class="form-control" placeholder="Enter your email" />
+			<label class="form-label">Email / Username</label>
+			<input type="text" name="name_email" required class="form-control" placeholder="Enter your email" />
 		</div>
 		<div class="mb-3">
 			<label class="form-label">Password</label>

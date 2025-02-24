@@ -332,7 +332,7 @@
                       <button id="sendButton" class="btn btn-primary btn-sm">Send</button>
                   </div>
             <!-- Sidebar Contact Section -->
-                <div class="sidebar-contact">
+                <div class="sidebar-contact d-none">
                       <p class="fw-light mb-1 text-nowrap text-truncate">Contact team</p>
                       <h5 class="m-0 lh-1 text-nowrap text-truncate">Queries?</h5>
                       <i class="ri-message-2-fill"></i>

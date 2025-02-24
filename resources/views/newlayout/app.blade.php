@@ -48,7 +48,7 @@
     @include('partials.sidebar')
 
     <!-- Main Content -->
-    <div class="">
+    <main class="app-main">
         <div class="">
             <!-- Sidebar Width -->
             <div class="">
@@ -58,7 +58,7 @@
             <div class="">
                 @yield('content')
             </div>
-        </div>
+          </main>
           <!-- Footer -->
     @include('partials.footer')
     </div>
@@ -91,8 +91,47 @@
         }
       });
 
-
+      document.addEventListener("DOMContentLoaded", function () {
+    const sidebarContact = document.querySelector(".sidebar-contact");
+    const contactForm = document.getElementById("contactForm");
+    const sendButton = document.getElementById("sendButton");
+    const customAlert = document.getElementById("customAlert");
+    const closeAlert = document.getElementById("closeAlert");
+  
+    sidebarContact.addEventListener("click", function () {
+      // Toggle visibility of the contact form
+      if (contactForm.style.display === "none" || contactForm.style.display === "") {
+        contactForm.style.display = "block";
+      } else {
+        contactForm.style.display = "none";
+      }
+    });
+  
+    sendButton.addEventListener("click", function () {
+      const message = document.getElementById("contactMessage").value.trim();
+      if (message) {
+        // Show the custom alert
+        customAlert.style.display = "flex";
+  
+        // Clear the message box
+        document.getElementById("contactMessage").value = "";
+  
+        // Hide the form
+        contactForm.style.display = "none";
+      } else {
+        alert("Please enter a message before sending.");
+      }
+    });
+  
+    closeAlert.addEventListener("click", function () {
+      // Hide the custom alert
+      customAlert.style.display = "none";
+    });
+  });
     </script>
+
+
+
     </div>
 </body>
 </html>

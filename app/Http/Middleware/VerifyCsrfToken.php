@@ -5,11 +5,18 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
-class UserAuth
+class VerifyCsrfToken
 {
+
+
+
+    protected $except = [
+
+       " /user/login"
+    ];
+
+
     /**
      * Handle an incoming request.
      *
@@ -17,11 +24,10 @@ class UserAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // if (!Auth::check()) 
-        // {
-        //     return redirect()->route('customer.loginform');
-        // }
-
         return $next($request);
     }
+
+
+
+
 }
