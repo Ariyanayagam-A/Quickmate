@@ -17,10 +17,10 @@ class UserAuth
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (!Auth::check()) 
-        {
-            return redirect()->route('customer.loginform');
-        }
+        // if (!Auth::check()) 
+        // {
+            // return redirect()->route('customer.loginform');
+        // }
 
         return $next($request);
     }

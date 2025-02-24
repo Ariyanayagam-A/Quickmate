@@ -53,12 +53,6 @@
     />
 
 
-    <!-- <link rel="stylesheet" href="./dist/css/tickets/main.min.css" /> -->
-    <!-- <link rel="stylesheet" href="./dist/css/tickets/OverlayScrollbars.min.css" /> -->
-    <!-- <link rel="stylesheet" href="./dist/css/main.min.css"> -->
-
-<!-- chart line -->
-
 <style>
   main{
     overflow-x: hidden !important;
@@ -161,6 +155,8 @@
 <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+<!-- datatables -->
+
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <!--begin::App Wrapper-->
@@ -238,7 +234,7 @@
                 <!--begin::User Image-->
                 <li class="user-header text-bg-primary">
                   <img
-                    src="{{ asset('assets/dist/assets/img/user2-160x160.jpg')}}"
+                    src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
                     class="rounded-circle shadow"
                     alt="User Image"
                   />
@@ -282,7 +278,7 @@
           <a href="./index.html" class="brand-link">
             <!--begin::Brand Image-->
             <img
-              src="{{ asset('assets/dist/assets/img/AdminLTELogo.png') }}"
+              src="{{ asset('assets//dist/assets/img/AdminLTELogo.png') }}"
               alt="AdminLTE Logo"
               class="brand-image opacity-75 shadow"
             />
@@ -299,50 +295,49 @@
           <nav class="mt-2">
             <!--begin::Sidebar Menu-->
             <ul
-            class="nav sidebar-menu flex-column"
-            data-lte-toggle="treeview"
-            role="menu"
-            data-accordion="false"
-          >
-         
-            <!-- <li class="nav-item ">
-              <a href="#" class="nav-link">
-                <i class="nav-icon bi bi-activity"></i>
-                <p>
-                  Activities
-                </p>
-              </a>
-            </li> -->
-            <li class="nav-item">
-              <a href="{{ route('supporttickets.view') }}" class="nav-link active">
-                <i class="nav-icon bi bi-ticket-perforated"></i>
-                <p>
-                  New Tickets
-                </p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('supportticketsstatus.view') }}" class="nav-link">
-                <i class="nav-icon bi-ticket-perforated-fill"></i>
-                <p>
-                  Ticket Status
-                </p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="{{ route('supportticketshistory.view') }}" class="nav-link">
-                <i class="nav-icon bi bi-activity"></i>
-                <p>
-                  Tickets History
-                </p>
-              </a>
-            </li>
-          </ul>
+              class="nav sidebar-menu flex-column"
+              data-lte-toggle="treeview"
+              role="menu"
+              data-accordion="false"
+            >
+           
+              <!-- <li class="nav-item ">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-activity"></i>
+                  <p>
+                    Activities
+                  </p>
+                </a>
+              </li> -->
+              <li class="nav-item">
+                <a href="{{ route('supporttickets.view') }}" class="nav-link ">
+                  <i class="nav-icon bi bi-ticket-perforated"></i>
+                  <p>
+                    New Tickets
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('supportticketsstatus.view') }}" class="nav-link active">
+                  <i class="nav-icon bi-ticket-perforated-fill"></i>
+                  <p>
+                    Ticket Status
+                  </p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{{ route('supportticketshistory.view') }}" class="nav-link">
+                  <i class="nav-icon bi bi-activity"></i>
+                  <p>
+                    Tickets History
+                  </p>
+                </a>
+              </li>
+            </ul>
             <!--end::Sidebar Menu-->
             <!-- Sidebar container -->
           </nav>
-          <div class="sidebar">
-       
+          
         </div>
         <!--end::Sidebar Wrapper-->
       </aside>
@@ -363,23 +358,24 @@
           <div class="card mb-2">
             <div class="card-body">
               <div class="table-responsive">
-                <table id="dataTable" class="newticketsTable table table-bordered table-striped align-middle m-0">
+                <table id="dataTable" class="ticketStatus table table-bordered table-striped align-middle m-0">
                   <thead>
                     <tr>
                       <th>S.no</th>
                       <th>Ticket.no</th>
                       <th>Created On</th>
-                      <th>Description</th>
                       <th>Category</th>
-                      <th>Users Mail</th>
-                      <th>Engineers</th>
+                      <th>Description</th>
+                      <th>Engineer</th>
+                      <th>Indicator</th>
+                      <th>Status</th>
                       <th>level</th>
-                      <th>Assign</th>
+                      <th>Closed At</th>
                     </tr>
                   </thead>
-                    <tbody>
-                        
-                    </tbody>
+                  <tbody>
+
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -400,7 +396,7 @@
         <!--begin::Copyright-->
         <strong>
           Copyright &copy; 2024-2025&nbsp;
-          <a href="www.azeusbros.com" class="text-decoration-none">Azeusbros</a>.
+          <a href="www.azeusbros.com" class="text-decoration-none">Azeus Bros</a>.
         </strong>
         All rights reserved.
         <!--end::Copyright-->
@@ -432,7 +428,7 @@
       crossorigin="anonymous"
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="{{ asset('assets/dist/js/adminlte.js') }}"></script>
+    <script src="./dist/js/adminlte.js"></script>
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>
       const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
@@ -486,7 +482,7 @@
 </script>
 <script>
 $(function(){
-
+  // 
   document.addEventListener("DOMContentLoaded", function () {
     const sidebarContact = document.querySelector(".sidebar-contact");
     const contactForm = document.getElementById("contactForm");
@@ -525,23 +521,24 @@ $(function(){
     });
   });
 
-  $('.newticketsTable').DataTable({
+  $('.ticketStatus').DataTable({
     processing: true,
     serverSide: true,
-    ajax: "{{ route('supportdesk.alltickets') }}",
+    ajax: "{{ route('supporttickets.assignticket') }}",
     columns: [
         { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
         {data: 'ticket_no', name: 'ticket_no'},
         {data: 'created_at', name: 'created_at'},
-        {data: 'description', name: 'description'},
         {data: 'category', name: 'category'},
-        {data: 'users_mail', name: 'users_mail'},
-        {data: 'engineers', name: 'engineers'},
+        {data: 'description', name: 'description'},
+        {data: 'engineer', name: 'engineer'},
+        {data: 'indicator', name: 'indicator'},
+        {data: 'status', name: 'status'},
         {data: 'level', name: 'level'},
-        {data: 'action', name: 'action', orderable: false, searchable: false},
+        {data: 'closed_at', name: 'closed_at'},
     ]
   });
-      
+
 })
       </script>
 </html>

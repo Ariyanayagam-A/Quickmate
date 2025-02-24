@@ -36,7 +36,13 @@ Route::middleware('user.auth')->prefix('user')->group(function () {
 
 Route::middleware('user.auth')->prefix('supportdesk')->group(function () {
     Route::get('tickets', [TicketController::class,'ticketsView'])->name('supporttickets.view');
+    Route::get('ticket-status', [TicketController::class,'ticketsStatusView'])->name('supportticketsstatus.view');
+    Route::get('ticket-history', [TicketController::class,'ticketsHistoryView'])->name('supportticketshistory.view');
     Route::get('tickets/list', [TicketController::class,'supportTicketlist'])->name('supporttickets.list');
+    Route::get('tickets/all-tickets', [TicketController::class,'allTicketsList'])->name('supportdesk.alltickets');
+    Route::get('tickets/assigned-tickets', [TicketController::class,'assignedTicketsList'])->name('supporttickets.assignticket');
+    Route::get('tickets/solved-tickets', [TicketController::class,'solvedTicketsList'])->name('supportdesk.solvedtickets');
+    // test
     Route::post('assign-ticket', [TicketController::class,'assignTicket'])->name('supporttickets.assign');
     Route::get('ticket/{id}', [TicketController::class,'getTicketById'])->name('supportticket.get'); 
 });
@@ -72,7 +78,6 @@ Route::get('/auth/azure/callback', [AzureAuthController::class, 'handleAzureCall
 // LDAP routes
 
 Route::get('/ldap/users', [LdapController::class, 'getUsers']);
-
 
 //Categories Store Route
 Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');

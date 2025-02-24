@@ -409,6 +409,193 @@ class TicketController extends Controller
         return view('agent.tickets');
     }
 
+    public function ticketsStatusView()
+    {
+        return view('supportdesk.ticket-status');
+    }
+
+    public function ticketsHistoryView()
+    {
+        return view('supportdesk.ticket-history');
+    }
+
+    public function assignedTicketsList()
+    {
+        $tickets = Ticket::with('category','user')->whereIn('status',['1','2'])->orderBy('id', 'desc');
+
+        return Datatables::of($tickets)
+        ->addIndexColumn()
+        ->addColumn('ticket_no', function($row) {
+            return $row->ticket_id;
+        })
+        ->addColumn('created_at', function($row) {
+            return $row->created_at;
+        })
+        ->addColumn('category', function($row) {
+            return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
+        })
+        ->addColumn('description', function($row) {
+            return $row->summary;
+        })
+        ->addColumn('indicator', function($row) {
+            $flag = $row->status ?? 'default';
+            $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
+            return $flag_img;
+        
+        })
+        ->addColumn('engineer', function($row) {
+            if ($row->assignee == '4') {
+                return 'Karthikeyan';
+            } elseif ($row->assignee == '3') {
+                return 'Sabari';
+            } else {
+                return '-';
+            }
+        })
+        ->addColumn('status', function($row) {
+            if ($row->status == 0) {
+                $status_btn = '<span class="badge bg-danger">Pending</span>';
+            }
+            elseif ($row->status == 1) {
+                $status_btn = '<span class="badge bg-info">In-Progress</span>';
+            }
+            elseif ($row->status == 2) {
+                $status_btn = '<span class="badge bg-primary">On Hold</span>';
+            }
+            elseif($row->status == 3) {
+                $status_btn = '<span class="badge bg-warning">Solved</span>';
+            }
+            else{
+                $status_btn = '<span class="badge bg-secondary">Rejected</span>';
+            }
+            return $status_btn;
+        })
+        ->addColumn('level', function($row) {
+            return !is_null($row->priority) ? "L".$row->priority : '-';
+        })
+        ->addColumn('closed_at', function($row) {
+            return !is_null($row->priority) ? "L".$row->priority : '-';
+        })
+        ->rawColumns(['level', 'assigned_to','status','indicator'])
+        ->make(true);
+
+    }
+    
+    public function allTicketsList()
+    {
+        $tickets = Ticket::with('category','user')->where('status','0')->orderBy('id', 'desc');
+
+        return Datatables::of($tickets)
+        ->addIndexColumn()
+        ->addColumn('ticket_no', function($row) {
+            return $row->ticket_id;
+        })
+        ->addColumn('created_at', function($row) {
+            return $row->created_at;
+        })
+        ->addColumn('description', function($row) {
+            return $row->summary ?? '-';
+        })
+        ->addColumn('category', function($row) {
+            return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
+        })
+        ->addColumn('users_mail', function($row) {
+            return $row->user->email ?? '-';
+        })
+        ->addColumn('engineers', function($row) {
+            return '<select class="form-select" id="engineers" name="engineers">
+                          <option selected="" disabled="" value="">Assign Engineer </option>
+                          <option selected="1"  value="1">Kathikeyan </option>
+                          <option selected="2"  value="2">Sabari </option>
+                    </select>';
+
+            if ($row->assignee == '4') {
+                return 'Karthikeyan';
+            } elseif ($row->assignee == '3') {
+                return 'Sabari';
+            } else {
+                return '-';
+            }
+        })
+        ->addColumn('level', function($row) {
+            return is_null($row->priority) ? '-' : '<select class="form-select" id="level" name="level" required="">
+                          <option selected="" disabled="" value="">Select Level</option>
+                          <option value="L1">L1</option>
+                          <option value="L2">L2</option>
+                          <option value="L3">L3</option>
+                        </select>';
+        })
+        ->addColumn('action', function($row) {
+            return '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" title="View Ticket">
+                        <i class="bi bi-check-circle"></i>
+                    </button>
+                    <br/>
+                    <a href="'.route('edit.ticket', $row->id).'" class="btn btn-outline-warning btn-sm" data-bs-toggle="tooltip" title="Edit Ticket">
+                        <i class="bi bi-hourglass-bottom"></i>
+                    </a>
+                    <br/>
+                    <a href="'.route('delete.ticket', $row->id).'" class="btn btn-outline-danger btn-sm" data-bs-toggle="tooltip" title="Delete Ticket">
+                        <i class="bi bi-trash"></i>
+                    </a>';
+        })
+        ->rawColumns(['level', 'action','engineers'])
+        ->make(true);
+
+    }
+
+    public function solvedTicketsList()
+    {
+        $tickets = Ticket::with('category','user')->whereIn('status', [3, 4])->orderBy('id', 'desc');
+
+        return Datatables::of($tickets)
+        ->addIndexColumn()
+        ->addColumn('ticket_no', function($row) {
+            return $row->ticket_id;
+        })
+        ->addColumn('created_at', function($row) {
+            return $row->created_at;
+        })
+        ->addColumn('description', function($row) {
+            return $row->summary ?? '-';
+        })
+        ->addColumn('category', function($row) {
+            return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
+        })
+        ->addColumn('indicator', function($row) {
+            $flag = $row->status ?? 'default';
+            $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
+            return $flag_img;
+        
+        })
+        ->addColumn('status', function($row) {
+            if ($row->status == 0) {
+                $status_btn = '<span class="badge bg-warning">Open</span>';
+            }
+            elseif ($row->status == 1) {
+                $status_btn = '<span class="badge bg-info">In-Progress</span>';
+            }
+            elseif ($row->status == 2) {
+                $status_btn = '<span class="badge ">On Hold</span>';
+            }
+            elseif($row->status == 3) {
+                $status_btn = '<span class="badge bg-success">Solved</span>';
+            }
+            else{
+                $status_btn = '<span class="badge bg-danger">Rejected</span>';
+            }
+            return $status_btn;
+        })
+        ->addColumn('level', function($row) {
+            return !is_null($row->priority) ? "L".$row->priority : '-';
+        })
+        ->addColumn('closed_at', function($row) {
+            return '-';
+        })
+        ->rawColumns(['status','indicator'])
+        ->make(true);
+
+    }
+
     public function getTicketById($id)
     {
         $ticket = Ticket::find($id);
