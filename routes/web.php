@@ -82,3 +82,6 @@ Route::get('/categories/edit/{id}', [CategoryController::class, 'categoriesedit'
 Route::post('/categories/update/{id}', [CategoryController::class, 'categoriesupdate'])->name('categories.update');
 Route::delete('/categories/delete/{id}', [CategoryController::class, 'categoriesDelete'])->name('categories.delete');
 
+Route::get('/dummy', function () {
+    return view('pages.dummy');
+})->name('dummy');
