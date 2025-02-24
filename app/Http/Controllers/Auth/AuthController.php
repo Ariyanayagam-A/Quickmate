@@ -20,6 +20,8 @@ class AuthController extends Controller
     public function checkAuth(Request $request)
     {
 
+
+
         $credentials = $request->validate([
             'name_email' => 'required',
             'password' => 'required',

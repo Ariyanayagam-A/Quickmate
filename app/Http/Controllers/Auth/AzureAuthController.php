@@ -63,7 +63,7 @@ class AzureAuthController extends Controller
         //     'token' => $token->getToken(),
         //     'user' => $user
         // ]);
-        return redirect()->route('customer.dashboard')->with('success', 'Logged in successfully.');
+        return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
     }
 }
 ?>
