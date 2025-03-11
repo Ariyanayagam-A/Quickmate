@@ -69,7 +69,7 @@
 			</div>
 			@endif
             <div class="mb-3">
-			<label class="form-label">Email / Username</label>
+			<label class="form-label">Email</label>
 			<input type="text" name="name_email" required class="form-control" placeholder="Enter your email" />
 		</div>
 		<div class="mb-3">
@@ -77,7 +77,7 @@
 			<div class="input-group">
 				<input type="password" name="password" required class="form-control" placeholder="Enter password" />
 				<a href="#" class="input-group-text">
-					<i class="icon-eye"></i>
+					<i class="bi bi-eye"></i>
 				</a>
 			</div>
 		</div>
@@ -101,18 +101,18 @@
           </form>
           <div class="social-auth-links text-center mb-3 d-grid gap-2">
             <p>- OR -</p>
-            <a href="{{ route('azure.login') }}" class="btn btn-primary">
-              <i class="bi bi-facebook me-2"></i> Sign in using Microsoft
+            <a href="{{ route('azure.login') }}" class="btn btn-warning">
+              <i class="bi bi-microsoft me-2"></i> Sign in using Microsoft
             </a>
-            <a href="#" class="btn btn-danger">
+            {{-- <a href="#" class="btn btn-danger">
               <i class="bi bi-google me-2"></i> Sign in using Google+
-            </a>
+            </a> --}}
           </div>
           <!-- /.social-auth-links -->
-          <p class="mb-1"><a href="forgot-password.html">I forgot my password</a></p>
+          {{-- <p class="mb-1"><a href="forgot-password.html">I forgot my password</a></p>
           <p class="mb-0">
             <a href="register.html" class="text-center"> Register a new membership </a>
-          </p>
+          </p> --}}
         </div>
         <!-- /.login-card-body -->
       </div>

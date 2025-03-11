@@ -197,3 +197,67 @@
     <!--end::Sidebar Wrapper-->
     
   </aside>
+
+  @push('scripts')
+
+  {{-- <script>
+    
+    const SELECTOR_SIDEBAR_WRAPPER = '.sidebar-wrapper';
+    const Default = {
+      scrollbarTheme: 'os-theme-light',
+      scrollbarAutoHide: 'leave',
+      scrollbarClickScroll: true,
+    };
+    document.addEventListener('DOMContentLoaded', function () {
+      const sidebarWrapper = document.querySelector(SELECTOR_SIDEBAR_WRAPPER);
+      if (sidebarWrapper && typeof OverlayScrollbarsGlobal?.OverlayScrollbars !== 'undefined') {
+        OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+          scrollbars: {
+            theme: Default.scrollbarTheme,
+            autoHide: Default.scrollbarAutoHide,
+            clickScroll: Default.scrollbarClickScroll,
+          },
+        });
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+  const sidebarContact = document.querySelector(".sidebar-contact");
+  const contactForm = document.getElementById("contactForm");
+  const sendButton = document.getElementById("sendButton");
+  const customAlert = document.getElementById("customAlert");
+  const closeAlert = document.getElementById("closeAlert");
+
+  sidebarContact.addEventListener("click", function () {
+    // Toggle visibility of the contact form
+    if (contactForm.style.display === "none" || contactForm.style.display === "") {
+      contactForm.style.display = "block";
+    } else {
+      contactForm.style.display = "none";
+    }
+  });
+
+  sendButton.addEventListener("click", function () {
+    const message = document.getElementById("contactMessage").value.trim();
+    if (message) {
+      // Show the custom alert
+      customAlert.style.display = "flex";
+
+      // Clear the message box
+      document.getElementById("contactMessage").value = "";
+
+      // Hide the form
+      contactForm.style.display = "none";
+    } else {
+      alert("Please enter a message before sending.");
+    }
+  });
+
+  closeAlert.addEventListener("click", function () {
+    // Hide the custom alert
+    customAlert.style.display = "none";
+  });
+});
+  </script> --}}
+
+@endpush

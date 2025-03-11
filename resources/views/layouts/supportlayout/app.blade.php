@@ -7,49 +7,52 @@
 
     <!-- Bootstrap & Icons (or other stylesheets) -->
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title>Agent | Dashboard </title>
-        <!--begin::Primary Meta Tags-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="title" content="Admin | Dashboard" />
-        <meta name="author" content="ColorlibHQ" />
-        <meta
-          name="description"
-          content="Admin is a Free Bootstrap 5 Admin Dashboard"
-        />
-        <meta
-          name="keywords"
-          content="bootstrap 5"
-        />
-    
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-          integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
-          crossorigin="anonymous"/>
-        <!--end::Third Party Plugin(Bootstrap Icons)-->
-        <!--begin::Required Plugin(AdminLTE)-->
-        <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css')}}" />
-        <!--end::Required Plugin(AdminLTE)-->
-        <!-- apexcharts -->
-    
-    {{-- <link rel="stylesheet" href="{{ asset('assets/dist/css/bootstrap.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('assets/dist/css/style.css') }}"> --}}
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="{{ asset('assets/dist/css/jquery.dataTables.min.css')}}" />
-
-   <!-- DataTables CSS -->
-{{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-
-
-
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> --}}
-
-
-<!-- DataTables JS -->
-
-    @stack('styles') <!-- Additional styles -->
-</head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Bootstrap Gallery - Support Desk Admin Template</title>
+  
+      <!-- Meta -->
+      <meta name="description" content="Marketplace for Bootstrap Admin Dashboards" />
+      <meta name="author" content="Bootstrap Gallery" />
+      <link rel="canonical" href="https://www.bootstrap.gallery/">
+      <meta property="og:url" content="https://www.bootstrap.gallery">
+      <meta property="og:title" content="Admin Templates - Dashboard Templates | Bootstrap Gallery">
+      <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
+      <meta property="og:type" content="Website">
+      <meta property="og:site_name" content="Bootstrap Gallery">
+      <meta name="csrf-token" content="{{ csrf_token() }}">
+      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.svg')}}" />
+  
+      <!-- *************
+        ************ CSS Files *************
+      ************* -->
+      <!-- Icomoon Font Icons css -->
+      <link rel="stylesheet" href="{{ asset('assets/fonts/icomoon/style.css') }}" />
+  
+      <!-- Main CSS -->
+      {{-- <link rel="stylesheet" href="{{ asset('assets/css/main.min.css')}}" /> --}}
+      <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css')}}" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+      <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+      <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
+      <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+      <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
+      crossorigin="anonymous"/>
+      <link rel="stylesheet" href="{{ asset('assets/dist/css/jquery.dataTables.min.css')}}" />
+      <!-- *************
+        ************ Vendor Css Files *************
+      ************ -->
+  
+      <!-- Scrollbar CSS -->
+      <link rel="stylesheet" href="assets/vendor/overlay-scroll/OverlayScrollbars.min.css" />
+      <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+         
+    </head>
 <style>
   main{
     overflow-x: hidden !important;
@@ -147,18 +150,18 @@
 }
 </style>
 
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary app-loaded sidebar-open">
-  
-    <div class="app-wrapper">
+
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary app-loaded sidebar-open">    
+  <div class="app-wrapper">
     <!-- Navigation Bar -->
-    @include('layouts.engineerpartials.navbar')
+    @include('layouts.supportpartials.navbar')
 
     <!-- Sidebar -->
-    @include('layouts.engineerpartials.sidebar')
+    @include('layouts.supportpartials.sidebar')
 
     <!-- Main Content -->
     <main class="app-main">
-       
+        <div class="">
             <!-- Sidebar Width -->
             <div class="">
                 @yield('sidebar') <!-- Optional custom sidebar section -->
@@ -167,17 +170,16 @@
             <div class="">
                 @yield('content')
             </div>
-    </main>
+          </main>
           <!-- Footer -->
-    @include('layouts.engineerpartials.footer')
+    @include('layouts.supportpartials.footer')
     </div>
+
+  
 
 
 
     @stack('scripts') <!-- Additional scripts -->
-    <link rel="stylesheet" href="{{ asset('assets/dist/js/adminlte.js')}}" />    
-
-
     <script>
       document.addEventListener("DOMContentLoaded", function () {
     const icon = document.querySelector("#toggleIcon");
@@ -197,5 +199,7 @@
 });
 
     </script>
+
+    </div>
 </body>
 </html>

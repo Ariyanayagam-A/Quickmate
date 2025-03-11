@@ -6,10 +6,6 @@
 
 
 
-      {{-- <div class="m-3">
-        <input type="text" id="searchBox" onkeyup="searchTable()" class="form-control mb-3" placeholder="Search ..">
-      
-      </div> --}}
       
              <div class="row">
               <div class="col-12">
@@ -19,18 +15,16 @@
                       <table id="dataTable" class="tickets table table-bordered table-striped align-middle m-0 ">
                         <thead>
                           <tr>
-                            <th>#</th>
+                          <th>#</th>
                           <th>Ticket No</th>
                           <th>Subject</th>
                           <th>category</th>
                           <th>Summary</th>
                           {{-- <th>assignee</th> --}}
                           <th>status</th>
-          
                           </tr>
                         </thead>
                         <tbody>
-                        
                         </tbody>
                       </table>
                     </div>
@@ -40,14 +34,12 @@
             </div>
    
 
-
-    <!-- Custom JS files -->
-    <!-- jQuery -->
-<!-- jQuery (Always Load Before DataTables) -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+{{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css"> --}}
+
+<link rel="stylesheet" href="{{ asset('assets/dist/css/jquery.dataTables.min.css')}}" />
 
 <!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
@@ -109,19 +101,14 @@ $(function() {
   ajax: "{{ route('tickets.list') }}",
  
   columns: [
-      { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-      {data : 'ticket_id', name: 'ticket_id'},
-      {data : 'subject', name: 'subject'},
-
-      {data : 'category', name: 'category'},
-      {data : 'summary', name: 'summary'},
-      // {data : 'priority', name: 'priority'},
-      {data : 'status', name: 'status'}
-
-      // {data: 'action', name: 'action', orderable: false, searchable: false},
-  ],
-
-  order: [[1, 'asc']]
+        { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+        { data: 'ticket_id', name: 'ticket_id' },
+        { data: 'subject', name: 'subject' },
+        { data: 'category', name: 'category' },
+        { data: 'summary', name: 'summary' },
+        { data: 'status', name: 'status' }
+    ],
+   
 });  
 
 });

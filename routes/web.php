@@ -20,6 +20,9 @@ Route::post('user/login', [AuthController::class,'checkAuth'])->name('customer.l
 Route::get('user/register', [UserController::class,'register'])->name('customer.register');
 Route::post('user/register', [UserController::class,'store'])->name('customer.store');
 
+Route::post('/update-ticket/{id}', [TicketController::class, 'updateTicket'])->name('update.ticket');
+
+
 Route::middleware('user.auth')->prefix('user')->group(function () {
     Route::get('dashboard', [UserController::class,'dashboard'])->name('customer.dashboard');
     Route::post('logout', [UserController::class,'logout'])->name('customer.logout');
@@ -57,14 +60,23 @@ Route::middleware('user.auth')->prefix('admin')->group(function () {
     Route::get('categories', [CategoryController::class,'index'])->name('admin.categories');
     Route::get('category/list',[CategoryController::class,'list'])->name('categories.list');
     Route::post('category/add', [CategoryController::class,'store'])->name('add.category');
+    Route::get('ticket/view/{id}', [TicketController::class,'getTicketById'])->name('ticket.view');
     Route::post('category/edit', [CategoryController::class,'update'])->name('edit.category');
     Route::post('category/delete',[CategoryController::class,'destroy'])->name('delete.category');
     Route::post('category/status', [CategoryController::class,'changeStatus'])->name('disable.category');
+    Route::post('/assign-ticket', [TicketController::class, 'assignTicketadmin'])->name('assign.ticket-admin');
+    Route::post('/reject-ticket', [TicketController::class, 'rejectTicket'])->name('reject.ticket');
+
+
 });
 
 
 Route::middleware('user.auth')->prefix('agent')->group(function () {
     Route::get('tickets', [TicketController::class,'getagentTickets'])->name('agenttickets.view');
+    Route::get('tickets/hold', [TicketController::class,'getagentholdesTickets'])->name('agentholdedtickets.view');
+    Route::get('tickets/history', [TicketController::class,'getagenthistoryesTickets'])->name('agenthistoryestickets.view');
+    Route::get('tickets/holded', [TicketController::class,'getagentHoldTickets'])->name('agentholdtickets.list');
+    Route::get('tickets/historyes', [TicketController::class,'getagenthistoryTickets'])->name('agenthistorytickets.list');
     Route::get('tickets/list', [TicketController::class,'agentTicketlist'])->name('agenttickets.list');
     Route::get('ticket/view/{id}', [TicketController::class,'getTicketById'])->name('ticket.view');
     Route::post('ticket/solve', [TicketController::class,'resolveTicket'])->name('solveticket');
