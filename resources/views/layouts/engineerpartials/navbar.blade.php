@@ -4,9 +4,10 @@
       <!--begin::Start Navbar Links-->
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+          <a href="javascript:void(0);" id="toggleIcon">
             <i class="bi bi-list"></i>
           </a>
+          
         </li>
         
       </ul>
@@ -60,10 +61,10 @@
         <li class="nav-item dropdown user-menu">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
             <img
-              src="./dist/assets/img/user2-160x160.jpg"
-              class="user-image rounded-circle shadow"
-              alt="User Image"
-            />
+        src="{{  asset('assets/dist/assets/img/dp.jpg') }}"
+        alt="AdminLTE Logo"
+        class="user-image rounded-circle shadow"
+        />
             <!-- <span class="d-none d-md-inline">Alexander Pierce</span> -->
           </a>
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
@@ -104,4 +105,5 @@
       <!--end::End Navbar Links-->
     </div>
     <!--end::Container-->
+    {{-- <link rel="stylesheet" href="{{ asset('assets/dist/js/adminlte.js')}}" /> --}}
   </nav>

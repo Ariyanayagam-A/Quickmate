@@ -9,5 +9,3 @@
     All rights reserved.
     <!--end::Copyright-->
   </footer>
-
-  <div class="sidebar-overlay"></div>

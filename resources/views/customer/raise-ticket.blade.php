@@ -76,7 +76,7 @@
 </style>
 <div class="card card-info card-outline mb-4">
   <!--begin::Header-->
-  <div class="card-header"><div class="card-title">Form Validation</div></div>
+  <div class="card-header"><div class="card-title">Raise a new Ticket</div></div>
   @if (session('error'))
   <div class="alert alert-danger alert-dismissible fade show mt-2 sessionclose" role="alert">
       {{ session('error') }}
@@ -181,13 +181,7 @@
   <!--end::JavaScript-->
 </div>
 
-    <!-- Overlay Scroll JS -->
-    <script src="assets/vendor/overlay-scroll/jquery.overlayScrollbars.min.js"></script>
-    <script src="assets/vendor/overlay-scroll/custom-scrollbar.js"></script>
 
-    <!-- Custom JS files -->
-    <script src="assets/js/custom.js"></script>
-    <script src="assets/js/validations.js"></script>
     <script>
       $(function(){
         $('.closeicon').click(function(){

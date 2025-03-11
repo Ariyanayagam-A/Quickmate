@@ -1,44 +1,24 @@
 <nav class="app-header navbar navbar-expand bg-body">
-  
-  @php
-      $user = Session::get('user');
-      $azureUser = isset($user['username']) ? $user['username']  : 'Admin';
-      $azureMail = isset($user['email']) ?  $user['email'] :  'admin@kloudstacks.com';
-@endphp
     <!--begin::Container-->
     <div class="container-fluid">
       <!--begin::Start Navbar Links-->
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-            <i class="bi bi-list"></i>
+          <a href="javascript:void(0);" id="toggleIcon">
+                        <i class="bi bi-list"></i>
           </a>
         </li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link" style="font-weight: 700;">Dashboard</a></li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Schedular</a></li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tech Availability Chart</a></li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tasks</a></li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Remainders</a></li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Announcements</a></li>
+        
       </ul>
       <!--end::Start Navbar Links-->
       <!--begin::End Navbar Links-->
       <ul class="navbar-nav ms-auto">
         <!--begin::Navbar Search-->
-        <li class="nav-item">
-          <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-            <i class="bi bi-search"></i>
-          </a>
-        </li>
+       
         <!--end::Navbar Search-->
         <!--begin::Messages Dropdown Menu-->
         
-        <li class="nav-item ">
-          <a class="nav-link" href="../setup.html">
-            <i class="bi bi-gear"></i>
-          </a>
-      
-        </li>
+       
         <!--end::Messages Dropdown Menu-->
         <!--begin::Notifications Dropdown Menu-->
         <li class="nav-item dropdown">
@@ -70,13 +50,11 @@
         <!--end::Notifications Dropdown Menu-->
         <!--begin::Fullscreen Toggle-->
         <li class="nav-item">
-          <a class="nav-link" href="javascript:void(0);" id="fullscreenToggle">
-            <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen" id="maximizeIcon"></i>
-            <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" id="minimizeIcon" style="display: none;"></i>
+          <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+            <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+            <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
           </a>
         </li>
-        
-        
         <!--end::Fullscreen Toggle-->
         <!--begin::User Menu Dropdown-->
         <li class="nav-item dropdown user-menu">
@@ -92,13 +70,13 @@
             <!--begin::User Image-->
             <li class="user-header text-bg-primary">
               <img
-                src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
+                src="{{ asset('assets/dist/assets/img/user2-160x160.jpg')}}"
                 class="rounded-circle shadow"
                 alt="User Image"
               />
               <p>
-                 {{ $azureUser }}
-                <small> {{ $azureMail }} </small>
+                Alexander Pierce
+                <small>Alex@gmail.com</small>
               </p>
             </li>
             <!--end::User Image-->
@@ -116,7 +94,7 @@
             <!--begin::Menu Footer-->
             <li class="user-footer">
               <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
-              <a href="{{ route('customer.loginform')}}" class="btn btn-default btn-flat ">Sign out</a>
+              <a href="./login.html" class="btn btn-default btn-flat ">Sign out</a>
             </li>
             <!--end::Menu Footer-->
           </ul>

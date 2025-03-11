@@ -8,6 +8,4 @@
       <a href="https://www.azeusbros.com" class="text-decoration-none" target="_blank">Azeus Bros</a>.    </strong>
     All rights reserved.
     <!--end::Copyright-->
-  </footer>
-
-  <div class="sidebar-overlay"></div>
+</footer>

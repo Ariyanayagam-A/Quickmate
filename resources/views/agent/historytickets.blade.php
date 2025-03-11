@@ -71,12 +71,6 @@
                           rows="4" readonly></textarea>
                       </div>
 
-                       <!-- Ticket Image -->
-                <div class="form-group mb-3">
-                  <label for="ticketImage" class="form-label">Ticket Image</label>
-                  <img id="ticketImage" src="" alt="Ticket Image" class="img-fluid" style="max-width: 100%; height: auto;">
-              </div>
-
                       <!-- Ticket Feedback -->
                       <div class="form-group mb-3">
                         <label for="feedback" class="form-label">Ticket Feedback</label>
@@ -132,13 +126,13 @@
                         <thead>
                           <tr>
                             <th>#</th>
-                            <th>View Ticket</th>
+                            {{-- <th>View Ticket</th> --}}
                             <th>Request by</th>
                             <th>Email</th>
                             <th>Subject</th>
                             <th>Status</th>
                             <th>Priority</th>
-                            <th>Actions</th>
+                            {{-- <th>Actions</th> --}}
                           </tr>
                         </thead>
                         <tbody>          
@@ -186,19 +180,19 @@
         var table = $('.tickets').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('agenttickets.list') }}",
+        ajax: "{{ route('agenthistorytickets.list') }}",
         initComplete: function () {
           console.log('initComplete');
         },
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
-            {data : 'view', name: 'view'},
+            // {data : 'view', name: 'view'},
             {data : 'request_by', name: 'request_by'},
             {data: 'email', name: 'email'},
             {data: 'subject', name: 'subject'},
             {data: 'status', name: 'status'},
             {data:'priority', name:'priority'},
-            {data: 'action', name: 'action', orderable: false, searchable: false},
+            // {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });  
 
@@ -256,43 +250,7 @@
           });
         }
 
- function viewTicket(ticketId) {
-    $('#ticketid').val(ticketId);
-    $.ajax({
-        url: `ticket/view/${ticketId}`,
-        type: 'GET',
-        contentType: 'application/json',
-        success: function(response) {
-            console.log('response : ', response);
-            if (response.status == 'success') {
-                console.log('response data => ', response.data);
-
-                // Populate the form fields
-                $('#subject').val(response.data.subject);
-                $('#description').val(response.data.summary);
-                $('#feedback').val(response.data.feedback);
-
-                // Set the image source
-                if (response.data.image) {
-                    const imageUrl = `/storage/${response.data.image}`;
-                    // console.log('Image URL:', imageUrl); // Debugging: Check the constructed URL
-                    $('#ticketImage').attr('src', imageUrl);
-                    $('#ticketImage').show(); // Show the image element
-                } else {
-                    $('#ticketImage').hide(); // Hide the image element if no file is uploaded
-                }
-
-                // Show the modal
-                $('#myModal').show();
-            } else {
-                alert('Something went wrong');
-            }
-        },
-        error: function(error) {
-            console.log(error);
-        }
-    });
-}
+       
         function closeRejectTicket(object,ticketId)
         {
           // console.log('type : ',);
