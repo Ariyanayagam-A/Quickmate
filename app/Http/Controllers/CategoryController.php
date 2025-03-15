@@ -48,23 +48,6 @@ class CategoryController extends Controller
 
 
   // Store function
-  public function categoriesStore(Request $request)
-  {
-      $request->validate([
-          'name' => 'required|string|max:255',
-          'description' => 'nullable|string',
-          'is_active' => 'required|in:0,1',
-      ]);
-
-      Category::create([
-          'org_id' => 1, // Default org_id
-          'name' => $request->name,
-          'description' => $request->description,
-          'is_active' => $request->is_active ?? 1,
-      ]);
-
-      return response()->json(['success' => 'Category added successfully']);
-  }
 
   // Fetch category for editing
   public function categoriesedit($id)
@@ -158,7 +141,7 @@ class CategoryController extends Controller
                     return $row->name;
                 })
                 ->addColumn('status', function($row){
-                    if ($row->status == 0) {
+                    if ($row->is_active == 0) {
                         $status_btn = '<span class="badge bg-danger">Inactive</span>';
                     }
                     else{
@@ -169,7 +152,7 @@ class CategoryController extends Controller
                 ->addColumn('action', function($row){
                     
                     $statusText = $row->status ? 'Disable' : 'Enable';
-                    $bgColor    = $row->status ? 'info' : 'primary';
+                    $bgColor    = $row->status ? 'info' : 'danger';
                     $btn = '<button onclick="CategoryModalAction(this,'.$row->id.')" data-action="status" data-current='.$row->status.' class="btn btn-outline-'.$bgColor.' btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" title="'.$statusText.' Category">
                     <i class="fa-regular fas fa-award"></i>
                     </button>

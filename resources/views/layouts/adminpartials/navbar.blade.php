@@ -15,33 +15,33 @@
           </a>
         </li>
         <li class="nav-item d-none d-md-block"><a href="#" class="nav-link" style="font-weight: 700;">Dashboard</a></li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Schedular</a></li>
+        {{-- <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Schedular</a></li>
         <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tech Availability Chart</a></li>
         <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tasks</a></li>
         <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Remainders</a></li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Announcements</a></li>
+        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Announcements</a></li> --}}
       </ul>
       <!--end::Start Navbar Links-->
       <!--begin::End Navbar Links-->
       <ul class="navbar-nav ms-auto">
         <!--begin::Navbar Search-->
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a class="nav-link" data-widget="navbar-search" href="#" role="button">
             <i class="bi bi-search"></i>
           </a>
-        </li>
+        </li> --}}
         <!--end::Navbar Search-->
         <!--begin::Messages Dropdown Menu-->
         
-        <li class="nav-item ">
+        {{-- <li class="nav-item ">
           <a class="nav-link" href="../setup.html">
             <i class="bi bi-gear"></i>
           </a>
-      
+       --}}
         </li>
         <!--end::Messages Dropdown Menu-->
         <!--begin::Notifications Dropdown Menu-->
-        <li class="nav-item dropdown">
+        {{-- <li class="nav-item dropdown">
           <a class="nav-link" data-bs-toggle="dropdown" href="#">
             <i class="bi bi-bell"></i>
             <span class="navbar-badge badge text-bg-warning">15</span>
@@ -66,15 +66,15 @@
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
           </div>
-        </li>
+        </li> --}}
         <!--end::Notifications Dropdown Menu-->
         <!--begin::Fullscreen Toggle-->
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a class="nav-link" href="javascript:void(0);" id="fullscreenToggle">
             <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen" id="maximizeIcon"></i>
             <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" id="minimizeIcon" style="display: none;"></i>
           </a>
-        </li>
+        </li> --}}
         
         
         <!--end::Fullscreen Toggle-->
@@ -103,7 +103,7 @@
             </li>
             <!--end::User Image-->
             <!--begin::Menu Body-->
-            <li class="user-body">
+            {{-- <li class="user-body">
               <!--begin::Row-->
               <div class="row">
                 <div class="col-4 text-center"><a href="#">Account</a></div>
@@ -111,7 +111,7 @@
                 <div class="col-4 text-center"><a href="#">Personalize</a></div>
               </div>
               <!--end::Row-->
-            </li>
+            </li> --}}
             <!--end::Menu Body-->
             <!--begin::Menu Footer-->
             <li class="user-footer">

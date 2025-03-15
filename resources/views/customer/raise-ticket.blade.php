@@ -4,76 +4,7 @@
 
 @section('content')
 
-<style>
-/* Hidden contact form initially */
-.contact-form {
-  position: absolute;
-  top: -150px; /* Hidden above the sidebar */
-  left: 0;
-  right: 0;
-  background-color: #ffffff;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  display: none;
-  z-index: 1000;
-  animation: slideDown 0.3s ease-in-out;
-}
 
-/* Textarea styling */
-.contact-form textarea {
-  width: 100%;
-  resize: none;
-  margin-bottom: 10px;
-}
-
-/* Button styling */
-.contact-form button {
-  display: inline-block;
-  width: 100%;
-}
-
-/* Animation for sliding down */
-@keyframes slideDown {
-  from {
-    transform: translateY(-20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-/* Custom alert modal styling */
-.custom-alert {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 2000;
-}
-
-.custom-alert-content {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
-}
-
-.custom-alert-content button {
-  margin-top: 10px;
-}
-
-
-</style>
 <div class="card card-info card-outline mb-4">
   <!--begin::Header-->
   <div class="card-header"><div class="card-title">Raise a new Ticket</div></div>
@@ -137,7 +68,7 @@
                   <div class="form-check">
                       <input class="form-check-input" type="checkbox" id="invalidCheck" required>
                       <label class="form-check-label" for="invalidCheck">
-                          Agree to terms and conditions
+                        Accept and Raise Ticket
                       </label>
                       <div class="invalid-feedback">You must agree before submitting.</div>
                   </div>

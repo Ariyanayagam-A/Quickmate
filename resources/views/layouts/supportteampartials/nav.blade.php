@@ -21,7 +21,7 @@
        
         <!--end::Messages Dropdown Menu-->
         <!--begin::Notifications Dropdown Menu-->
-        <li class="nav-item dropdown">
+        {{-- <li class="nav-item dropdown">
           <a class="nav-link" data-bs-toggle="dropdown" href="#">
             <i class="bi bi-bell"></i>
             <span class="navbar-badge badge text-bg-warning">15</span>
@@ -46,15 +46,15 @@
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
           </div>
-        </li>
+        </li> --}}
         <!--end::Notifications Dropdown Menu-->
         <!--begin::Fullscreen Toggle-->
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a class="nav-link" href="#" data-lte-toggle="fullscreen">
             <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
             <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
           </a>
-        </li>
+        </li> --}}
         <!--end::Fullscreen Toggle-->
         <!--begin::User Menu Dropdown-->
         <li class="nav-item dropdown user-menu">

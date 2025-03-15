@@ -1,4 +1,4 @@
-@extends('layouts.adminlayout.app')
+@extends('layouts.superadminlayout.app')
 
 @section('title', 'Dashboard')
 
@@ -127,11 +127,13 @@
       </main>
       <!--end::App Main-->
       <!--begin::Footer-->
+
       <!--end::Footer-->
 
 
 
       <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
+
  <script src="{{ asset('assets/dist/js/ticketsPriorityData.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="{{ asset('assets/dist/js/avgTimeData.js') }}"></script>

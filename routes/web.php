@@ -8,12 +8,28 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\AzureAuthController;
 use App\Http\Controllers\Auth\LdapController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\superadminController;
+use App\Http\Controllers\OrganizationController;
+use App\Http\Controllers\AuthenticationController;
 
 Route::get('/', function () {
     return redirect('user/login');
 });
 
 // user routes 
+
+
+Route::get('/quickmate/kloudstack/authenticate/{token}', [AuthenticationController::class, 'authenticate'])
+    ->name('quickmate.authenticate');
+
+    Route::get('/authorize-user', [AuthenticationController::class, 'authorizeUser'])
+    ->name('authorize.user');
+    
+    Route::get('/redirect', function () {
+        // This will trigger the middleware
+    })->middleware('role.redirect')->name('role.redirect');
+    
+    
 
 Route::get('user/login', [UserController::class,'login'])->name('customer.loginform');
 Route::post('user/login', [AuthController::class,'checkAuth'])->name('customer.login');
@@ -23,11 +39,11 @@ Route::post('user/register', [UserController::class,'store'])->name('customer.st
 Route::post('/update-ticket/{id}', [TicketController::class, 'updateTicket'])->name('update.ticket');
 
 
-Route::middleware('user.auth')->prefix('user')->group(function () {
-    Route::get('dashboard', [UserController::class,'dashboard'])->name('customer.dashboard');
+Route::middleware('new.user')->prefix('user')->group(function () {
+    // Route::get('dashboard', [UserController::class,'dashboard'])->name('customer.dashboard');
     Route::post('logout', [UserController::class,'logout'])->name('customer.logout');
     Route::post('create-ticket', [TicketController::class,'create'])->name('raise.ticket');
-    Route::get('raise-ticket', [TicketController::class,'raiseTicket'])->name('ticketform');
+    Route::get('dashboard', [TicketController::class,'raiseTicket'])->name('ticketform');
     Route::get('tickets', [TicketController::class,'index'])->name('customer.tickets');
     Route::get('tickets/list', [TicketController::class,'list'])->name('tickets.list');
     Route::get('edit/ticket/{id}',[TicketController::class,'edit'])->name('edit.ticket');
@@ -37,7 +53,7 @@ Route::middleware('user.auth')->prefix('user')->group(function () {
 
 // support desk routes
 
-Route::middleware('user.auth')->prefix('supportdesk')->group(function () {
+Route::middleware('support')->prefix('supportdesk')->group(function () {
     Route::get('tickets', [TicketController::class,'ticketsView'])->name('supporttickets.view');
     Route::get('ticket-status', [TicketController::class,'ticketsStatusView'])->name('supportticketsstatus.view');
     Route::get('ticket-history', [TicketController::class,'ticketsHistoryView'])->name('supportticketshistory.view');
@@ -52,7 +68,7 @@ Route::middleware('user.auth')->prefix('supportdesk')->group(function () {
 
 // admin routes
 
-Route::middleware('user.auth')->prefix('admin')->group(function () {
+Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('dashboard', [AdminController::class,'index'])->name('admin.dashboard');
     Route::get('configurations', [AdminController::class,'configurations'])->name('admin.configurations');
     Route::get('tickets', [AdminController::class,'getTickets'])->name('admin.tickets');
@@ -66,12 +82,46 @@ Route::middleware('user.auth')->prefix('admin')->group(function () {
     Route::post('category/status', [CategoryController::class,'changeStatus'])->name('disable.category');
     Route::post('/assign-ticket', [TicketController::class, 'assignTicketadmin'])->name('assign.ticket-admin');
     Route::post('/reject-ticket', [TicketController::class, 'rejectTicket'])->name('reject.ticket');
+    Route::get('assets', [AdminController::class,'assets'])->name('admin.assets');
+    Route::get('siem', [AdminController::class,'addsiem'])->name('admin.siem');
+    Route::get('manage/users', [AdminController::class,'manageuser'])->name('admin.manageuser');
+
+
+
 
 
 });
 
+Route::middleware('superadmin')->prefix('quickmate/admin')->group(function () {
+    Route::get('dashboard', [superadminController::class,'index'])->name('super.admin.dashboard');
+    Route::get('organization', [superadminController::class,'addorgnization'])->name('super.admin.org');
+    Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations.index');
+    Route::get('/organizations/data', [OrganizationController::class, 'getOrganizations'])->name('organizations.data');
+    Route::get('/lisense/organizations/data', [OrganizationController::class, 'getLisenseOrganizations'])->name('lisense.organizations.data');
+    Route::get('/organizations/lisense/{id}', [OrganizationController::class, 'lisenseshow'])->name('organizations.show');
+    Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy']);
 
-Route::middleware('user.auth')->prefix('agent')->group(function () {
+
+    
+
+    Route::get('/organizations/{id}', [OrganizationController::class, 'show'])->name('organizations.show');
+    Route::post('/organizations/approve/{id}', [OrganizationController::class, 'approve'])->name('organizations.approve');
+    Route::get('siem', [superadminController::class,'addsiem'])->name('super.admin.siem');
+    Route::get('assets', [superadminController::class,'assets'])->name('super.admin.assets');
+    Route::get('lisense', [superadminController::class,'lisense'])->name('super.admin.lisense');
+
+});
+
+
+Route::middleware('user.auth')->prefix('organization')->group(function () {
+
+    Route::get('addorg', [OrganizationController::class,'addorg'])->name('new.org');
+    Route::post('/store-organization', [OrganizationController::class, 'store'])->name('organization.store');
+
+});
+
+
+Route::middleware('agent')->prefix('agent')->group(function () {
     Route::get('tickets', [TicketController::class,'getagentTickets'])->name('agenttickets.view');
     Route::get('tickets/hold', [TicketController::class,'getagentholdesTickets'])->name('agentholdedtickets.view');
     Route::get('tickets/history', [TicketController::class,'getagenthistoryesTickets'])->name('agenthistoryestickets.view');
