@@ -23,23 +23,6 @@ Route::get('/import-user', function () {
     return view('customer.dashboard');
 });
 
-// Route::post('/import-excel', function (Request $request) {
-//     // Validate the file input
-//     $request->validate([
-//         'file' => 'required|mimes:xlsx,xls'
-//     ]);
-
-//     // Create an instance of the import class
-//     $import = new ExcelImport();
-
-//     // Import the file and store data
-//     Excel::import($import, $request->file('file'));
-
-//     // Return the Excel data as JSON
-//     return response()->json($import->data);
-// })->name('import.excel');
-
-
 Route::get('/quickmate/kloudstack/authenticate', [AuthenticationController::class, 'showSuccessPage'])
     ->middleware('role.auth')
     ->name('auth.success');
@@ -49,18 +32,7 @@ Route::get('/', function () {
     return redirect('user/login');
 });
 
-// user routes 
-
-// Route::get('/redirect', function () {
-//     // This will trigger the middleware
-// })->middleware('role.redirect')->name('role.redirect');
-
-//Charts Routes
 Route::get('/open-requests', [TicketController::class, 'getOpenRequests'])->name('getOpenRequests');
-
-
-
-
 
 Route::get('/quickmate/kloudstack/authenticate/{token}', [AuthenticationController::class, 'authenticate'])
     ->name('quickmate.authenticate');
@@ -138,7 +110,7 @@ Route::middleware('admin')->prefix('admin')->group(function () {
 
 });
 
-Route::middleware('superadmin')->prefix('quickmate/admin')->group(function () {
+Route::middleware('superadmin')->prefix('quickmate')->group(function () {
     Route::get('dashboard', [superadminController::class,'index'])->name('super.admin.dashboard');
     Route::get('organization', [superadminController::class,'addorgnization'])->name('super.admin.org');
     Route::get('add/organization', [superadminController::class,'addneworgnization'])->name('super.admin.neworg');
@@ -150,7 +122,7 @@ Route::middleware('superadmin')->prefix('quickmate/admin')->group(function () {
     Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy']);
 
 
-    
+    Route::get('/test', [OrganizationController::class, 'test']);
 
     Route::get('/organizations/{id}', [OrganizationController::class, 'show'])->name('organizations.show');
     Route::post('/organizations/approve/{id}', [OrganizationController::class, 'approve'])->name('organizations.approve');
