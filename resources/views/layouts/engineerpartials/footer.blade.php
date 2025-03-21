@@ -5,8 +5,7 @@
     <!--begin::Copyright-->
     <strong>
       Copyright &copy; 2024-2025&nbsp;
-      <a href="www.azeusbros.com" class="text-decoration-none">Azeusbros</a>.
-    </strong>
+      <a href="https://www.azeusbros.com" class="text-decoration-none" target="_blank">Azeus Bros</a>.    </strong>
     All rights reserved.
     <!--end::Copyright-->
   </footer>

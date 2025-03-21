@@ -1,4 +1,5 @@
 <nav class="app-header navbar navbar-expand bg-body">
+  
   @php
       $user = Session::get('user');
       $azureUser = isset($user['username']) ? $user['username']  : 'Admin';

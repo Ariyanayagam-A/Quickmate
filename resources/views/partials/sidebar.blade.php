@@ -55,7 +55,7 @@
             </a>
             <ul class="nav nav-treeview" style="display: block;">
               <li class="nav-item">
-                <a href="{{ route('admin.tickets') }}" class="nav-link active">
+                <a href="{{ route('admin.tickets') }}" class="nav-link">
                   <i class="nav-icon bi bi-ticket-perforated"></i>
                   <p>All My Activities</p>
                 </a>
@@ -195,4 +195,5 @@
       </nav>
     </div>
     <!--end::Sidebar Wrapper-->
+    
   </aside>

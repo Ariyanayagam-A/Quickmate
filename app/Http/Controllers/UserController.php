@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ExcelImport;
 
 class UserController extends Controller
 {
@@ -96,6 +98,31 @@ class UserController extends Controller
         dd($user);
     }
 
+    public function createUser(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:6',
+            'organization_id' => 'required|exists:organizations,id',
+        ]);
+
+        // Find the organization and get the realm_id
+        $organization = Organization::findOrFail($request->organization_id);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+            'realm_id' => $organization->realm_id, // Assign realm_id from organization
+        ]);
+
+        return response()->json([
+            'message' => 'User created successfully',
+            'user' => $user
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
@@ -138,4 +165,38 @@ class UserController extends Controller
 
     return redirect('user/login')->with('success', 'Logged out successfully.');
   }
+
+  public function import(Request $request)
+  {
+      // Validate the uploaded file
+      $request->validate([
+          'file' => 'required|mimes:xlsx,xls'
+      ]);
+  
+      // Import the Excel file
+      $import = new ExcelImport();
+      Excel::import($import, $request->file('file'));
+  
+      // Get the imported data as an array
+      $data = $import->data;
+      $index = 0;
+      // Loop through the data and insert into the users table
+      foreach ($data as $row) {
+    //    dd($row);
+        $data[$index] = [
+            'name' => $row['name'] ?? 'Unknown', 
+            'email' => $row['email'],
+            'password' => Hash::make('password123'), 
+            'role' => 1, // Default role
+            'email_verified_at' => null,
+            'realm_id' => $row['realm_id'] ?? 1, // Match key correctly
+            'organization_id' => $row['organization_id'] ?? 1, // Match key correctly
+        ];
+        $index++;
+      }
+    //   dd($data);
+      User::insert($data);
+      return response()->json(['message' => 'Users imported successfully!']);
+  }
+  
 }

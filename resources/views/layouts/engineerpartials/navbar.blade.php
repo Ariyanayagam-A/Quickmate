@@ -4,9 +4,10 @@
       <!--begin::Start Navbar Links-->
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+          <a href="javascript:void(0);" id="toggleIcon">
             <i class="bi bi-list"></i>
           </a>
+          
         </li>
         
       </ul>
@@ -21,7 +22,7 @@
        
         <!--end::Messages Dropdown Menu-->
         <!--begin::Notifications Dropdown Menu-->
-        <li class="nav-item dropdown">
+        {{-- <li class="nav-item dropdown">
           <a class="nav-link" data-bs-toggle="dropdown" href="#">
             <i class="bi bi-bell"></i>
             <span class="navbar-badge badge text-bg-warning">15</span>
@@ -46,55 +47,60 @@
             <div class="dropdown-divider"></div>
             <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
           </div>
-        </li>
+        </li> --}}
         <!--end::Notifications Dropdown Menu-->
         <!--begin::Fullscreen Toggle-->
-        <li class="nav-item">
+        {{-- <li class="nav-item">
           <a class="nav-link" href="#" data-lte-toggle="fullscreen">
             <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
             <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
           </a>
-        </li>
+        </li> --}}
         <!--end::Fullscreen Toggle-->
         <!--begin::User Menu Dropdown-->
         <li class="nav-item dropdown user-menu">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
             <img
-              src="/assets//dist/assets/img/user2-160x160.jpg"
-              class="user-image rounded-circle shadow"
-              alt="User Image"
-            />
+            src="{{ asset('assets/dist/assets/img/dp.jpg') }}"
+            alt="AdminLTE Logo"
+            class="user-image rounded-circle shadow"
+          />
             <!-- <span class="d-none d-md-inline">Alexander Pierce</span> -->
           </a>
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
             <!--begin::User Image-->
             <li class="user-header text-bg-primary">
-              <img
-                src="/assets//dist/assets/img/user2-160x160.jpg"
-                class="rounded-circle shadow"
-                alt="User Image"
-              />
+              
               <p>
-                Alexander Pierce
-                <small>Alex@gmail.com</small>
+                Karthikeyan
+                <small>Karthikeyan@gmail.com</small>
               </p>
             </li>
             <!--end::User Image-->
             <!--begin::Menu Body-->
             <li class="user-body">
               <!--begin::Row-->
-              <div class="row">
+              {{-- <div class="row">
                 <div class="col-4 text-center"><a href="#">Account</a></div>
                 <!-- <div class="col-4 text-center"><a href="#">Sales</a></div> -->
                 <div class="col-4 text-center"><a href="#">Personalize</a></div>
-              </div>
+              </div> --}}
               <!--end::Row-->
             </li>
             <!--end::Menu Body-->
             <!--begin::Menu Footer-->
             <li class="user-footer">
               <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
-              <a href="./login.html" class="btn btn-default btn-flat ">Sign out</a>
+              {{-- <a href="{{ route('logout') }}" class="btn btn-default btn-flat ">Sign out</a> --}}
+
+              <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+            
+            <a href="#" class="btn btn-default btn-flat" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                Sign out
+            </a>
+            
             </li>
             <!--end::Menu Footer-->
           </ul>
@@ -104,4 +110,5 @@
       <!--end::End Navbar Links-->
     </div>
     <!--end::Container-->
+    {{-- <link rel="stylesheet" href="{{ asset('assets/dist/js/adminlte.js')}}" /> --}}
   </nav>

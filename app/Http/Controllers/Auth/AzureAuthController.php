@@ -43,7 +43,7 @@ class AzureAuthController extends Controller
             'code'  => $request->input('code'),
         ]);
 
-        $azureUser = $this->provider->get($this->provider->getRootMicrosoftGraphUri($token) . '/v1.0/me', $token);
+       //$azureUser = $this->provider->get($this->provider->getRootMicrosoftGraphUri($token) . '/v1.0/me', $token);
 
         // dd($azureUser);
         $user = [

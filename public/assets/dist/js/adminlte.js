@@ -735,3 +735,6 @@ function searchTable() {
         rows[i].style.display = found ? "" : "none"; // Show/hide rows based on search
     }
 }
+
+
+

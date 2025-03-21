@@ -36,8 +36,11 @@
     {{-- <link rel="stylesheet" href="{{ asset('assets/dist/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/dist/css/style.css') }}"> --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ asset('assets/dist/css/jquery.dataTables.min.css')}}" />
+
    <!-- DataTables CSS -->
 {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
 
 
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> --}}
@@ -144,7 +147,9 @@
 }
 </style>
 
-<body>
+
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary app-loaded sidebar-open">
+  
     <div class="app-wrapper">
     <!-- Navigation Bar -->
     @include('layouts.engineerpartials.navbar')
@@ -154,7 +159,7 @@
 
     <!-- Main Content -->
     <main class="app-main">
-        <div class="">
+       
             <!-- Sidebar Width -->
             <div class="">
                 @yield('sidebar') <!-- Optional custom sidebar section -->
@@ -163,16 +168,51 @@
             <div class="">
                 @yield('content')
             </div>
-          </main>
+    </main>
           <!-- Footer -->
     @include('layouts.engineerpartials.footer')
     </div>
 
-  
-
-
+    <script
+    src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js"
+    integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ="
+    crossorigin="anonymous"
+  ></script>
+  <!--end::Third Party Plugin(OverlayScrollbars)--><!--begin::Required Plugin(popperjs for Bootstrap 5)-->
+  <script
+    src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+    crossorigin="anonymous"
+  ></script>
+  <!--end::Required Plugin(popperjs for Bootstrap 5)--><!--begin::Required Plugin(Bootstrap 5)-->
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
+    integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
+    crossorigin="anonymous"
+  ></script>
 
     @stack('scripts') <!-- Additional scripts -->
-    </div>
+<script src="{{ asset('assets/dist/js/adminlte.js') }} "defer></script>
+    {{-- @stack('scripts')  --}}
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+    const icon = document.querySelector("#toggleIcon");
+    const body = document.body; // Select body element
+
+    if (icon) {
+        icon.addEventListener("click", function () {
+            if (body.classList.contains("sidebar-open")) {
+                body.classList.remove("sidebar-open");
+                body.classList.add("sidebar-collapse");
+            } else {
+                body.classList.remove("sidebar-collapse");
+                body.classList.add("sidebar-open");
+            }
+        });
+    }
+});
+
+    </script>
 </body>
 </html>

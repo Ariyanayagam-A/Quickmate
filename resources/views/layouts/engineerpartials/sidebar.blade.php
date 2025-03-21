@@ -2,13 +2,13 @@
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">
       <!--begin::Brand Link-->
-      <a href="./index.html" class="brand-link">
+      <a href="{{route('ticketform')}}" class="brand-link">
         <!--begin::Brand Image-->
         <img
-          src="/assets//dist/assets/img/AdminLTELogo.png"
-          alt="AdminLTE Logo"
-          class="brand-image opacity-75 shadow"
-        />
+        src="{{  asset('assets/dist/assets/img/AdminLTELogo.png') }}"
+        alt="AdminLTE Logo"
+        class="brand-image opacity-75 shadow"
+      />
         <!--end::Brand Image-->
         <!--begin::Brand Text-->
         <span class="brand-text fw-light">Users</span>
@@ -30,7 +30,7 @@
           <li class="nav-item ">
             <a href="{{ route('ticketform') }}" class="nav-link">
               <i class="nav-icon bi bi-ui-radios"></i>
-              <p>Form</p>
+              <p>Raise a Ticket</p>
           </a>
           </li>
     
@@ -39,7 +39,7 @@
             <a href="{{ route('customer.tickets') }}"  class="nav-link ">
               <i class="nav-icon bi bi-activity"></i>
               <p>
-                All Tickets
+                Ticket History
               </p>
             </a>
           </li>
