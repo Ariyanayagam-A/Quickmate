@@ -295,28 +295,4 @@
       });
     }
   }
-  //stoer the categores
-  //         $('#categoryForm').submit(function (e) {
-  //         e.preventDefault();
-  //         $.ajax({
-  //             url: "{{ route('categories.store') }}",
-  //             type: "POST",
-  //             data: $(this).serialize(),
-  //             dataType: "json",
-  //             headers: {
-  //                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
-  //             },
-  //             success: function (response) {
-  //                console.log('resposne'+response)
-  //                 $('#categoryForm')[0].reset();
-  //                 // $('#categoryForm').close();
-  //                 $('#myModal').css('display', 'none');
-  // // Reload DataTable 
-  //        $('#table').DataTable().ajax.reload(null, false);
-  //             },
-  //             error: function (xhr) {
-  //                 alert("Error: " + xhr.responseJSON.message);
-  //             }
-  //         });
-  //     });
 </script> @endsection
