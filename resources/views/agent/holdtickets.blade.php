@@ -125,7 +125,7 @@
                       <table id="table" class="table table-bordered table-striped align-middle m-0 tickets">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th>S.no</th>
                             {{-- <th>View Ticket</th> --}}
                             <th>Request by</th>
                             <th>Email</th>

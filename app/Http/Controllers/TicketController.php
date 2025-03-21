@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use DataTables;
+use Carbon\Carbon;
 
 class TicketController extends Controller
 {
@@ -44,6 +45,18 @@ class TicketController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
     
+            // Retrieve user_id and organization_id from session
+            // $organizationId = session('organization_id');
+            // $userId = session('user_id');
+            
+    
+            // if (!$userId) {
+            //     return redirect()->back()->with('error', 'User ID not found in session.');
+            // }
+    
+            // Debugging: Check if session values are set
+            // dd(session()->all()); 
+    
             // Create new ticket
             $ticket = new Ticket();
             $ticket->subject = $request->title;
@@ -52,8 +65,9 @@ class TicketController extends Controller
             $ticket->summary = $request->desc;
             $ticket->status = 0;
             $ticket->raised_by = 1; // Store the logged-in user's ID
+            $ticket->organization_id = 1;
     
-            // // Handle file upload
+            // Handle file upload
             if ($request->hasFile('ticket_file')) {
                 $file = $request->file('ticket_file');
                 $fileName = time() . '_' . $file->getClientOriginalName();
@@ -70,8 +84,6 @@ class TicketController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
-
-
     }
     
 
@@ -118,10 +130,18 @@ class TicketController extends Controller
 
 
 
-    public function list()
-    {
-        // dd('asasasas');
-        // Fetch all tickets with the related category
+    public function list(Request $request)
+{
+    //    // Get the organization_id from the session
+    // $organizationId = session('organization_id');
+
+    // if (!$organizationId) {
+    //     dd('No Organization ID in Session');
+    //     return response()->json(['error' => 'Unauthorized - No Organization ID in Session'], 401);
+    // }
+    //  // Fetch the user associated with this organization_id
+    //  $user = User::where('organization_id', $organizationId)->first();
+
         $tickets = Ticket::with('category')->orderBy('id', 'desc')->get();
     
         return DataTables::of($tickets)
@@ -171,7 +191,8 @@ class TicketController extends Controller
             // })
             // ->rawColumns(['status', 'level', 'action'])
             ->make(true);
-    }
+            
+}
     
 
     public function adminTicketsList()
@@ -662,7 +683,7 @@ class TicketController extends Controller
     }
     public function getagenthistoryTickets()
     {
-        $tickets = Ticket::with('user')->where('assignee', 4)->orderBy('id', 'desc')->get();
+        $tickets = Ticket::with('user')->where('assignee', 4)->whereIn('status', [2, 3, 4])->orderBy('id', 'desc')->get();
         // dd($tickets);
         return Datatables::of($tickets)
         ->addIndexColumn()
@@ -781,6 +802,11 @@ class TicketController extends Controller
         if (!$ticket) {
             return response()->json(['message' => 'Ticket not found'], 404);
         }
+
+         // Check if assignee or priority is changing
+    if ($ticket->assignee !== $request->assignee || $ticket->priority !== $request->priority) {
+        $ticket->assigned_at = now(); // Set assigned_at only when these fields change
+    }
     
         $ticket->assignee = $request->assignee;
         $ticket->priority = $request->priority;
@@ -869,7 +895,13 @@ class TicketController extends Controller
         }
         else
         {
-            $updateData = ['status' => $request->status,'closed_at' => $request->status == 3 ? date('Y-m-d H:i:s') : null];
+            // $updateData = ['status' => $request->status,'closed_at' => $request->status == 3 ? date('Y-m-d H:i:s') : null];
+
+            $updateData = [
+                'status' => $request->status,
+                'closed_at' => $request->status == 3 ? date('Y-m-d H:i:s')  : null,  // Store closed time for rejected tickets
+                'deleted_at' => $request->status == 2 ? date('Y-m-d H:i:s')  : null  // Store deletion time when ticket is solved
+            ];
         }
 
         $solveTicket = Ticket::where('id',$request->ticketId)->update($updateData);
@@ -878,7 +910,7 @@ class TicketController extends Controller
         {
             if($request->status == 2)
             {
-                return response()->json(['status' => 'success', 'message' => 'Ticket Closed successfully.']);
+                return response()->json(['status' => 'success', 'message' => 'Ticket resolved successfully.']);
             }
             else if($request->status == 3){
                 return response()->json(['status' => 'success', 'message' => 'Ticket Rejected successfully.']);
@@ -887,7 +919,7 @@ class TicketController extends Controller
                 return response()->json(['status' => 'success', 'message' => 'Ticket Holded successfully.']);
             }
             else{
-                return response()->json(['status' => 'success', 'message' => 'Ticket resolved successfully.']);
+                return response()->json(['status' => 'success', 'message' => 'Ticket closed successfully.']);
             }
         }
         else
@@ -970,4 +1002,29 @@ class TicketController extends Controller
         })->rawColumns(['view','action','status','priority'])
     ->make(true);
     }
+
+    //Chart Data
+    public function getOpenRequests()
+    {
+        $data = Ticket::selectRaw('priority, COUNT(*) as count')
+            ->groupBy('priority')
+            ->pluck('count', 'priority');
+    
+        // Map priority numbers to L1, L2, L3
+        $formattedData = [
+            'L1' => $data[1] ?? 0,
+            'L2' => $data[2] ?? 0,
+            'L3' => $data[3] ?? 0
+        ];
+    
+        return response()->json($formattedData);
+    }
+
+    public function getUsers(){
+    
+    }
+    
+    
 }
+
+

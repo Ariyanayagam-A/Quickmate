@@ -14,7 +14,7 @@
           <i class="bi bi-list"></i>
           </a>
         </li>
-        <li class="nav-item d-none d-md-block"><a href="#" class="nav-link" style="font-weight: 700;">Dashboard</a></li>
+        <li class="nav-item d-none d-md-block"><a href="{{route('admin.dashboard')}}" class="nav-link" style="font-weight: 700;">Dashboard</a></li>
         {{-- <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Schedular</a></li>
         <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tech Availability Chart</a></li>
         <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Tasks</a></li>

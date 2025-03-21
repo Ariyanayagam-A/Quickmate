@@ -43,7 +43,7 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                      <h4 class="modal-title">Support Ticket</h4>
+                      <h4 class="modal-title">Engineer Desk</h4>
                       <button type="button" class="btn-close close" data-bs-dismiss="modal"></button>
                       {{-- <button type="button" class="btn btn-danger close" data-bs-dismiss="modal">Close</button> --}}
                     </div>
@@ -77,7 +77,7 @@
                   <img id="ticketImage" src="" alt="Ticket Image" class="img-fluid" style="max-width: 100%; height: auto;">
               </div>
 
-                      <!-- Ticket Feedback -->
+                      {{-- <!-- Ticket Feedback -->
                       <div class="form-group mb-3">
                         <label for="feedback" class="form-label">Ticket Feedback</label>
                         <textarea 
@@ -94,7 +94,7 @@
                           class="btn btn-primary btn-sm px-4">
                           Submit
                         </button>
-                      </div>
+                      </div> --}}
                     </div>
 
 
@@ -131,7 +131,7 @@
                       <table id="table" class="table table-bordered table-striped align-middle m-0 tickets">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th>S.no</th>
                             <th>View Ticket</th>
                             <th>Request by</th>
                             <th>Email</th>

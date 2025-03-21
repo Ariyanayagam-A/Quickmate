@@ -7,6 +7,8 @@
 
     <!-- Bootstrap & Icons (or other stylesheets) -->
     <head>
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <title>Admin | Dashboard </title>
         <!--begin::Primary Meta Tags-->

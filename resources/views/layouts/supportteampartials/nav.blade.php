@@ -94,7 +94,7 @@
             <!--begin::Menu Footer-->
             <li class="user-footer">
               <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
-              <a href="./login.html" class="btn btn-default btn-flat ">Sign out</a>
+              <a href="{{route('customer.loginform')}}" class="btn btn-default btn-flat ">Sign out</a>
             </li>
             <!--end::Menu Footer-->
           </ul>

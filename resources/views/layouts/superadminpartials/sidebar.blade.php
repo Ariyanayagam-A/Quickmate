@@ -47,12 +47,18 @@
                   Organisation Details
                   <i class="nav-arrow bi bi-chevron-right"></i>
                 </p>
-              </a>
+              </a>              
               <ul class="nav nav-treeview">
-                <li class="nav-item">
+                {{-- <li class="nav-item">
                   <a href="{{ route('super.admin.org') }}" class="nav-link">
                     <i class="nav-icon bi bi-clipboard2-check"></i>
                     <p>New Organisation</p>
+                  </a>
+                </li> --}}
+                <li class="nav-item">
+                  <a href="{{ route('super.admin.neworg') }}" class="nav-link">
+                    <i class="nav-icon bi bi-clipboard2-check"></i>
+                    <p>Add New Organisation</p>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -66,24 +72,7 @@
 
       
 
-          <li class="nav-item ">
-            <a href="{{ route('super.admin.siem') }}" class="nav-link">
-              <i class="nav-icon bi bi-bug"></i>
-              <p>
-                SIEM
-              </p>
-            </a>
-          </li>
-          <li class="nav-item ">
-           
-          <li class="nav-item ">
-            <a href="{{ route('super.admin.assets') }}" class="nav-link">
-              <i class="nav-icon bi bi-arrow-left-right"></i>
-              <p>
-                Assets
-              </p>
-            </a>
-          </li>
+          
        
           
 

@@ -15,7 +15,7 @@ class SupportMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        die('SupportMiddleware');
+       // die('SupportMiddleware');
         return $next($request);
     }
 }

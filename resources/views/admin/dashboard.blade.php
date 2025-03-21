@@ -34,11 +34,11 @@
                   <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                       <h3 class="card-title">Requests Last week</h3>
-                      <a
+                      {{-- <a
                         href="javascript:void(0);"
                         class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                         >View Report</a
-                      >
+                      > --}}
                     </div>
                   </div>
                   <div class="card-body">
@@ -52,34 +52,22 @@
                     </div>
                   </div>
                 </div>
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header border-0">
-                    <h3 class="card-title">Open Requests by Mode</h3>
-                    <div class="card-tools">
-                      <a href="#" class="btn btn-tool btn-sm"> <i class="bi bi-download"></i> </a>
-                      <a href="#" class="btn btn-tool btn-sm"> <i class="bi bi-list"></i> </a>
-                    </div>
-                  </div>
-                  
 
-                   <div id="lticketsPriorityData"></div>
-                   <div class="d-flex justify-content-center gap-4 my-4">
-                    <div class="d-flex align-items-center">
-                      High
-                      <span class="badge rounded-pill ms-2" style="background-color: #E87609;">15</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      Medium
-                      <span class="badge rounded-pill bg-dark ms-2">18</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      Low
-                      <span class="badge rounded-pill bg-secondary ms-2">21</span>
-                    </div>
-                  </div>
-                </div>
+                <!-- /.gokul card -->
+                      <div class="card mb-4">
+                          <div class="card-header border-0">
+                              <h3 class="card-title">Open Requests by Mode</h3>
+                          </div>
+                          <div class="card-body">
+                              <div id="open-requests-chart"></div>
+                          </div>
+                      </div>
+             
                 <!-- /.card -->
+                
+                <!-- /.card -->
+
+              
               </div>
               <!-- /.col-md-6 -->
               <div class="col-lg-6">
@@ -87,11 +75,11 @@
                   <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                       <h3 class="card-title">SLA Violation by Technician</h3>
-                      <a
+                      {{-- <a
                         href="javascript:void(0);"
                         class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                         >View Report</a
-                      >
+                      > --}}
                     </div>
                   </div>
                   <div class="card-body">
@@ -110,8 +98,8 @@
                   <div class="card-header border-0">
                     <h3 class="card-title">Request Complete in Last Week</h3>
                     <div class="card-tools">
-                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-download"></i> </a>
-                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-list"></i> </a>
+                      {{-- <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-download"></i> </a>
+                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-list"></i> </a> --}}
                     </div>
                   </div>
                   <div id="avgTimeData"></div>
@@ -139,7 +127,7 @@
 
 
 
-    <script
+    {{-- <script
       src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js"
       integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ="
       crossorigin="anonymous"
@@ -155,7 +143,7 @@
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
-    ></script>
+    ></script> --}}
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     {{-- <script src="{{ asset('assets/dist/js/adminlte.js') }}"></script> --}}
     <script
@@ -163,6 +151,35 @@
       integrity="sha256-+vh8GkaU7C9/wbSLIcwq82tQ2wTf44aOHA8HlBMwRI8="
       crossorigin="anonymous"
     ></script>
+
+    <script>
+      $(document).ready(function () {
+          $.ajax({
+              url: "{{ route('getOpenRequests') }}", // Ensure this route is correctly defined in web.php or api.php
+              type: "GET",
+              dataType: "json",
+              success: function (data) {
+                  var options = {
+                      series: [data.L1, data.L2, data.L3], // Fetch data dynamically
+                      chart: {
+                          type: 'donut',
+                          height: 300
+                      },
+                      labels: ['L1', 'L2', 'L3'], // Updated labels
+                      colors: ['#E87609', '#343a40', '#adb5bd'] // You can customize colors
+                  };
+  
+                  var chart = new ApexCharts(document.querySelector("#open-requests-chart"), options);
+                  chart.render();
+              },
+              error: function () {
+                  console.log("Error fetching data.");
+              }
+          });
+      });
+  </script>
+  
+
     <script>
 
       const visitors_chart_options = {
@@ -270,20 +287,5 @@
       );
       sales_chart.render();
     </script>
-     <script id="rendered-js">
-      Highcharts.chart('containerchart', {
-        xAxis: {
-          type: 'datetime',
-          dateTimeLabelFormats: {
-            week: '%e of %b' } },
-      
-      
-      
-        series: [{
-          data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4, 330, 222, 338, 42, 33, 48, 193, 282, 118],
-          pointStart: Date.UTC(2019, 0, 7),
-          pointInterval: 24 * 3600 * 1000 * 7 // one week
-        }] });
-      //# sourceURL=pen.js
-          </script>
+     
 @endsection

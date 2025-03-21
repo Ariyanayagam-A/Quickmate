@@ -12,9 +12,14 @@ class superadminController extends Controller
     }
 
     public function addorgnization(){
-        session()->flash('success', 'User added successfully!');
+       
+        return view('superadmin.organization');    
+    }
 
-        return view('superadmin.organization');    }
+    public function addneworgnization(){
+       
+        return view('organization.addorg');    
+    }
 
     public function addsiem(){
         session()->flash('success', 'User added successfully!');
@@ -31,8 +36,7 @@ class superadminController extends Controller
 
     public function lisense(){
         // return view('superadmin.assets');
-        session()->flash('success', 'User added successfully!');
-
+       
         return view('superadmin.lisense');
     }
 }

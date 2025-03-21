@@ -15,7 +15,7 @@ class SuperAdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        die('SuperAdminMiddleware');
+       // die('SuperAdminMiddleware');
         return $next($request);
     }
 }

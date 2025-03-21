@@ -1,62 +1,11 @@
-<!doctype html>
-<html lang="en">
+@extends('layouts.superadminlayout.app')
 
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Admin | Dashboard | All Ticket</title>
-    <!--begin::Primary Meta Tags-->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="title" content="Admin | Dashboard" />
-    <meta name="author" content="ColorlibHQ" />
-    <meta
-      name="description"
-      content="Admin is a Free Bootstrap 5 Admin Dashboard"
-    />
-    <meta
-      name="keywords"
-      content="bootstrap 5"
-    />
-    <!--end::Primary Meta Tags-->
-    <!--begin::Fonts-->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-      integrity="sha256-tXJfXfp6Ewt1ilPzLDtQnJV4hclT9XuaZUKyUvmyr+Q="
-      crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-      integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
-      crossorigin="anonymous"
-    />
+@section('title', 'Dashboard')
 
-    <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css')}}" />
+@section('content')
 
 
-<style>
-  main{
-    overflow-x: hidden !important;
-  }
-  .table-striped tbody tr td{
-    text-align: center;
-  }
-  .table-striped thead tr th{
-    text-align: center;
-  }
-.footer-org{
-  display: flex;
-  justify-content: center;
-}
-
-</style>
-
-
-  </head>
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-
-    <div class="app-wrapper ">
-
+<meta name="csrf-token" content="{{ csrf_token() }}">
         <main class="app-main container">
           <!--begin::App Content Header-->
           <div class="app-content-header">
@@ -393,32 +342,14 @@
           </div>
           <!--end::App Content-->
         </main>
-  
-      <footer class="app-footer footer-org">
-        <!--begin::To the end-->
-        <!-- <div class="float-end d-none d-sm-inline">Anything you want</div> -->
-        <!--end::To the end-->
-        <!--begin::Copyright-->
-        <strong>
-          Copyright &copy; 2024-2025&nbsp;
-          <a href="www.azeusbros.com" class="text-decoration-none">Azeus Bros</a>.
-        </strong>
-        <span style="margin-left: 10px;">All rights reserved.</span>
-        <!--end::Copyright-->
-      </footer>
 
     </div>
 
-    <script
+    {{-- <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
-    ></script>
-    <script src="{{ asset('assets/dist/js/adminlte.js') }} "defer></script>
+    ></script> --}}
 
-
-
-  </body>
-
-
-</html>
+    @endsection
+   

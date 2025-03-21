@@ -22,23 +22,25 @@
           content="bootstrap 5"
         />
     
-        <link
+        {{-- <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
           integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
           crossorigin="anonymous"/>
         <!--end::Third Party Plugin(Bootstrap Icons)-->
         <!--begin::Required Plugin(AdminLTE)-->
-        <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css')}}" />
         <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/styles/overlayscrollbars.min.css"
       integrity="sha256-tZHrRjVqNSRyWg2wbppGnT833E/Ys0DHWGwT04GiqQg="
       crossorigin="anonymous"
-    />
+    /> --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     @stack('styles') <!-- Additional styles -->
+
+    
+    <link rel="stylesheet" href="{{ asset('assets/dist/css/adminlte.css')}}" />
 
     <!-- datatables -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>

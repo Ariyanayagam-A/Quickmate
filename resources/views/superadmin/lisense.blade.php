@@ -70,7 +70,7 @@
     console.log("Clicked Organization ID:", orgId);
 
     $.ajax({
-        url: "/superadmin/organizations/lisense/" + orgId,
+        url: "/quickmate/admin/organizations/lisense/" + orgId,
         type: "GET",
         success: function (response) {
             console.log("Response Data:", response);

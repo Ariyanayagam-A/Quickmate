@@ -50,7 +50,7 @@
   
 
 
-    <script
+    {{-- <script
       src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js"
       integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ="
       crossorigin="anonymous"
@@ -66,9 +66,9 @@
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
-    ></script>
+    ></script> --}}
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
-    <script src="{{ asset('assets/dist/js/adminlte.js') }}"></script>
+    {{-- <script src="{{ asset('assets/dist/js/adminlte.js') }}"></script> --}}
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
    
     <!--end::OverlayScrollbars Configure-->

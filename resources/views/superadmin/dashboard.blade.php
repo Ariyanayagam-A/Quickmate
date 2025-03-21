@@ -34,11 +34,11 @@
                   <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                       <h3 class="card-title">Requests Last week</h3>
-                      <a
+                      {{-- <a
                         href="javascript:void(0);"
                         class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                         >View Report</a
-                      >
+                      > --}}
                     </div>
                   </div>
                   <div class="card-body">
@@ -57,8 +57,8 @@
                   <div class="card-header border-0">
                     <h3 class="card-title">Open Requests by Mode</h3>
                     <div class="card-tools">
-                      <a href="#" class="btn btn-tool btn-sm"> <i class="bi bi-download"></i> </a>
-                      <a href="#" class="btn btn-tool btn-sm"> <i class="bi bi-list"></i> </a>
+                      {{-- <a href="#" class="btn btn-tool btn-sm"> <i class="bi bi-download"></i> </a>
+                      <a href="#" class="btn btn-tool btn-sm"> <i class="bi bi-list"></i> </a> --}}
                     </div>
                   </div>
                   
@@ -87,11 +87,11 @@
                   <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                       <h3 class="card-title">SLA Violation by Technician</h3>
-                      <a
+                      {{-- <a
                         href="javascript:void(0);"
                         class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
                         >View Report</a
-                      >
+                      > --}}
                     </div>
                   </div>
                   <div class="card-body">
@@ -110,8 +110,8 @@
                   <div class="card-header border-0">
                     <h3 class="card-title">Request Complete in Last Week</h3>
                     <div class="card-tools">
-                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-download"></i> </a>
-                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-list"></i> </a>
+                      {{-- <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-download"></i> </a>
+                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-list"></i> </a> --}}
                     </div>
                   </div>
                   <div id="avgTimeData"></div>
@@ -141,7 +141,7 @@
 
 
 
-    <script
+    {{-- <script
       src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js"
       integrity="sha256-dghWARbRe2eLlIJ56wNB+b760ywulqK3DzZYEpsg2fQ="
       crossorigin="anonymous"
@@ -157,7 +157,7 @@
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"
       integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy"
       crossorigin="anonymous"
-    ></script>
+    ></script> --}}
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     {{-- <script src="{{ asset('assets/dist/js/adminlte.js') }}"></script> --}}
     <script

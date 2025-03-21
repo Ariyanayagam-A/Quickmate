@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use DataTables;
 use App\Models\Organization;
+// use Tymon\JWTAuth\Facades\JWTAuth;
+use Firebase\JWT\JWT;
+
 
 class OrganizationController extends Controller
 {
@@ -15,7 +18,6 @@ class OrganizationController extends Controller
     public function store(Request $request)
     {
         // Validate the request
-        // dd($request->all());
         $request->validate([
             'organization_name' => 'required|string',
             'industry' => 'required|string',
@@ -57,12 +59,27 @@ class OrganizationController extends Controller
             'admin_phone' => $request->admin_phone,
             'designation' => $request->designation,
             'domain_name' => $request->domain_name,
+            'realm_id' => 4, // Generate unique ID
             'logo' => $logoPath, // Store the file path in the DB
         ]);
+
+       
+        
+        // Generate JWT token
+        $secretKey = env('JWT_SECRET'); // Ensure to set this in your .env file
+        $payload = [
+            'id' => $organization->id,
+            'organization_name' => $organization->organization_name,
+            'issued_at' => time(),
+            'expires_at' => time() + 86400, // 1 day expiration
+        ];
+        $token = JWT::encode($payload, $secretKey, 'HS256');
+      
+        // Store token in the database (if you have a column for it)
+        $organization->update(['token' => $token]);
     
-        return redirect()->back()->with('success', 'Organization stored successfully!');
+        return redirect()->back()->with('success', 'Organization stored successfully with JWT token!');
     }
-    
     public function getOrganizations(Request $request)
 {
     $organizations = Organization::select(['id', 'organization_name', 'official_email'])->where('is_active', 0);
@@ -93,7 +110,7 @@ public function destroy($id) {
 
 public function getLisenseOrganizations(Request $request)
 {
-    $organizations = Organization::select(['id', 'organization_name', 'official_email'])->where('is_active', 1);
+    $organizations = Organization::select(['id', 'organization_name', 'official_email']);
 
     return DataTables::of($organizations)
     ->addColumn('action', function ($row) {

@@ -28,6 +28,8 @@
       ************* -->
       <!-- Icomoon Font Icons css -->
       <link rel="stylesheet" href="{{ asset('assets/fonts/icomoon/style.css') }}" />
+      <script src="{{ asset('assets/dist/js/adminlte.js') }} "defer></script>
+
   
       <!-- Main CSS -->
       {{-- <link rel="stylesheet" href="{{ asset('assets/css/main.min.css')}}" /> --}}
@@ -48,7 +50,7 @@
       ************ -->
   
       <!-- Scrollbar CSS -->
-      <link rel="stylesheet" href="assets/vendor/overlay-scroll/OverlayScrollbars.min.css" />
+      {{-- <link rel="stylesheet" href="assets/vendor/overlay-scroll/OverlayScrollbars.min.css" /> --}}
       <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
          

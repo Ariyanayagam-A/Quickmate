@@ -23,7 +23,14 @@ class Organization extends Model
         'admin_email',
         'admin_phone',
         'designation',
-        'domain_name', 
+        'domain_name',
+        'token', 
         'is_active',
+        'realm_id',
     ];
+
+    public function users()
+    {
+        return $this->hasMany(User::class, 'realm_id', 'realm_id'); // One organization has many users
+    }
 }

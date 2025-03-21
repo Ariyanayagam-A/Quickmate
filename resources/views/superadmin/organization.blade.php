@@ -68,7 +68,7 @@
     console.log("Clicked Organization ID:", orgId);
 
     $.ajax({
-        url: "/superadmin/organizations/" + orgId,
+        url: "{{ route('organizations.show', ':orgId') }}".replace(':orgId', orgId),
         type: "GET",
         success: function (response) {
             console.log("Response Data:", response);

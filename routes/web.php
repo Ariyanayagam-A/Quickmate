@@ -11,6 +11,39 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\superadminController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\AuthenticationController;
+// use App\Http\Controllers\AuthController;
+
+use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ExcelImport;
+
+Route::post('/import-excel', [UserController::class, 'import'])->name('import-excel');
+
+Route::get('/import-user', function () {
+    return view('customer.dashboard');
+});
+
+// Route::post('/import-excel', function (Request $request) {
+//     // Validate the file input
+//     $request->validate([
+//         'file' => 'required|mimes:xlsx,xls'
+//     ]);
+
+//     // Create an instance of the import class
+//     $import = new ExcelImport();
+
+//     // Import the file and store data
+//     Excel::import($import, $request->file('file'));
+
+//     // Return the Excel data as JSON
+//     return response()->json($import->data);
+// })->name('import.excel');
+
+
+Route::get('/quickmate/kloudstack/authenticate', [AuthenticationController::class, 'showSuccessPage'])
+    ->middleware('role.auth')
+    ->name('auth.success');
+
 
 Route::get('/', function () {
     return redirect('user/login');
@@ -18,16 +51,27 @@ Route::get('/', function () {
 
 // user routes 
 
+// Route::get('/redirect', function () {
+//     // This will trigger the middleware
+// })->middleware('role.redirect')->name('role.redirect');
+
+//Charts Routes
+Route::get('/open-requests', [TicketController::class, 'getOpenRequests'])->name('getOpenRequests');
+
+
+
+
 
 Route::get('/quickmate/kloudstack/authenticate/{token}', [AuthenticationController::class, 'authenticate'])
     ->name('quickmate.authenticate');
 
     Route::get('/authorize-user', [AuthenticationController::class, 'authorizeUser'])
     ->name('authorize.user');
-    
-    Route::get('/redirect', function () {
-        // This will trigger the middleware
-    })->middleware('role.redirect')->name('role.redirect');
+
+    Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+
+    Route::get('/getuser/data', [TicketController::class, 'getUsers'])->name('getuser.data');
+ 
     
     
 
@@ -37,11 +81,13 @@ Route::get('user/register', [UserController::class,'register'])->name('customer.
 Route::post('user/register', [UserController::class,'store'])->name('customer.store');
 
 Route::post('/update-ticket/{id}', [TicketController::class, 'updateTicket'])->name('update.ticket');
+// Route::get('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+
 
 
 Route::middleware('new.user')->prefix('user')->group(function () {
     // Route::get('dashboard', [UserController::class,'dashboard'])->name('customer.dashboard');
-    Route::post('logout', [UserController::class,'logout'])->name('customer.logout');
+    // Route::post('logout', [UserController::class,'logout'])->name('customer.logout');
     Route::post('create-ticket', [TicketController::class,'create'])->name('raise.ticket');
     Route::get('dashboard', [TicketController::class,'raiseTicket'])->name('ticketform');
     Route::get('tickets', [TicketController::class,'index'])->name('customer.tickets');
@@ -95,10 +141,12 @@ Route::middleware('admin')->prefix('admin')->group(function () {
 Route::middleware('superadmin')->prefix('quickmate/admin')->group(function () {
     Route::get('dashboard', [superadminController::class,'index'])->name('super.admin.dashboard');
     Route::get('organization', [superadminController::class,'addorgnization'])->name('super.admin.org');
+    Route::get('add/organization', [superadminController::class,'addneworgnization'])->name('super.admin.neworg');
+
     Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations.index');
     Route::get('/organizations/data', [OrganizationController::class, 'getOrganizations'])->name('organizations.data');
     Route::get('/lisense/organizations/data', [OrganizationController::class, 'getLisenseOrganizations'])->name('lisense.organizations.data');
-    Route::get('/organizations/lisense/{id}', [OrganizationController::class, 'lisenseshow'])->name('organizations.show');
+    Route::get('/organizations/lisense/{id}', [OrganizationController::class, 'lisenseshow'])->name('lisenseorganizations.show');
     Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy']);
 
 
@@ -106,8 +154,6 @@ Route::middleware('superadmin')->prefix('quickmate/admin')->group(function () {
 
     Route::get('/organizations/{id}', [OrganizationController::class, 'show'])->name('organizations.show');
     Route::post('/organizations/approve/{id}', [OrganizationController::class, 'approve'])->name('organizations.approve');
-    Route::get('siem', [superadminController::class,'addsiem'])->name('super.admin.siem');
-    Route::get('assets', [superadminController::class,'assets'])->name('super.admin.assets');
     Route::get('lisense', [superadminController::class,'lisense'])->name('super.admin.lisense');
 
 });

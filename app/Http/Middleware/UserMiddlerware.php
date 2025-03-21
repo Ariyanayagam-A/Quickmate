@@ -15,7 +15,7 @@ class UserMiddlerware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        die('UserMiddlerware');
+        // die('UserMiddlerware');
         return $next($request);
     
     }

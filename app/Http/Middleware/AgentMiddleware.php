@@ -15,7 +15,7 @@ class AgentMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        die('AgentMiddleware');
+        // die('AgentMiddleware');
         return $next($request);
     }
 }

@@ -9,25 +9,23 @@
      
       <!--end::Sidebar-->
       <!--begin::App Main-->
+      
     <main class="app-main">
 
        <!-- Row start -->
-       <div class="dropdown m-3">
-        <button class="btn btn-drp dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Tickets
-        </button>
-      <!-- Dropdown for filtering tickets -->
-      <ul class="dropdown-menu dropdown-menu-dark-bg">
-        <li><a class="dropdown-item drp-clr" href="#" data-status="">All-Tickets</a></li>
-        <li><a class="dropdown-item drp-clr" href="#" data-status="Rejected">Rejected</a></li>
-        <li><a class="dropdown-item drp-clr" href="#" data-status="Solved">Solved</a></li>
-        <li><a class="dropdown-item drp-clr" href="#" data-status="Open">Open</a></li>
-        <li><a class="dropdown-item drp-clr" href="#" data-status="On Hold">On Hold</a></li>
-      </ul>
 
-      
-      
-    </div>
+
+    <select id="statusFilter" style="
+    width: 20%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 8px;">
+        <option value="">All</option>
+        <option value="Open">Open</option>
+        <option value="On Hold">On Hold</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Solved">Solved</option>
+    </select>
 
        <div class="row">
         <div class="col-12 col-xl-6">
@@ -36,12 +34,7 @@
          
 
           <ol class="breadcrumb m-3">
-            <li class="breadcrumb-item ">
-              Activities
-            </li>
-            <li class="breadcrumb-item ">
-              All My Activities
-            </li>
+            
             <li class="breadcrumb-item ">
               All Ticket
             </li>
@@ -58,7 +51,7 @@
 
         <!-- Modal Header -->
         <div class="modal-header">
-          <h4 class="modal-title">Support Ticket</h4>
+          <h4 class="modal-title">Ticket</h4>
           <button type="button" class="btn-close close" data-bs-dismiss="modal"></button>
           {{-- <button type="button" class="btn btn-danger close" data-bs-dismiss="modal">Close</button> --}}
         </div>
@@ -85,6 +78,12 @@
               class="form-control" 
               rows="4" readonly></textarea>
           </div>
+
+          <p>Created Time: <span id="created_time"></span></p>
+          <p>Assigned Time: <span id="assigned_time"></span></p>
+          <p>Solved Time: <span id="solved_time"></span></p>
+          <p>Rejected Time: <span id="rejected_time"></span></p>
+
 
            <!-- Ticket Image -->
     <div class="form-group mb-3">
@@ -162,6 +161,7 @@
 
 
 
+
       <!-- Modal for Viewing Ticket Details -->
 
        <div class="row">
@@ -182,7 +182,7 @@
                       <th>Indicator</th>
                       <th>Level</th>
                       <th>Status</th>
-                      <th>Created At</th>
+                      {{-- <th>Created At</th> --}}
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -230,25 +230,29 @@
             {data: 'indicator', name: 'indicator'},
             {data: 'level', name: 'level'},
             {data: 'status', name: 'status'},
-            {data: 'created_at', name: 'created_at'},
+            // {data: 'created_at', name: 'created_at'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });  
 
        // Dropdown filter functionality
-       $(document).on('click', '.dropdown-item', function (e) {
-        e.preventDefault(); // Prevent page reload
-        
-        var status = $(this).data('status');  // Get the clicked status text
+    
 
-        if (status === "") {
-            table.column(9).search('').draw(); // Show all tickets
-        } else {
-            table.column(9).search(status).draw(); // Filter by status
-        }
-    });
 
     });
+
+    function formatDateTime(dateString) {
+    if (!dateString) return 'N/A'; // Handle null or undefined values
+
+    let date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date'; // Handle invalid date formats
+
+    return date.toLocaleString(); // Format it based on the user's locale
+}
+
+
+
+
     
     function viewTicket(ticketId) {
     $('#ticketid').val(ticketId);
@@ -265,7 +269,10 @@
                 $('#subject').val(response.data.subject);
                 $('#description').val(response.data.summary);
                 $('#feedback').val(response.data.feedback);
-
+                $('#created_time').text(formatDateTime(response.data.created_at));
+                $('#assigned_time').text(formatDateTime(response.data.assigned_at));
+                $('#solved_time').text(formatDateTime(response.data.deleted_at));
+                $('#rejected_time').text(formatDateTime(response.data.closed_at));
                 // Set the image source
                 if (response.data.image) {
                     const imageUrl = `/storage/${response.data.image}`;
@@ -388,8 +395,26 @@ $('.close').click(function(){
 
   </script>
 
+<script>
+  $(document).ready(function() {
+    var table = $('.ticketstable').DataTable(); // Initialize DataTable
+
+$('#statusFilter').on('change', function () {
+    var status = $(this).val(); // Get selected status
+
+    if (status === "") {
+        table.column(9).search('').draw(); // Show all tickets
+    } else {
+        table.column(9).search(status).draw(); // Filter by status
+    }
+});
+
+  });
+
+
+</script>
+
 
   
-  </body>
-</html>
+
 @endsection
