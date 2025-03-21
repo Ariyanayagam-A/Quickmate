@@ -19,6 +19,5 @@ ADD . /var/www/html/
 #Permission for storage directory
 RUN chmod 777 -R  storage/
 
-#ADD httpd.conf /usr/local/apache2/htdocs/conf/
 # Expose port 80 for HTTP traffic
 EXPOSE 80
