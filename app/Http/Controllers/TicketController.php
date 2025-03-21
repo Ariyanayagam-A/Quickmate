@@ -340,6 +340,7 @@ class TicketController extends Controller
     }
 
     $ticket->status = 3; // Change status to "Rejected"
+    $ticket->closed_at = Carbon::now(); // Store rejection time
     $ticket->save();
 
     return response()->json(['message' => 'Ticket has been rejected successfully!']);
@@ -1020,9 +1021,7 @@ class TicketController extends Controller
         return response()->json($formattedData);
     }
 
-    public function getUsers(){
-    
-    }
+
     
     
 }

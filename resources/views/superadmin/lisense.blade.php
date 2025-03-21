@@ -70,7 +70,7 @@
     console.log("Clicked Organization ID:", orgId);
 
     $.ajax({
-        url: "/quickmate/admin/organizations/lisense/" + orgId,
+        url: "{{ route('lisenseorganizations.show', ':id') }}".replace(':id', orgId),
         type: "GET",
         success: function (response) {
             console.log("Response Data:", response);

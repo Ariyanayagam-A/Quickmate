@@ -257,8 +257,8 @@
     function viewTicket(ticketId) {
     $('#ticketid').val(ticketId);
     $.ajax({
-        url: `ticket/view/${ticketId}`,
-        type: 'GET',
+      url: "{{ route('ticket.view', ':id') }}".replace(':id', ticketId),
+      type: 'GET',
         contentType: 'application/json',
         success: function(response) {
             console.log('response : ', response);

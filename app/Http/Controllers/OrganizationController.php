@@ -32,7 +32,7 @@ class OrganizationController extends Controller
             'admin_phone' => 'required|string',
             'designation' => 'required|string',
             'domain_name' => 'required|string|max:255', 
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048' // Validate logo upload
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
     
         // Handle file upload
@@ -59,7 +59,7 @@ class OrganizationController extends Controller
             'admin_phone' => $request->admin_phone,
             'designation' => $request->designation,
             'domain_name' => $request->domain_name,
-            'realm_id' => 4, // Generate unique ID
+            'realm_id' => 22, // Generate unique ID
             'logo' => $logoPath, // Store the file path in the DB
         ]);
 
@@ -78,7 +78,7 @@ class OrganizationController extends Controller
         // Store token in the database (if you have a column for it)
         $organization->update(['token' => $token]);
     
-        return redirect()->back()->with('success', 'Organization stored successfully with JWT token!');
+        return redirect()->back()->with('success', 'Organization stored successfully!');
     }
     public function getOrganizations(Request $request)
 {

@@ -13,7 +13,7 @@
 	{{-- <link rel="stylesheet" href="style.css"> --}}
   <link rel="stylesheet" href="{{ asset('assets/dist/css/loginform.css') }}" />
 	</head>
-	<body class="img js-fullheight" style="background-image: url({{ asset('assets/dist/assets/img/bg.jpg') }}); overflow-y: hidden;">
+	<body class="img js-fullheight" style="background-image: url({{ asset('assets/dist/assets/img/login-bg.jpg') }}); overflow-y: hidden;">
 	<section class="ftco-section">
 		<div class="container">
 			<div class="row justify-content-center">

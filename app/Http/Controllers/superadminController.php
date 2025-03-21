@@ -11,6 +11,11 @@ class superadminController extends Controller
         return view('superadmin.dashboard')->with('activeLink','dashboard');
     }
 
+    public function dashboard()
+    {
+        return view('admin.dashboard');
+    }
+
     public function addorgnization(){
        
         return view('superadmin.organization');    

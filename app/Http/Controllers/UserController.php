@@ -168,6 +168,7 @@ class UserController extends Controller
 
   public function import(Request $request)
   {
+    
       // Validate the uploaded file
       $request->validate([
           'file' => 'required|mimes:xlsx,xls'
@@ -196,7 +197,8 @@ class UserController extends Controller
       }
     //   dd($data);
       User::insert($data);
-      return response()->json(['message' => 'Users imported successfully!']);
+      return redirect()->route('import-user')->with('success', 'Users imported successfully!');
+
   }
   
 }

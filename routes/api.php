@@ -6,7 +6,11 @@ use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 // use Carbon\Carbon;
 use Illuminate\Support\Facades\Response;
+use App\Http\Controllers\AuthenticationController;
 
+Route::get('/quickmate/kloudstack/authenticate', [AuthenticationController::class, 'showSuccessPage'])
+    ->middleware('role.auth')
+    ->name('auth.success');
 
 
 Route::middleware('auth:sanctum')->group(function(){

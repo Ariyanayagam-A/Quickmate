@@ -22,7 +22,6 @@ return new class extends Migration {
             $table->string('admin_email');
             $table->string('admin_phone');
             $table->string('designation');
-            $table->string('domail_name');
             $table->timestamps();
         });
     }
