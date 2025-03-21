@@ -197,8 +197,10 @@ class TicketController extends Controller
 
     public function adminTicketsList()
     {
+        
 
         $tickets = Ticket::with('category','user')->orderBy('id', 'desc')->get();
+        
 
         return Datatables::of($tickets)
                 ->addIndexColumn()

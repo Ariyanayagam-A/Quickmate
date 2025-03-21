@@ -83,6 +83,7 @@ class AdminController extends Controller
 
     public function getTickets()
     {
+        
         return view('admin.tickets')->with('activeLink','tickets');
     }
 
