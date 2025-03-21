@@ -7,13 +7,25 @@ use DataTables;
 use App\Models\Organization;
 // use Tymon\JWTAuth\Facades\JWTAuth;
 use Firebase\JWT\JWT;
+use App\Services\MasterAuthService;
 
 
 class OrganizationController extends Controller
-{
+{ 
+    private $masterAuthService;
+    public function __construct(MasterAuthService $masterAuthService)
+    {
+        $this->masterAuthService = $masterAuthService;
+    }
     public function addorg()
     {
         return view('organization.addorg');
+    }
+
+    public function test()
+    {
+        
+       return $this->masterAuthService->createOrgRealm();
     }
     public function store(Request $request)
     {
