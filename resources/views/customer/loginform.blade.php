@@ -1,104 +1,107 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <title>{{  env('APP_NAME') }} | Login Page</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title> Qicktick</title>
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
 
-		<!-- Meta -->
-		<meta name="description" content="Marketplace for Bootstrap Admin Dashboards" />
-		<meta name="author" content="Bootstrap Gallery" />
-		<link rel="canonical" href="https://www.bootstrap.gallery/">
-		<meta property="og:url" content="https://www.bootstrap.gallery">
-		<meta property="og:title" content="Admin Templates - Dashboard Templates | Bootstrap Gallery">
-		<meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
-		<meta property="og:type" content="Website">
-		<meta property="og:site_name" content="Bootstrap Gallery">
-		<link rel="shortcut icon" href="{{ asset('assets/images/logo-qickmate.png') }}"/>
-
-		<!-- *************
-			************ CSS Files *************
-		************* -->
-		<!-- Icomoon Font Icons css -->
-		<link rel="stylesheet" href="{{ asset('assets/fonts/icomoon/style.css') }}" />
-
-		<!-- Main CSS -->
-		<link rel="stylesheet" href="{{ asset('assets/css/main.min.css') }}" />
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-		<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
-
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"> -->
+     
+	{{-- <link rel="stylesheet" href="style.css"> --}}
+  <link rel="stylesheet" href="{{ asset('assets/dist/css/loginform.css') }}" />
 	</head>
-
-	<body class="bg-one">
-		<!-- Container start -->
+	<body class="img js-fullheight" style="background-image: url({{ asset('assets/dist/assets/img/bg.jpg') }}); overflow-y: hidden;">
+	<section class="ftco-section">
 		<div class="container">
 			<div class="row justify-content-center">
-				<div class="col-xl-4 col-lg-5 col-sm-6 col-12">
-					<form action="{{ route('customer.login') }}" method="POST" class="my-5">
-                        @csrf
-						<div class="card p-md-4 p-sm-3">
-							<div class="login-form">
-								<a href="index.html" class="mb-4 d-flex">
-									<img src="{{ asset('assets/images/logo-qickmate.png') }}" class="img-fluid login-logo" alt="Bootstrap Gallery" />
-								</a>
-								<h2 class="mt-4 mb-4">Login</h2>
-                                @if (session('error'))
-								<div class="alert alert-danger alert-dismissible fade show" role="alert">
-									{{ session('error') }}
-									<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">Quickmate Login</h2>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-md-6 col-lg-4">
+					<div class="login-wrap p-0">
+		      	<!-- <h3 class="mb-4 text-center"></h3> -->
+		      	<form action="{{ route('customer.login') }}" method="POST" class="signin-form">
+              @csrf
+              @if (session('error'))
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+              @endif
+		      		<div class="form-group">
+                {{-- <input type="text" name="name_email" required class="form-control" placeholder="Enter your email" /> --}}
+		      			<input type="text"  name="name_email" required class="form-control" placeholder="Enter your email" required>
+		      		</div>
+	            <div class="form-group">
+                {{-- <input type="password" name="password" required class="form-control" placeholder="Enter password" /> --}}
+	              <input id="password-field" name="password" required type="password" class="form-control" placeholder="Password" required>
+	              <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+	            </div>
+	            <div class="form-group">
+	            	<button type="submit" class="form-control btn btn-primary submit px-3">Sign In</button>
+	            </div>
+	            <div class="form-group d-md-flex">
+	            	<div class="w-50">
+		            	<label class="checkbox-wrap checkbox-primary">Remember Me
+									  <input type="checkbox" checked>
+									  <span class="checkmark"></span>
+									</label>
 								</div>
-                                @endif
-								<div class="mb-3">
-									<label class="form-label">Email</label>
-									<input type="text" name="email" required class="form-control" placeholder="Enter your email" />
-								</div>
-								<div class="mb-3">
-									<label class="form-label">Password</label>
-									<div class="input-group">
-										<input type="password" name="password" required class="form-control" placeholder="Enter password" />
-										<a href="#" class="input-group-text">
-											<i class="icon-eye"></i>
-										</a>
-									</div>
-								</div>
-								<div class="d-flex align-items-center justify-content-between">
-									<div class="form-check m-0">
-										<input class="form-check-input" type="checkbox" value="" id="rememberPassword" />
-										<label class="form-check-label" for="rememberPassword">Remember</label>
-									</div>
-									<a href="forgot-password.html" class="text-success text-decoration-underline">Lost password?</a>
-								</div>
-								<div class="d-grid py-3 mt-3">
-									<button type="submit" class="btn btn-lg btn-success">
-										LOGIN
-									</button>
-								</div>
-								<div class="text-center py-2">or Login with</div>
-								<div class="btn-group w-100">
-									<button type="button" class="btn btn-sm btn-outline-light">
-										Google
-									</button>
-									<button type="button" class="btn btn-sm btn-outline-light">
-										Facebook
-									</button>
-									<button type="button" class="btn btn-sm btn-outline-light">
-										Twitter
-									</button>
-								</div>
-								<div class="text-center pt-4">
-									<span>Not registered?</span>
-									<a href="{{ route('customer.register')}}" class="text-success text-decoration-underline">
-										SignUp</a>
-								</div>
-							</div>
-						</div>
-					</form>
+							
+	            </div>
+	          </form>
+	          <p class="w-100 text-center">&mdash; Or Sign In With &mdash;</p>
+	          <div class="social d-flex text-center">
+              
+ {{-- <a href="{{ route('azure.login') }}" class="btn btn-warning">
+  <i class="bi bi-microsoft me-2"></i> Sign in using Microsoft
+</a> --}}
+
+	          	<a href="{{ route('azure.login') }}" class="px-2 py-2 mr-md-1 rounded"><span class="ion-logo-microsoft mr-2"></span>Microsoft</a>
+	          	
+	          </div>
+		      </div>
 				</div>
 			</div>
 		</div>
-		<!-- Container end -->
-	</body>
+	</section>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.8/umd/popper.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    (function($) {
 
+"use strict";
+
+var fullHeight = function() {
+
+    $('.js-fullheight').css('height', $(window).height());
+    $(window).resize(function(){
+        $('.js-fullheight').css('height', $(window).height());
+    });
+
+};
+fullHeight();
+
+$(".toggle-password").click(function() {
+
+  $(this).toggleClass("fa-eye fa-eye-slash");
+  var input = $($(this).attr("toggle"));
+  if (input.attr("type") == "password") {
+    input.attr("type", "text");
+  } else {
+    input.attr("type", "password");
+  }
+});
+
+})(jQuery);
+
+</script>
+</body>
 </html>
+

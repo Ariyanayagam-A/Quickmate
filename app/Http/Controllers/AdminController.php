@@ -14,6 +14,25 @@ class AdminController extends Controller
         return view('admin.dashboard')->with('activeLink','dashboard');
     }
 
+    public function assets(){
+        // return view('superadmin.assets');
+        session()->flash('success', 'User added successfully!');
+
+        return view('admin.assets');
+    }
+
+    public function addsiem(){
+        session()->flash('success', 'User added successfully!');
+
+        return view('admin.siem');
+    }
+
+    public function manageuser(){
+        // session()->flash('success', 'User added successfully!');
+
+        return view('admin.manageuser');
+    }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -66,4 +85,12 @@ class AdminController extends Controller
     {
         return view('admin.tickets')->with('activeLink','tickets');
     }
+
+
+    public function configurations()
+    {
+        return view('admin.configurations')->with('activeLink','tickets');
+    }
+    
 }
+

@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', 
-        function (Blueprint $table) {
-            $table->id(); 
-            $table->string('name')->unique();
-            $table->tinyInteger('status'); 
-            $table->timestamps(); 
+        Schema::table('organizations', function (Blueprint $table) {
+            $table->string('token')->nullable()->change();
         });
     }
 
@@ -25,6 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('categories');
+        Schema::table('organizations', function (Blueprint $table) {
+            $table->string('token')->nullable(false)->change(); // Revert the change if needed
+            //
+        });
     }
 };

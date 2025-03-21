@@ -1,50 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.supportlayout.app')
 
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Bootstrap Gallery - Support Desk Admin Template</title>
+@section('title', 'Agent Page')
 
-    <!-- Meta -->
-    <meta name="description" content="Marketplace for Bootstrap Admin Dashboards" />
-    <meta name="author" content="Bootstrap Gallery" />
-    <link rel="canonical" href="https://www.bootstrap.gallery/">
-    <meta property="og:url" content="https://www.bootstrap.gallery">
-    <meta property="og:title" content="Admin Templates - Dashboard Templates | Bootstrap Gallery">
-    <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
-    <meta property="og:type" content="Website">
-    <meta property="og:site_name" content="Bootstrap Gallery">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" href="{{ asset('assets/images/favicon.svg')}}" />
+@section('content')
 
-    <!-- *************
-			************ CSS Files *************
-		************* -->
-    <!-- Icomoon Font Icons css -->
-    <link rel="stylesheet" href="{{ asset('assets/fonts/icomoon/style.css') }}" />
 
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/main.min.css')}}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
+ 
 
-    <!-- *************
-			************ Vendor Css Files *************
-		************ -->
-
-    <!-- Scrollbar CSS -->
-    <link rel="stylesheet" href="assets/vendor/overlay-scroll/OverlayScrollbars.min.css" />
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-       
-  </head>
-
-  <body>
-
+ 
+    <main class="app-main">
     <!-- Page wrapper start -->
     <div class="page-wrapper">
 
@@ -52,103 +16,14 @@
       <div class="app-container">
 
         <!-- App header starts -->
-        <div class="app-header d-flex align-items-center">
-
-          <!-- Container starts -->
-          <div class="container">
-
-            <!-- Row starts -->
-            <div class="row">
-              <div class="col-md-3 col-2">
-
-                <!-- App brand starts -->
-                <div class="app-brand">
-                  <a href="index.html" class="d-lg-block d-none">
-                    <img src="{{ asset('assets/images/logo.svg') }}" class="logo" alt="Bootstrap Gallery" />
-                  </a>
-                  <a href="index.html" class="d-lg-none d-md-block">
-                    <img src="{{ asset('assets/images/logo-sm.svg')}}" class="logo" alt="Bootstrap Gallery" />
-                  </a>
-                </div>
-                <!-- App brand ends -->
-
-              </div>
-
-              <div class="col-md-9 col-10">
-                <!-- App header actions start -->
-                <div class="header-actions d-flex align-items-center justify-content-end">
-
-                  <!-- Search container start -->
-                  <!-- <div class="search-container d-none d-lg-block">
-                    <input type="text" class="form-control" placeholder="Search" />
-                    <i class="icon-search"></i>
-                  </div> -->
-                  <!-- Search container end -->
-
-                  <!-- <div class="dropdown">
-                    <a class="dropdown-toggle d-flex p-3 position-relative" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <img src="assets/images/flags/1x1/br.svg" class="flag-img" alt="Brazil" />
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end shadow-sm dropdown-menu-mini">
-                      <div class="country-container">
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/us.svg" alt="USA" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/in.svg" alt="India" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/tr.svg" alt="Turkey" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/gb.svg" alt="Great Britain" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/id.svg" alt="Indonesia" />
-                        </a>
-                      </div>
-                    </div>
-                  </div> -->
-                  <form id="logout-form" action="{{ route('customer.logout')}}" method="POST" style="display: none;">
-                    @csrf    
-                    </form>
-                  <div class="dropdown ms-2">
-                    <a class="dropdown-toggle d-flex align-items-center user-settings" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <span class="d-none d-md-block">{{ auth()->user()->name }} </span>
-                      <img src="{{ asset('assets/images/user3.png') }}" class="img-3x m-2 me-0 rounded-5" alt="Bootstrap Gallery" />
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-sm shadow-sm gap-3">
-                      <a class="dropdown-item d-flex py-2" href="agent-profile.html">User Profile</a>
-                      <a class="dropdown-item d-flex py-2" href="account-settings.html">Account
-                        Settings</a>
-                        <a href="#" class="dropdown-item d-flex py-2" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-           
-                    </div>
-                  </div>
-
-                  <!-- Toggle Menu starts -->
-                  <button class="btn btn-success btn-sm ms-3 d-lg-none d-md-block" type="button"
-                    data-bs-toggle="offcanvas" data-bs-target="#MobileMenu">
-                    <i class="icon-menu"></i>
-                  </button>
-                  <!-- Toggle Menu ends -->
-
-                </div>
-                <!-- App header actions end -->
-
-              </div>
-            </div>
-            <!-- Row ends -->
-
-          </div>
-          <!-- Container ends -->
-
-        </div>
+       
         <!-- App header ends -->
 
         <!-- App navbar starts -->
+       
+        <!-- App Navbar ends -->
+
+        <!-- App body starts -->
         <nav class="navbar navbar-expand-lg p-0">
           <div class="container">
             <div class="offcanvas offcanvas-end" id="MobileMenu">
@@ -160,20 +35,7 @@
               </div>
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle active-link" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false" >
-                    Tickets
-                  </a>
-                  <ul class="dropdown-menu">
-                   
-                    <li>
-                      <a class="dropdown-item" href="open-tickets.html"><span>All Tickets</span></a>
-                    </li>
-                  
-                  </ul>
-                </li>
-
+               
                <!-- Assign model -->
                <div class="modal modal-lg" id="myModal">
                 <div class="modal-dialog modal-dialog-centered">
@@ -181,8 +43,9 @@
 
                     <!-- Modal Header -->
                     <div class="modal-header">
-                      <h4 class="modal-title">Support Ticket</h4>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                      <h4 class="modal-title">Engineer Desk</h4>
+                      <button type="button" class="btn-close close" data-bs-dismiss="modal"></button>
+                      {{-- <button type="button" class="btn btn-danger close" data-bs-dismiss="modal">Close</button> --}}
                     </div>
 
                     <div class="modal-body">
@@ -208,7 +71,13 @@
                           rows="4" readonly></textarea>
                       </div>
 
-                      <!-- Ticket Feedback -->
+                       <!-- Ticket Image -->
+                <div class="form-group mb-3">
+                  <label for="ticketImage" class="form-label">Ticket Image</label>
+                  <img id="ticketImage" src="" alt="Ticket Image" class="img-fluid" style="max-width: 100%; height: auto;">
+              </div>
+
+                      {{-- <!-- Ticket Feedback -->
                       <div class="form-group mb-3">
                         <label for="feedback" class="form-label">Ticket Feedback</label>
                         <textarea 
@@ -225,7 +94,7 @@
                           class="btn btn-primary btn-sm px-4">
                           Submit
                         </button>
-                      </div>
+                      </div> --}}
                     </div>
 
 
@@ -240,77 +109,17 @@
                 </div>
               </div>
                <!-- Assign model -->
-
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    Login
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a class="dropdown-item" href="login.html">
-                        <span>Login</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="signup.html">
-                        <span>Signup</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="reset-password.html">
-                        <span>Reset Password</span>
-                      </a>
-                    </li>
-                    <li>
-                      <a class="dropdown-item" href="forgot-password.html">
-                        <span>Forgot Password</span>
-                      </a>
-                    </li>
-                   
-                   
-                  </ul>
-                </li>
               </ul>
             </div>
           </div>
         </nav>
-        <!-- App Navbar ends -->
-
-        <!-- App body starts -->
         <div class="app-body">
 
           <!-- Container starts -->
           <div class="container">
 
             <!-- Row start -->
-            <div class="row">
-              <div class="col-12 col-xl-6">
-
-                <!-- Breadcrumb start -->
-                <!-- <ol class="breadcrumb mb-3">
-                  <li class="breadcrumb-item">
-                    <i class="icon-home lh-1"></i>
-                    <a href="index.html" class="text-decoration-none">Home</a>
-                  </li>
-                  <li class="breadcrumb-item">Tickets</li>
-                  <li class="breadcrumb-item text-light">Open Tickets</li>
-                </ol> -->
-
-                <ol class="breadcrumb mb-3">
-                 
-                  <li class="breadcrumb-item ">
-                
-                    Tickets
-                  </li>
-                  <li class="breadcrumb-item text-light">
-                    <i class="fa-solid fa-greater-than"></i>
-                    Open Tickets</li>
-                </ol>
-                <!-- Breadcrumb end -->
-
-              </div>
-            </div>
+          
             <!-- Row end -->
 
             <!-- Row start -->
@@ -322,7 +131,7 @@
                       <table id="table" class="table table-bordered table-striped align-middle m-0 tickets">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th>S.no</th>
                             <th>View Ticket</th>
                             <th>Request by</th>
                             <th>Email</th>
@@ -349,17 +158,17 @@
         <!-- App body ends -->
 
         <!-- App footer start -->
-        <div class="app-footer">
-          <div class="container">
-            <span>© Azeusbros</span>
-          </div>
-        </div>
+       
         <!-- App footer end -->
 
       </div>
       <!-- App container ends -->
 
     </div>
+  </main>
+  <!--end::App Main-->
+ 
+</div>
     <!-- Page wrapper end -->
 
     <!-- Custom JS files -->
@@ -447,36 +256,43 @@
           });
         }
 
-        function viewTicket(ticketId)
-        {
-          $('#ticketid').val(ticketId)
-          $.ajax({
-            url: `ticket/view/${ticketId}`,
-            type: 'GET',
-            contentType: 'application/json',
-            success: function(response){
-              console.log('response : ',response);
-              if(response.status == 'success')
-              {
-                console.log('response data => ',response.data);
+ function viewTicket(ticketId) {
+    $('#ticketid').val(ticketId);
+    $.ajax({
+        url: `ticket/view/${ticketId}`,
+        type: 'GET',
+        contentType: 'application/json',
+        success: function(response) {
+            console.log('response : ', response);
+            if (response.status == 'success') {
+                console.log('response data => ', response.data);
+
+                // Populate the form fields
                 $('#subject').val(response.data.subject);
                 $('#description').val(response.data.summary);
                 $('#feedback').val(response.data.feedback);
+
+                // Set the image source
+                if (response.data.image) {
+                    const imageUrl = `/storage/${response.data.image}`;
+                    // console.log('Image URL:', imageUrl); // Debugging: Check the constructed URL
+                    $('#ticketImage').attr('src', imageUrl);
+                    $('#ticketImage').show(); // Show the image element
+                } else {
+                    $('#ticketImage').hide(); // Hide the image element if no file is uploaded
+                }
+
+                // Show the modal
                 $('#myModal').show();
-              }
-              else{
+            } else {
                 alert('Something went wrong');
-              }
-
-            },
-            error: function(error){
-              console.log(error);
             }
-          });
-
-
+        },
+        error: function(error) {
+            console.log(error);
         }
-
+    });
+}
         function closeRejectTicket(object,ticketId)
         {
           // console.log('type : ',);
@@ -503,6 +319,4 @@
         }
         
     </script>
-  </body>
-
-</html>
+ @endsection

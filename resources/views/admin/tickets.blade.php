@@ -1,355 +1,420 @@
-<!DOCTYPE html>
-<html lang="en">
 
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin <?=
-   isset($activeLink) && !empty($activeLink) ? ucfirst($activeLink) : ''?> </title>
+      @extends('layouts.adminlayout.app')
 
-    <!-- Meta -->
-    <meta name="description" content="Marketplace for Bootstrap Admin Dashboards" />
-    <meta name="author" content="Bootstrap Gallery" />
-    <link rel="canonical" href="https://www.bootstrap.gallery/">
-    <meta property="og:url" content="https://www.bootstrap.gallery">
-    <meta property="og:title" content="Admin Templates - Dashboard Templates | Bootstrap Gallery">
-    <meta property="og:description" content="Marketplace for Bootstrap Admin Dashboards">
-    <meta property="og:type" content="Website">
-    <meta property="og:site_name" content="Bootstrap Gallery">
-    <link rel="shortcut icon" href="assets/images/favicon.svg" />
+      @section('title', 'Dashboard')
+      
+      @section('content')
+      <!--end::Header-->
+      <!--begin::Sidebar-->
+     
+      <!--end::Sidebar-->
+      <!--begin::App Main-->
+      
+    <main class="app-main">
 
-    <!-- *************
-			************ CSS Files *************
-		************* -->
-    <!-- Icomoon Font Icons css -->
-    <link rel="stylesheet" href="{{ asset('assets/fonts/icomoon/style.css') }}" />
+       <!-- Row start -->
 
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="{{ asset('assets/css/main.min.css')}}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-    <!-- datatables -->
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
 
-  </head>
+    <select id="statusFilter" style="
+    width: 20%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 8px;">
+        <option value="">All</option>
+        <option value="Open">Open</option>
+        <option value="On Hold">On Hold</option>
+        <option value="Rejected">Rejected</option>
+        <option value="Solved">Solved</option>
+    </select>
 
-  <body>
+       <div class="row">
+        <div class="col-12 col-xl-6">
 
-    <!-- Page wrapper start -->
-    <div class="page-wrapper">
+          <!-- Breadcrumb start -->
+         
 
-      <!-- App container starts -->
-      <div class="app-container">
-
-        <!-- App header starts -->
-        <div class="app-header d-flex align-items-center">
-
-          <!-- Container starts -->
-          <div class="container">
-
-            <!-- Row starts -->
-            <div class="row">
-              <div class="col-md-3 col-2">
-
-                <!-- App brand starts -->
-                <div class="app-brand">
-                  <a href="index.html" class="d-lg-block d-none">
-                    <img src="{{ asset('assets/images/logo-qickmate.png')}}" class="logo" alt="Bootstrap Gallery" />
-                  </a>
-                  <a href="index.html" class="d-lg-none d-md-block">
-                    <img src="{{ asset('assets/images/logo-qickmate.png') }}" class="logo" alt="Bootstrap Gallery" />
-                  </a>
-                </div>
-                <!-- App brand ends -->
-
-              </div>
-
-              <div class="col-md-9 col-10">
-                <!-- App header actions start -->
-                <div class="header-actions d-flex align-items-center justify-content-end">
-
-                  <!-- Search container start -->
-                  <!-- <div class="search-container d-none d-lg-block">
-                    <input type="text" class="form-control" placeholder="Search" />
-                    <i class="icon-search"></i>
-                  </div> -->
-                  <!-- Search container end -->
-
-                  <!-- <div class="dropdown">
-                    <a class="dropdown-toggle d-flex p-3 position-relative" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <img src="assets/images/flags/1x1/br.svg" class="flag-img" alt="Brazil" />
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end shadow-sm dropdown-menu-mini">
-                      <div class="country-container">
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/us.svg" alt="USA" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/in.svg" alt="India" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/tr.svg" alt="Turkey" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/gb.svg" alt="Great Britain" />
-                        </a>
-                        <a href="index.html" class="py-2">
-                          <img src="assets/images/flags/1x1/id.svg" alt="Indonesia" />
-                        </a>
-                      </div>
-                    </div>
-                  </div> -->
-                  <div class="dropdown d-sm-block d-none">
-                    <a class="dropdown-toggle d-flex p-3 position-relative" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa-regular fa-envelope"></i>
-                      <span class="count rounded-circle bg-danger">9</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-md shadow-sm">
-                      <h5 class="fw-semibold px-3 py-2 m-0">Messages</h5>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <div class="p-3 bg-danger rounded-circle me-3">
-                            MS
-                          </div>
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Moory Sammy</h6>
-                            <p class="mb-1">Sent a mail.</p>
-                            <p class="small m-0 opacity-50">3 Mins Ago</p>
-                          </div>
-                        </div>
-                      </a>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <div class="p-3 bg-primary rounded-circle me-3">
-                            KY
-                          </div>
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Kyle Yomaha</h6>
-                            <p class="mb-1">Need support.</p>
-                            <p class="small m-0 opacity-50">5 Mins Ago</p>
-                          </div>
-                        </div>
-                      </a>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <div class="p-3 bg-success rounded-circle me-3">
-                            SB
-                          </div>
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Srinu Basava</h6>
-                            <p class="mb-1">Purchased a NotePad.</p>
-                            <p class="small m-0 opacity-50">7 Mins Ago</p>
-                          </div>
-                        </div>
-                      </a>
-                      <div class="d-grid p-3 border-top">
-                        <a href="javascript:void(0)" class="btn btn-outline-primary">View all</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="dropdown d-sm-block d-none">
-                    <a class="dropdown-toggle d-flex p-3 position-relative" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <i class="fa-regular fa-message"></i>
-                      <span class="count rounded-circle bg-danger">5</span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-md shadow-sm">
-                      <h5 class="fw-semibold px-3 py-2 m-0">Notifications</h5>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <img src="assets/images/user.png" class="img-3x me-3 rounded-3" alt="Admin Themes" />
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Sophie Michiels</h6>
-                            <p class="mb-1">Membership has been ended.</p>
-                            <p class="small m-0 opacity-50">Today, 07:30pm</p>
-                          </div>
-                        </div>
-                      </a>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <img src="assets/images/user2.png" class="img-3x me-3 rounded-3" alt="Admin Theme" />
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Sophie Michiels</h6>
-                            <p class="mb-1">Congratulate, James for new job.</p>
-                            <p class="small m-0 opacity-50">Today, 08:00pm</p>
-                          </div>
-                        </div>
-                      </a>
-                      <a href="javascript:void(0)" class="dropdown-item">
-                        <div class="d-flex align-items-start py-2">
-                          <img src="assets/images/user1.png" class="img-3x me-3 rounded-3" alt="Admin Theme" />
-                          <div class="m-0">
-                            <h6 class="mb-1 fw-semibold">Sophie Michiels</h6>
-                            <p class="mb-1">
-                              Lewis added new schedule release.
-                            </p>
-                            <p class="small m-0 opacity-50">Today, 09:30pm</p>
-                          </div>
-                        </div>
-                      </a>
-                      <div class="d-grid p-3 border-top">
-                        <a href="javascript:void(0)" class="btn btn-outline-primary">View all</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="dropdown ms-2">
-                    <a class="dropdown-toggle d-flex align-items-center user-settings" href="#!" role="button"
-                      data-bs-toggle="dropdown" aria-expanded="false">
-                      <span class="d-none d-md-block">{{ auth()->user()->name}}</span>
-                      <img src="{{ asset('assets/images/user3.png')}}" class="img-3x m-2 me-0 rounded-5" alt="Bootstrap Gallery" />
-                    </a>
-                    <form id="logout-form" action="{{ route('customer.logout')}}" method="POST" style="display: none;">
-                    @csrf    
-                    </form>
-                    <div class="dropdown-menu dropdown-menu-end dropdown-menu-sm shadow-sm gap-3">
-                      <a class="dropdown-item d-flex align-items-center py-2" href="agent-profile.html">User Profile</a>
-                      <a class="dropdown-item d-flex align-items-center py-2" href="account-settings.html">
-                          Account
-                        Settings</a>
-                        <a href="#" class="dropdown-item d-flex align-items-center py-2" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
-                      
-                    </div>
-                  </div>
-
-                  <!-- Toggle Menu starts -->
-                  <button class="btn btn-success btn-sm ms-3 d-lg-none d-md-block" type="button"
-                    data-bs-toggle="offcanvas" data-bs-target="#MobileMenu">
-                    <i class="icon-menu"></i>
-                  </button>
-                  <!-- Toggle Menu ends -->
-
-                </div>
-                <!-- App header actions end -->
-
-              </div>
-            </div>
-            <!-- Row ends -->
-
-          </div>
-          <!-- Container ends -->
+          <ol class="breadcrumb m-3">
+            
+            <li class="breadcrumb-item ">
+              All Ticket
+            </li>
+          </ol>
+          <!-- Breadcrumb end -->
 
         </div>
-        <!-- App header ends -->
+      </div>
+      {{-- <input type="text" id="searchBox" onkeyup="searchTable()" class="form-control mb-3" placeholder="Search .."> --}}
+   <!-- Assign model -->
+   <div class="modal modal-lg" id="myModal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
 
-        <!-- App navbar starts -->
-        @include('admin.layouts.navbar')
-        <!-- App Navbar ends -->
-
-        <!-- App body starts -->
-        <div class="app-body">
-
-          <!-- Container starts -->
-          <div class="container">
-
-            <!-- Row start -->
-            <div class="row">
-              <div class="col-12 col-xl-6">
-
-                <!-- Breadcrumb start -->
-                <ol class="breadcrumb mb-3">
-                  <li class="breadcrumb-item">
-                    <i class="fa-solid fa-house"></i>
-                    <a href="agents.html" class="text-decoration-none">Home</a>
-                  </li>
-                  <li class="breadcrumb-item text-light">
-                    <i class="fa-solid fa-greater-than"></i>
-                    Admin</li>
-                    <li class="breadcrumb-item text-light">
-                    <i class="fa-solid fa-greater-than"></i>
-                    Tickets</li>
-                </ol>
-              </div>
-            </div>
-            <!-- Row end -->
-
-            <!-- Row start -->
-            <div class="row">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-2 mb-3">
-              <label for="ticket" class="form-label">Select Ticket Mode</label>
-              <select class="form-select" id="ticket" aria-label="Select Ticket Mode">
-                <option selected>Filter by</option>
-                <option value="1">Pending</option>
-                <option value="2">Closed</option>
-                <option value="3">Solved</option>
-              </select>
-            </div>
-              <div class="col-12 mt-2">
-                <div class="card mb-2">
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-striped align-middle m-0 tickets">
-                        <thead>
-                          <tr>
-                            <th>#</th>
-                            <th>Ticket.no</th>
-                            <th>Title</th>
-                            <th>Created On</th>
-                            <th>Category</th>
-                            <th>Description</th>
-                            <th>Updated On</th>
-                            <th>level</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                          </tr>
-                        </thead>
-                        <tbody></tbody>
-
-                      </table>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <!-- Row end -->
-
-          </div>
-          <!-- Container ends -->
-
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Ticket</h4>
+          <button type="button" class="btn-close close" data-bs-dismiss="modal"></button>
+          {{-- <button type="button" class="btn btn-danger close" data-bs-dismiss="modal">Close</button> --}}
         </div>
-        <!-- App body ends -->
 
-        <!-- App footer start -->
-        <div class="app-footer">
-          <div class="container">
-            <span>© Azeusbros</span>
+        <div class="modal-body">
+          <h2 class="text-center mb-4">Ticket Details</h2>
+          
+          <!-- Ticket Subject -->
+          <div class="form-group mb-3">
+            <label for="subject" class="form-label">Ticket Subject</label>
+            <input 
+              type="text" 
+              name="subject" 
+              id="subject" 
+              class="form-control" readonly>
           </div>
+          
+          <!-- Ticket Description -->
+          <div class="form-group mb-3">
+            <label for="description" class="form-label">Ticket Description</label>
+            <textarea 
+              name="description" 
+              id="description" 
+              class="form-control" 
+              rows="4" readonly></textarea>
+          </div>
+
+          <p>Created Time: <span id="created_time"></span></p>
+          <p>Assigned Time: <span id="assigned_time"></span></p>
+          <p>Solved Time: <span id="solved_time"></span></p>
+          <p>Rejected Time: <span id="rejected_time"></span></p>
+
+
+           <!-- Ticket Image -->
+    <div class="form-group mb-3">
+      <label for="ticketImage" class="form-label">Ticket Image</label>
+      <img id="ticketImage" src="" alt="Ticket Image" class="img-fluid" style="max-width: 100%; height: auto;">
+  </div>
+
+          {{-- <!-- Ticket Feedback -->
+          <div class="form-group mb-3">
+            <label for="feedback" class="form-label">Ticket Feedback</label>
+            <textarea 
+              name="feedback" 
+              id="feedback" 
+              class="form-control" 
+              rows="4"></textarea>
+          </div> --}}
+          
+          <!-- Submit Button -->
+          {{-- <div class="d-flex justify-content-center">
+            <button 
+              id="submitBtn" 
+              class="btn btn-primary btn-sm px-4">
+              Submit
+            </button>
+          </div> --}}
         </div>
-        <!-- App footer end -->
+
+
+        <input type="hidden" name="ticketid" id="ticketid" value="">
+        <input type="hidden" name="is_edit" id="is_edit" value="0">
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger close" data-bs-dismiss="modal">Close</button>
+        </div>
 
       </div>
-      <!-- App container ends -->
-
     </div>
-    <!-- Page wrapper end -->
+  </div>
 
-    <!-- Custom JS files -->
-    <script type="text/javascript">
-        $(function() {
-            console.log($('.tickets')); // Ensure it logs the table element
 
-        var table = $('.tickets').DataTable({
+  <!-- Assign Ticket Modal -->
+<div class="modal fade" id="assignTicketModal" tabindex="-1" aria-labelledby="assignTicketLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignTicketLabel">Assign Ticket</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="assignTicketForm">
+          <input type="hidden" id="ticket_id" name="ticket_id">
+          <div class="mb-3">
+            <label for="assignee" class="form-label">Assign to Engineer</label>
+            <select class="form-control" id="assignee" name="assignee" required>
+              <option value="" selected disabled>-- Select Engineer --</option>
+              <option value="3">Sabari</option>
+              <option value="4">Karthikeyan</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="priority" class="form-label">Priority Level</label>
+            <select class="form-control" id="priority" name="priority" required>
+              <option value="" selected disabled>-- Select Priority --</option>
+              <option value="1">L1</option>
+              <option value="2">L2</option>
+              <option value="3">L3</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Assign Ticket</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+      <!-- Modal for Viewing Ticket Details -->
+
+       <div class="row">
+        <div class="col-12">
+          <div class="card mb-2">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table id="dataTable" class="table ticketstable table-bordered table-striped align-middle m-0">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>Ticket ID</th>
+                      <th>Requested by</th>
+                      <th>Email</th>
+                      <th>Subject</th>
+                      <th>Category </th>
+                      <th>Engineer</th>
+                      <th>Indicator</th>
+                      <th>Level</th>
+                      <th>Status</th>
+                      {{-- <th>Created At</th> --}}
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                   <tbody>
+
+                   </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Row end -->
+    
+
+    </main>
+ 
+
+
+  
+
+
+
+    <script>
+   $(function() {
+
+    
+
+        console.log($('.tickets')); // Ensure it logs the table element
+
+        var table = $('.ticketstable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('tickets.list') }}",
+        "ordering": false,
+        ajax: "{{ route('tickets.adminlist') }}",
         columns: [
             { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             {data : 'ticket_no', name: 'ticket_no'},
+            {data : 'requested_by', name: 'requested_by'},
+            {data : 'email', name: 'email'},
             {data: 'title', name: 'title'},
-            {data: 'created_at', name: 'created_at'},
             {data: 'category', name: 'category'},
-            {data: 'description', name: 'description'},
-            {data: 'updated_at', name: 'updated_at'},
+            {data: 'assigned_to', name: 'assigned_to'},
+            {data: 'indicator', name: 'indicator'},
             {data: 'level', name: 'level'},
             {data: 'status', name: 'status'},
+            // {data: 'created_at', name: 'created_at'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
     });  
-        });
-    </script>
-  </body>
 
-</html>
+       // Dropdown filter functionality
+    
+
+
+    });
+
+    function formatDateTime(dateString) {
+    if (!dateString) return 'N/A'; // Handle null or undefined values
+
+    let date = new Date(dateString);
+    if (isNaN(date.getTime())) return 'Invalid Date'; // Handle invalid date formats
+
+    return date.toLocaleString(); // Format it based on the user's locale
+}
+
+
+
+
+    
+    function viewTicket(ticketId) {
+    $('#ticketid').val(ticketId);
+    $.ajax({
+        url: `ticket/view/${ticketId}`,
+        type: 'GET',
+        contentType: 'application/json',
+        success: function(response) {
+            console.log('response : ', response);
+            if (response.status == 'success') {
+                console.log('response data => ', response.data);
+
+                // Populate the form fields
+                $('#subject').val(response.data.subject);
+                $('#description').val(response.data.summary);
+                $('#feedback').val(response.data.feedback);
+                $('#created_time').text(formatDateTime(response.data.created_at));
+                $('#assigned_time').text(formatDateTime(response.data.assigned_at));
+                $('#solved_time').text(formatDateTime(response.data.deleted_at));
+                $('#rejected_time').text(formatDateTime(response.data.closed_at));
+                // Set the image source
+                if (response.data.image) {
+                    const imageUrl = `/storage/${response.data.image}`;
+                    // console.log('Image URL:', imageUrl); // Debugging: Check the constructed URL
+                    $('#ticketImage').attr('src', imageUrl);
+                    $('#ticketImage').show(); // Show the image element
+                } else {
+                    $('#ticketImage').hide(); // Hide the image element if no file is uploaded
+                }
+
+                // Show the modal
+                $('#myModal').show();
+            } else {
+                alert('Something went wrong');
+            }
+        },
+        error: function(error) {
+            console.log(error);
+        }
+    });
+}
+
+$('.close').click(function(){
+          $('#myModal').hide();
+        })
+
+        
+
+
+    </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const currentStatus = urlParams.get("status") || ""; // Get status from URL
+
+      document.querySelectorAll(".dropdown-item").forEach(item => {
+          if (item.getAttribute("data-status") === currentStatus) {
+              item.classList.add("active");
+          } else {
+              item.classList.remove("active");
+          }
+
+          // Change status when clicking a dropdown item
+          item.addEventListener("click", function () {
+              document.querySelectorAll(".dropdown-item").forEach(i => i.classList.remove("active"));
+              this.classList.add("active");
+
+              // Update URL (optional)
+              const newUrl = new URL(window.location);
+              newUrl.searchParams.set("status", this.getAttribute("data-status"));
+              window.history.pushState({}, "", newUrl);
+          });
+      });
+  });
+</script>
+
+<script>
+  $(document).ready(function () {
+      // Open modal when clicking the "Assign Ticket" button
+      $(document).on('click', '.assign-ticket-btn', function () {
+          let ticketId = $(this).data('id');
+          $('#ticket_id').val(ticketId); // Set hidden input value
+          $('#assignTicketModal').modal('show'); // Show the modal
+      });
+  
+      // Handle form submission
+      $('#assignTicketForm').submit(function (e) {
+          e.preventDefault();
+  
+          let ticketId = $('#ticket_id').val();
+          let assignee = $('#assignee').val();
+          let priority = $('#priority').val();
+  
+          $.ajax({
+              url: "{{ route('assign.ticket-admin') }}", // Route to handle assignment
+              type: "POST",
+              data: {
+                  _token: "{{ csrf_token() }}",
+                  ticket_id: ticketId,
+                  assignee: assignee,
+                  priority: priority
+              },
+              success: function (response) {
+                  alert(response.message); // Show success message
+                  $('#assignTicketModal').modal('hide'); // Hide modal
+                  $('.ticketstable').DataTable().ajax.reload(); // Reload DataTable
+              },
+              error: function (xhr) {
+            let errorMessage = xhr.responseJSON.message;
+            alert(errorMessage); // Show error message if already assigned
+             }
+          });
+      });
+  });
+
+  $(document).on("click", ".delete-ticket-btn", function () {
+    let ticketId = $(this).data("id");
+
+    if (!confirm("Are you sure you want to reject this ticket?")) {
+        return;
+    }
+
+    $.ajax({
+        url: "{{ route('reject.ticket') }}", // Create this route in web.php
+        type: "POST",
+        data: {
+            _token: "{{ csrf_token() }}",
+            ticket_id: ticketId
+        },
+        success: function (response) {
+            alert(response.message);
+            location.reload(); // Refresh the table after status update
+        },
+        error: function (xhr) {
+            alert("Something went wrong!");
+        }
+    });
+});
+
+  </script>
+
+<script>
+  $(document).ready(function() {
+    var table = $('.ticketstable').DataTable(); // Initialize DataTable
+
+$('#statusFilter').on('change', function () {
+    var status = $(this).val(); // Get selected status
+
+    if (status === "") {
+        table.column(9).search('').draw(); // Show all tickets
+    } else {
+        table.column(9).search(status).draw(); // Filter by status
+    }
+});
+
+  });
+
+
+</script>
+
+
+  
+
+@endsection
