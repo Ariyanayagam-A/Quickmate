@@ -24,6 +24,7 @@ class OrganizationController extends Controller
 
     public function test()
     {
+        
        return $this->masterAuthService->createOrgRealm();
     }
     public function store(Request $request)
