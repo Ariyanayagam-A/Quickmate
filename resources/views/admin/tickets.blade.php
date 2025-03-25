@@ -359,7 +359,7 @@ $('.close').click(function(){
               success: function (response) {
                   alert(response.message); // Show success message
                   $('#assignTicketModal').modal('hide'); // Hide modal
-                  $('.ticketstable').DataTable().ajax.reload(); // Reload DataTable
+                  $('.ticketstable').DataTable().ajax.reload(null,false); // Reload DataTable
               },
               error: function (xhr) {
             let errorMessage = xhr.responseJSON.message;
@@ -377,21 +377,23 @@ $('.close').click(function(){
     }
 
     $.ajax({
-        url: "{{ route('reject.ticket') }}", // Create this route in web.php
+        url: "{{ route('reject.ticket') }}", // Ensure this route exists in web.php
         type: "POST",
         data: {
-            _token: "{{ csrf_token() }}",
+            _token: "{{ csrf_token() }}", // Blade syntax only works inside .blade.php files
             ticket_id: ticketId
         },
         success: function (response) {
             alert(response.message);
-            location.reload(); // Refresh the table after status update
+            $('.ticketstable').DataTable().ajax.reload(null, false); // Reload DataTable
         },
         error: function (xhr) {
             alert("Something went wrong!");
+            console.error(xhr.responseText); // Log the error for debugging
         }
     });
 });
+
 
   </script>
 

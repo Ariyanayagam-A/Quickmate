@@ -148,15 +148,13 @@ Route::middleware('superadmin')->prefix('quickmate/admin')->group(function () {
     Route::get('/organizations/data', [OrganizationController::class, 'getOrganizations'])->name('organizations.data');
     Route::get('/lisense/organizations/data', [OrganizationController::class, 'getLisenseOrganizations'])->name('lisense.organizations.data');
     Route::get('/organizations/lisense/{id}', [OrganizationController::class, 'lisenseshow'])->name('lisenseorganizations.show');
-    Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy']);
-
-
-    
-
+    Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy'])->name('organizations.delete');
     Route::get('/organizations/{id}', [OrganizationController::class, 'show'])->name('organizations.show');
     Route::post('/organizations/approve/{id}', [OrganizationController::class, 'approve'])->name('organizations.approve');
     Route::get('lisense', [superadminController::class,'lisense'])->name('super.admin.lisense');
-
+    Route::get('/organizations/{id}/edit', [OrganizationController::class, 'edit'])->name('organizations.edit');
+    Route::post('/organization/update/{id}', [OrganizationController::class, 'update'])->name('organization.update');
+    
 });
 
 

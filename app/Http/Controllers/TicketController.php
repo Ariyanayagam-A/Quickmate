@@ -208,10 +208,10 @@ class TicketController extends Controller
                     return $row->ticket_id;
                 })
                ->addColumn('requested_by', function($row){
-                    return $row->user->name;
+                    return $row->user->name ?? '-';
                 })
                 ->addColumn('email', function($row){
-                    return $row->user->email;
+                    return $row->user->email ?? '-';
                 })
                 ->addColumn('title', function($row){
                     return $row->subject;
@@ -276,13 +276,17 @@ class TicketController extends Controller
                                 <i class="bi bi-eye"></i>
                             </button>';
                 
-                    // Show Assign and Reject buttons only if status is not 3 (Rejected)
+                    // Show Assign and Reject buttons only if status is not 2 (Assigned) or 3 (Rejected)
                     if ($row->status != 2 && $row->status != 3) {
+                        // Check if 'assignee' is NULL or empty before showing the Assign button
+                        if (empty($row->assignee)) { 
+                            $btn .= '<br/>
+                                     <button class="btn btn-outline-warning btn-sm assign-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-warning" title="Assign Ticket">
+                                        <i class="bi bi-pencil-square"></i>
+                                     </button>';
+                        }
+                        
                         $btn .= '<br/>
-                                 <button class="btn btn-outline-warning btn-sm assign-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-warning" title="Assign Ticket">
-                                    <i class="bi bi-pencil-square"></i>
-                                 </button>
-                                 <br/>
                                  <button class="btn btn-outline-danger btn-sm delete-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-danger" title="Reject Ticket">
                                     <i class="bi bi-x-circle"></i>
                                  </button>';
@@ -290,6 +294,7 @@ class TicketController extends Controller
                 
                     return $btn;
                 })
+                
                 
                 ->rawColumns(['action','status','level','indicator'])
                 ->make(true);

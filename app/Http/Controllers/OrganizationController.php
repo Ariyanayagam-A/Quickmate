@@ -7,6 +7,7 @@ use DataTables;
 use App\Models\Organization;
 // use Tymon\JWTAuth\Facades\JWTAuth;
 use Firebase\JWT\JWT;
+use Illuminate\Support\Facades\Storage;
 
 
 class OrganizationController extends Controller
@@ -59,7 +60,9 @@ class OrganizationController extends Controller
             'admin_phone' => $request->admin_phone,
             'designation' => $request->designation,
             'domain_name' => $request->domain_name,
-            'realm_id' => 22, // Generate unique ID
+            'realm_id' => 29, // Generate unique ID
+            'realm'=> 'kloudstack22',
+            'master_orgid' => 12, // Set master organization ID
             'logo' => $logoPath, // Store the file path in the DB
         ]);
 
@@ -116,6 +119,9 @@ public function getLisenseOrganizations(Request $request)
     ->addColumn('action', function ($row) {
         return '
             <button class="btn btn-primary btn-sm view-details" data-id="'.$row->id.'">View Details</button>
+             <button class="btn btn-sm btn-warning update-btn" data-id="'.$row->id.'">Update</button>
+            <button class="btn btn-sm btn-danger delete-btn" data-id="'.$row->id.'">Delete</button>
+
         ';
     })
     ->rawColumns(['action']) // This allows rendering HTML buttons properly
@@ -161,6 +167,76 @@ public function getLisenseOrganizations(Request $request)
     $organization->save();
 
     return response()->json(['success' => true, 'message' => 'Organization approved successfully!']);
+}
+
+public function edit($id)
+{
+    $organization = Organization::find($id);
+    if (!$organization) {
+        return response()->json(['success' => false, 'message' => 'Organization not found.'], 404);
+    }
+
+    return response()->json(['success' => true, 'data' => $organization]);
+}
+
+public function update(Request $request, $id)
+{
+    $organization = Organization::find($id);
+    if (!$organization) {
+        return response()->json(['success' => false, 'message' => 'Organization not found.'], 404);
+    }
+
+    // Validate the request
+    $request->validate([
+        'organization_name' => 'required|string',
+        'industry' => 'required|string',
+        'organization_type' => 'required|string',
+        'organization_size' => 'required|string',
+        'website_url' => 'nullable|url',
+        'official_email' => 'required|email',
+        'phone_number' => 'required|string',
+        'address' => 'required|string',
+        'admin_name' => 'required|string',
+        'admin_email' => 'required|email',
+        'admin_phone' => 'required|string',
+        'designation' => 'required|string',
+        'domain_name' => 'required|string|max:255',
+        'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
+    ]);
+
+    // Handle logo update
+    if ($request->hasFile('logo')) {
+        // Delete old logo if exists
+        if ($organization->logo) {
+            Storage::disk('public')->delete($organization->logo);
+        }
+
+        $logoFile = $request->file('logo');
+        $logoName = time() . '_' . $logoFile->getClientOriginalName();
+        $logoPath = $logoFile->storeAs('logos', $logoName, 'public');
+    } else {
+        $logoPath = $organization->logo;
+    }
+
+    // Update organization details
+    $organization->update([
+        'organization_name' => $request->organization_name,
+        'industry' => $request->industry,
+        'organization_type' => $request->organization_type,
+        'organization_size' => $request->organization_size,
+        'website_url' => $request->website_url,
+        'official_email' => $request->official_email,
+        'phone_number' => $request->phone_number,
+        'address' => $request->address,
+        'admin_name' => $request->admin_name,
+        'admin_email' => $request->admin_email,
+        'admin_phone' => $request->admin_phone,
+        'designation' => $request->designation,
+        'domain_name' => $request->domain_name,
+        'logo' => $logoPath
+    ]);
+
+    return response()->json(['success' => true, 'message' => 'Organization updated successfully!']);
 }
     
 }
