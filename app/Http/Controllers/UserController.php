@@ -9,6 +9,10 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ExcelImport;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
+
+
 
 class UserController extends Controller
 {
@@ -200,5 +204,49 @@ class UserController extends Controller
       return redirect()->route('import-user')->with('success', 'Users imported successfully!');
 
   }
+
+
+  public function storeUser(Request $request)
+  {
+      // 1️⃣ Validate request
+      $request->validate([
+          'token' => 'required|string',
+      ]);
+  
+      try {
+          // 2️⃣ Get Secret Key from .env
+          $secretKey = env('JWT_SECRET');
+  
+          // 3️⃣ Decode JWT Token using Firebase JWT
+          $payload = JWT::decode($request->token, new Key($secretKey, 'HS256'));
+  
+          // 4️⃣ Extract User Data
+          $username = $payload->username ?? null;
+          $email = $payload->email ?? null;
+          $password = $payload->password ?? null;
+
+        //   dd($username , $email , $password);
+  
+          if (!$username || !$email || !$password) {
+              return response()->json(['error' => 'Invalid token payload'], 400);
+          }
+  
+          // 5️⃣ Store User Data in Database
+          $user = User::create([
+              'name' => $username,
+              'email' => $email,
+              'password' => Hash::make($password), // Secure password
+          ]);
+  
+          // 6️⃣ Return Response
+          return response()->json([
+              'success' => 'User created successfully!',
+              'user' => $user
+          ], 201);
+  
+      } catch (\Exception $e) {
+          return response()->json(['error' => 'Invalid token: ' . $e->getMessage()], 400);
+      }
+    }
   
 }
