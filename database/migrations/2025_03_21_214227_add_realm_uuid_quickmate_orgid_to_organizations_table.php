@@ -7,16 +7,16 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('organizations', function (Blueprint $table) {
-            $table->string('realm', 100)->after('id'); // Adjust 'id' if needed
-            $table->string('uuid', 100)->after('realm')->unique()->default('uuid');
-            $table->string('master_orgid', 100)->after('uuid');
+            // $table->string('realm', 100)->after('id'); // Adjust 'id' if needed
+            // $table->string('uuid', 100)->after('realm')->unique()->default('uuid');
+            // $table->string('master_orgid', 100)->after('uuid');
         });
     }
 
     public function down()
     {
         Schema::table('organizations', function (Blueprint $table) {
-            $table->dropColumn(['realm', 'uuid', 'quickmate_orgid']);
+            // $table->dropColumn(['realm', 'uuid', 'quickmate_orgid']);
         });
     }
 };

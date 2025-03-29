@@ -8,6 +8,9 @@ use App\Models\Organization;
 // use Tymon\JWTAuth\Facades\JWTAuth;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Http;
+
+
 
 
 class OrganizationController extends Controller
@@ -16,9 +19,11 @@ class OrganizationController extends Controller
     {
         return view('organization.addorg');
     }
+  
+    
     public function store(Request $request)
     {
-        // Validate the request
+        // Validate request
         $request->validate([
             'organization_name' => 'required|string',
             'industry' => 'required|string',
@@ -32,20 +37,33 @@ class OrganizationController extends Controller
             'admin_email' => 'required|email',
             'admin_phone' => 'required|string',
             'designation' => 'required|string',
-            'domain_name' => 'required|string|max:255', 
+            'domain_name' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
     
         // Handle file upload
+        $logoPath = null;
         if ($request->hasFile('logo')) {
             $logoFile = $request->file('logo');
-            $logoName = time() . '_' . $logoFile->getClientOriginalName(); // Unique filename
-            $logoPath = $logoFile->storeAs('logos', $logoName, 'public'); // Save in storage/app/public/logos
-        } else {
-            $logoPath = null; // No file uploaded
+            $logoName = time() . '_' . $logoFile->getClientOriginalName();
+            $logoPath = $logoFile->storeAs('logos', $logoName, 'public'); 
         }
     
-        // Store organization details in DB
+        // Define the data to send to Node.js
+        $nodeAppUrl = 'http://localhost:5000/create-realm';
+        $realmData = ['realmName' => $request->domain_name];
+    
+        // Send data to Node.js first
+        $response = Http::withHeaders([
+            'Content-Type' => 'application/json',
+        ])->post($nodeAppUrl, $realmData);
+    
+        // Check if Node.js request was successful
+        if ($response->failed()) {
+            return redirect()->back()->with('error', 'Failed to send realmName to Node.js app.');
+        }
+    
+        // Store organization details in DB only if Node.js request is successful
         $organization = Organization::create([
             'organization_name' => $request->organization_name,
             'industry' => $request->industry,
@@ -60,29 +78,28 @@ class OrganizationController extends Controller
             'admin_phone' => $request->admin_phone,
             'designation' => $request->designation,
             'domain_name' => $request->domain_name,
-            'realm_id' => 29, // Generate unique ID
-            'realm'=> 'kloudstack22',
-            'master_orgid' => 12, // Set master organization ID
-            'logo' => $logoPath, // Store the file path in the DB
+            'realm_id' => 324,
+            'realm' => 'kloudstack22',
+            'master_orgid' => 17,
+            'logo' => $logoPath,
         ]);
-
-       
-        
+    
         // Generate JWT token
-        $secretKey = env('JWT_SECRET'); // Ensure to set this in your .env file
+        $secretKey = env('JWT_SECRET'); 
         $payload = [
             'id' => $organization->id,
             'organization_name' => $organization->organization_name,
             'issued_at' => time(),
-            'expires_at' => time() + 86400, // 1 day expiration
+            'expires_at' => time() + 86400, // 1-day expiration
         ];
         $token = JWT::encode($payload, $secretKey, 'HS256');
-      
-        // Store token in the database (if you have a column for it)
+    
+        // Store token in the database (if column exists)
         $organization->update(['token' => $token]);
     
         return redirect()->back()->with('success', 'Organization stored successfully!');
     }
+    
     public function getOrganizations(Request $request)
 {
     $organizations = Organization::select(['id', 'organization_name', 'official_email'])->where('is_active', 0);
@@ -237,6 +254,36 @@ public function update(Request $request, $id)
     ]);
 
     return response()->json(['success' => true, 'message' => 'Organization updated successfully!']);
+}
+
+public function showOrganizations()
+{
+    // Fetch organizations that don't already have both authorization and client secret enabled
+    $organizations = Organization::where(function ($query) {
+        $query->whereNull('is_authorize')
+              ->orWhere('is_authorize', false);
+    })
+    ->whereNull('secret')
+    ->get();
+
+    return view('superadmin.verifyorg', compact('organizations'));
+}
+
+public function verify(Request $request) {
+    $request->validate([
+        'organization_id' => 'required|exists:organizations,id',
+        'authorization_enabled' => 'nullable|boolean',
+        'client_secret_enabled' => 'nullable|string',
+    ]);
+    // dd($request->all()); 
+
+    $organization = Organization::findOrFail($request->organization_id);
+    $organization->is_authorize = $request->has('authorization_enabled');
+    $organization->secret = $request->client_secret_enabled;
+    
+    $organization->save();
+
+    return redirect()->back()->with('success', 'Organization settings updated successfully.');
 }
     
 }

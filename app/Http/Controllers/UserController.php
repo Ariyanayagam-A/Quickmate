@@ -186,20 +186,20 @@ class UserController extends Controller
       $data = $import->data;
       $index = 0;
       // Loop through the data and insert into the users table
-      foreach ($data as $row) {
-    //    dd($row);
+      foreach ($data as $index => $row) {
         $data[$index] = [
             'name' => $row['name'] ?? 'Unknown', 
             'email' => $row['email'],
-            'password' => Hash::make('password123'), 
-            'role' => 1, // Default role
+            'password' => $row['password'], // Use already hashed password
+            'role' => 1,
             'email_verified_at' => null,
-            'realm_id' => $row['realm_id'] ?? 1, // Match key correctly
-            'organization_id' => $row['organization_id'] ?? 1, // Match key correctly
+            'realm_id' => $row['realm_id'] ?? 1,
+            'organization_id' => $row['organization_id'] ?? 1,
+            'created_at' => now(),
+            'updated_at' => now(),
         ];
-        $index++;
       }
-    //   dd($data);
+    // dd($data);
       User::insert($data);
       return redirect()->route('import-user')->with('success', 'Users imported successfully!');
 
@@ -224,18 +224,20 @@ class UserController extends Controller
           $username = $payload->username ?? null;
           $email = $payload->email ?? null;
           $password = $payload->password ?? null;
-
-        //   dd($username , $email , $password);
   
           if (!$username || !$email || !$password) {
               return response()->json(['error' => 'Invalid token payload'], 400);
           }
   
-          // 5️⃣ Store User Data in Database
+          // 5️⃣ Store User Data in Database with Default Values
           $user = User::create([
               'name' => $username,
               'email' => $email,
               'password' => Hash::make($password), // Secure password
+              'realm_id' => $payload->realm_id ?? 1, // Default to 1 if not provided
+              'organization_id' => $payload->organization_id ?? 1, // Default to 1 if not provided
+              'role' => $payload->role ?? 1, // Default role
+              'email_verified_at' => now(), // Auto-verify email
           ]);
   
           // 6️⃣ Return Response
@@ -247,6 +249,43 @@ class UserController extends Controller
       } catch (\Exception $e) {
           return response()->json(['error' => 'Invalid token: ' . $e->getMessage()], 400);
       }
-    }
+  }
+
+  public function newuserstore(Request $request)
+  {
+      $request->validate([
+          'name' => 'required|string|max:255',
+          'email' => 'required|email|unique:users',
+          'password' => 'required|min:6',
+          'role' => 'required|string'
+      ]);
+
+      // Assign role value
+      $roleValues = [
+          'user' => 1,
+          'support team' => 2,
+          'engineer' => 3,
+      ];
+
+      $roleValue = $roleValues[$request->role] ?? null;
+
+      if ($roleValue === null) {
+          return back()->withErrors(['role' => 'Invalid role selected']);
+      }
+        // dd($roleValue);
+      // Create user
+      User::create([
+          'name' => $request->name,
+          'email' => $request->email,
+          'password' => Hash::make($request->password),
+          'role' => $roleValue,
+          'realm_id' => null,  // Change this if needed
+          'organization_id' => null, // Change this if needed
+          'email_verified_at' => now(),
+      ]);
+
+      return redirect()->back()->with('success', 'User registered successfully!');
+  }
+  
   
 }

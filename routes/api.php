@@ -66,9 +66,12 @@ Route::get('/user/generate-token', function (Request $request) {
     $expireAt  = Carbon::now()->addDays(1)->timestamp;
 
     // Get user details from headers (Default values if missing)
-    $username = $request->header('Username', 'mairu');
-    $email = $request->header('Email', 'mairu12@example.com');
+    $username = $request->header('Username', 'Bottle man');
+    $email = $request->header('Email', 'boomer12@example.com');
     $password = $request->header('Password', 'password123'); // Not storing, just included for payload
+    $realmId = $request->header('Realm-Id', 29); // Default realm_id
+    $organizationId = $request->header('Organization-Id', 71); // Default organization_id
+    $role = $request->header('Role', 1); // Default role
 
     // JWT Payload (No Database Interaction)
     $payload = [
@@ -77,7 +80,10 @@ Route::get('/user/generate-token', function (Request $request) {
         'exp' => $expireAt,  // Expiration time
         'username' => $username,
         'email' => $email,
-        'password' => $password // Just for reference, avoid sending sensitive data in JWT
+        'password' => $password, // Just for reference, avoid sending sensitive data in JWT
+        'realm_id' => $realmId,
+        'organization_id' => $organizationId,
+        'role' => $role
     ];
 
     // Generate JWT token

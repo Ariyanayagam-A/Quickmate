@@ -29,6 +29,8 @@ class Organization extends Model
         'realm_id',
         'realm',
         'master_orgid',
+        'is_authorize',
+        'secret',
     ];
 
     public function users()

@@ -11,7 +11,6 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\superadminController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\AuthenticationController;
-// use App\Http\Controllers\AuthController;
 
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -132,6 +131,9 @@ Route::middleware('admin')->prefix('admin')->group(function () {
         })->name('import-user');
         Route::post('/import-excel', [UserController::class, 'import'])->name('import-excel');
 
+        Route::post('/user/store', [UserController::class, 'newuserstore'])->name('new.user.store');
+
+
 
 
 
@@ -154,7 +156,8 @@ Route::middleware('superadmin')->prefix('quickmate/admin')->group(function () {
     Route::get('lisense', [superadminController::class,'lisense'])->name('super.admin.lisense');
     Route::get('/organizations/{id}/edit', [OrganizationController::class, 'edit'])->name('organizations.edit');
     Route::post('/organization/update/{id}', [OrganizationController::class, 'update'])->name('organization.update');
-    
+    Route::get('/organization/verifyorg', [OrganizationController::class, 'showOrganizations'])->name('organization.list');
+    Route::post('/verifyorg/update', [OrganizationController::class, 'verify'])->name('superadmin.verifyorg.update');
 });
 
 

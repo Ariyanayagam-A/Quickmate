@@ -134,7 +134,7 @@
                 <p><strong>Admin Name:</strong> <span id="admin-name"></span></p>
                 <p><strong>Admin Email:</strong> <span id="admin-email"></span></p>
                 <p><strong>Admin Phone:</strong> <span id="admin-phone"></span></p>
-                <p><strong>Designation:</strong> <span id="designation"></span></p>
+                <p><strong>Designation:</strong> <span id="ldesignation"></span></p>
             </div>
         </div>
     </div>
@@ -178,7 +178,7 @@
                 $('#admin-name').text(response.admin_name || "N/A");
                 $('#admin-email').text(response.admin_email || "N/A");
                 $('#admin-phone').text(response.admin_phone || "N/A");
-                $('#designation').text(response.designation || "N/A");
+                $('#ldesignation').text(response.designation || "N/A");
                 $('#org-domain').text(response.domain_name || "N/A");
                 // Check and display logo
                 if (response.logo) {

@@ -2,6 +2,7 @@
 namespace App\Imports;
 
 use Maatwebsite\Excel\Concerns\ToArray;
+use Illuminate\Support\Facades\Hash; // Import Hash
 
 class ExcelImport implements ToArray
 {
@@ -17,6 +18,9 @@ class ExcelImport implements ToArray
             $this->data[] = [
                 'name' => $row[0] ?? null,
                 'email' => $row[1] ?? null,
+                'password' => isset($row[2]) ? Hash::make($row[2]) : Hash::make('password123'), // Hash password
+                'realm_id' => $row[3] ?? 1,  
+                'organization_id' => $row[4] ?? 1,
             ];
         }
     }

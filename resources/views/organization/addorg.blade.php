@@ -122,7 +122,7 @@
                           <div class="col-md-6">
                             <label for="logo" class="form-label">Upload Logo</label>
                             <div class="input-group mb-3">
-                                <input type="file" class="form-control" id="logo" name="logo" />
+                                <input type="file" class="form-control" id="logo" name="logo" required />
                                 <label class="input-group-text" for="logo">Logo Upload</label>
                             </div>
                         </div>
