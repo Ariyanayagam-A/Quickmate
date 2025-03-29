@@ -48,20 +48,75 @@ class OrganizationController extends Controller
             $logoName = time() . '_' . $logoFile->getClientOriginalName();
             $logoPath = $logoFile->storeAs('logos', $logoName, 'public'); 
         }
-    
-        // Define the data to send to Node.js
-        $nodeAppUrl = 'http://localhost:5000/create-realm';
-        $realmData = ['realmName' => $request->domain_name];
-    
-        // Send data to Node.js first
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->post($nodeAppUrl, $realmData);
-    
-        // Check if Node.js request was successful
-        if ($response->failed()) {
-            return redirect()->back()->with('error', 'Failed to send realmName to Node.js app.');
+
+        $url = "https://sso.kloudstacks.com/api/v1/auth/create"; // Your API endpoint
+
+        $data = [
+            "username" => "Siva123",
+            // "password" => "pass123"
+        ];
+        
+        // Convert data to JSON
+        $jsonData = json_encode($data);
+        
+        // Initialize cURL
+        $ch = curl_init($url);
+        
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Content-Type: application/json",
+            "Content-Length: " . strlen($jsonData)
+        ]);
+
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+        
+        // Execute request and get response
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        
+        // Check for cURL errors
+        if (curl_errno($ch)) {
+            $error_message = 'cURL Error: ' . curl_error($ch);
+            \Log::error($error_message); // Log the error for debugging
+            curl_close($ch);
+            return redirect()->back()->with('error', 'Failed to send realmName to Node.js app. ' . $error_message);
         }
+        
+        // Close cURL
+        curl_close($ch);
+        
+        // Decode JSON response
+        $responseData = json_decode($response, true);
+        
+        // Handle HTTP errors
+        if ($httpCode >= 400) {
+            $error_message = "API Request Failed. HTTP Code: $httpCode. Response: " . json_encode($responseData);
+            \Log::error($error_message);
+            return redirect()->back()->with('error', $error_message);
+        }
+        
+        // Success response handling
+        return redirect()->back()->with('success', 'API request successful! Response: ' . json_encode($responseData));
+        
+
+            
+        // // Define the data to send to Node.js
+        // $nodeAppUrl = 'https://sso.kloudstacks.com/api/v1/auth/create';
+        // $realmData = ['realmName' => $request->domain_name];
+    
+        // // Send data to Node.js first
+        // $response = Http::withHeaders([
+        //     'Content-Type' => 'application/json',
+        // ])->post($nodeAppUrl, $realmData);
+    
+        // // Check if Node.js request was successful
+        // if ($response->failed()) {
+        //     return redirect()->back()->with('error', 'Failed to send realmName to Node.js app.');
+        // }
     
         // Store organization details in DB only if Node.js request is successful
         $organization = Organization::create([
