@@ -11,16 +11,18 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
 
 
-
-
 class OrganizationController extends Controller
-{
+{ 
+    private $masterAuthService;
+    public function __construct(MasterAuthService $masterAuthService)
+    {
+        $this->masterAuthService = $masterAuthService;
+    }
     public function addorg()
     {
         return view('organization.addorg');
     }
-  
-    
+ 
     public function store(Request $request)
     {
         // Validate request

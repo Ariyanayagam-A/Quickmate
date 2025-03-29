@@ -11,11 +11,11 @@ class LdapService
     public function __construct()
     {
         $this->connection = new Connection([
-            'hosts' => [env('LDAP_HOSTS')],
-            'port' => env('LDAP_PORT', 389),
-            'base_dn' => env('LDAP_BASE_DN'),
-            'username' => env('LDAP_USERNAME'),
-            'password' => env('LDAP_PASSWORD'),
+            'hosts' => [env('LDAP_HOSTS',"20.168.243.12")],
+            'port' => env('LDAP_PORT', default: "389"),
+            'base_dn' => env('LDAP_BASE_DN',"DC=demodc,DC=local"),
+            'username' => env('LDAP_USERNAME',"dcadmin@demodc.local"),
+            'password' => env('LDAP_PASSWORD',"Password@2024"),
             'use_ssl' => false,
             'use_tls' => false,
         ]);
