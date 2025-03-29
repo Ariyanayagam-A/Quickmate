@@ -67,6 +67,16 @@
                   <p>Manage Users</p>
                 </a>
               </li>
+
+              <li class="nav-item">
+                <a href="{{route('import-user')}}" class="nav-link">
+                  <i class="nav-icon bi bi-clipboard2-check"></i>
+                  <p>Add Users</p>
+                </a>
+              </li>
+
+
+              
              
               <li class="nav-item">
                 <a href="{{route('admin.categories')}}" class="nav-link {{ Request::routeIs('admin.categories') ? 'active' : ''}}">

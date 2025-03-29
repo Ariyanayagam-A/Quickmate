@@ -27,6 +27,10 @@ class Organization extends Model
         'token', 
         'is_active',
         'realm_id',
+        'realm',
+        'master_orgid',
+        'is_authorize',
+        'secret',
     ];
 
     public function users()

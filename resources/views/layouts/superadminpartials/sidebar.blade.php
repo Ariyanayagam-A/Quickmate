@@ -67,6 +67,12 @@
                     <p>Lisenced Organisation</p>
                   </a>
                 </li>
+                <li class="nav-item">
+                  <a href="{{ route('organization.list') }}" class="nav-link">
+                    <i class="nav-icon bi  bi-clipboard2-check"></i>
+                    <p>Verify Organisation</p>
+                  </a>
+                </li>
               </ul>
             </li>
 

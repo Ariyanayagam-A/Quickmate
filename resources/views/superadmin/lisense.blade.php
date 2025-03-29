@@ -16,7 +16,98 @@
             </tr>
         </thead>
     </table>
-    
+    <!-- Update Modal -->
+<!-- Update Organization Modal -->
+<div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Update Organization</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateForm" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" id="org_id" name="id">
+
+                    <div class="mb-3">
+                        <label class="form-label">Organization Name</label>
+                        <input type="text" class="form-control" id="organization_name" name="organization_name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Industry</label>
+                        <input type="text" class="form-control" id="industry" name="industry" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Organization Type</label>
+                        <input type="text" class="form-control" id="organization_type" name="organization_type" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Organization Size</label>
+                        <input type="text" class="form-control" id="organization_size" name="organization_size" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Website URL</label>
+                        <input type="text" class="form-control" id="website_url" name="website_url">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Official Email</label>
+                        <input type="email" class="form-control" id="official_email" name="official_email">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" id="phone_number" name="phone_number">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" class="form-control" id="address" name="address">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Admin Name</label>
+                        <input type="text" class="form-control" id="admin_name" name="admin_name">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Admin Email</label>
+                        <input type="email" class="form-control" id="admin_email" name="admin_email">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Admin Phone</label>
+                        <input type="text" class="form-control" id="admin_phone" name="admin_phone">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Designation</label>
+                        <input type="text" class="form-control" id="designation" name="designation">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Domain Name</label>
+                        <input type="text" class="form-control" id="domain_name" name="domain_name">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Logo</label>
+                        <input type="file" class="form-control" id="logo" name="logo">
+                        <img id="preview_logo" src="" class="img-fluid mt-2" style="max-height: 100px;">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Bootstrap Modal -->
 <!-- Bootstrap Modal -->
 <div class="modal fade" id="organizationModal" tabindex="-1" aria-labelledby="orgModalLabel" aria-hidden="true">
@@ -43,7 +134,7 @@
                 <p><strong>Admin Name:</strong> <span id="admin-name"></span></p>
                 <p><strong>Admin Email:</strong> <span id="admin-email"></span></p>
                 <p><strong>Admin Phone:</strong> <span id="admin-phone"></span></p>
-                <p><strong>Designation:</strong> <span id="designation"></span></p>
+                <p><strong>Designation:</strong> <span id="ldesignation"></span></p>
             </div>
         </div>
     </div>
@@ -56,7 +147,7 @@
                 serverSide: true,
                 ajax: "{{ route('lisense.organizations.data') }}",
                 columns: [
-                    { data: 'organization_name', name: 'organization_name' },
+                    { data: 'organization_name', name: 'organization_name'},
                     { data: 'official_email', name: 'official_email' },
                     { data: 'action', name: 'action', orderable: false, searchable: false }
                 ]
@@ -67,10 +158,10 @@
    $(document).ready(function () {
                 $('#organizations-table').on('click', '.view-details', function () {
     var orgId = $(this).data('id');  
-    console.log("Clicked Organization ID:", orgId);
+    // console.log("Clicked Organization ID:", orgId);
 
     $.ajax({
-        url: "/quickmate/admin/organizations/lisense/" + orgId,
+        url: "{{ route('lisenseorganizations.show', ':id') }}".replace(':id', orgId),
         type: "GET",
         success: function (response) {
             console.log("Response Data:", response);
@@ -87,7 +178,7 @@
                 $('#admin-name').text(response.admin_name || "N/A");
                 $('#admin-email').text(response.admin_email || "N/A");
                 $('#admin-phone').text(response.admin_phone || "N/A");
-                $('#designation').text(response.designation || "N/A");
+                $('#ldesignation').text(response.designation || "N/A");
                 $('#org-domain').text(response.domain_name || "N/A");
                 // Check and display logo
                 if (response.logo) {
@@ -108,6 +199,95 @@
     });
 });
 });
+
+$(document).on('click', '.delete-btn', function() {
+    
+    let organizationId = $(this).data('id');
+
+    if (!confirm("Are you sure you want to delete this organization?")) return;
+
+    $.ajax({
+        url: "/quickmate/admin/organizations/delete/" + organizationId, // Correct URL format
+        type: 'DELETE',
+        data: {
+            _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+            if (response.success) {
+                alert(response.message);
+                location.reload();
+            }
+        },
+        error: function(xhr) {
+            console.error(xhr.responseText);
+            alert('Error deleting organization.');
+        }
+    });
+});
+
+$(document).ready(function() {
+    // Open update modal and fetch data from server
+    $(document).on('click', '.update-btn', function () {
+    let organizationId = $(this).data('id'); // Get the ID from data-id attribute
+     $.ajax({
+            url: '/quickmate/admin/organizations/' + organizationId + '/edit',
+            type: 'GET',
+            success: function(response) {  // "response" contains the full object
+    let orgData = response.data; // Extract the actual organization data
+
+    console.log(orgData); // Debugging step to confirm data
+
+    $('#org_id').val(orgData.id);
+    $('#organization_name').val(orgData.organization_name);
+    $('#industry').val(orgData.industry);
+    $('#organization_type').val(orgData.organization_type);
+    $('#organization_size').val(orgData.organization_size);
+    $('#website_url').val(orgData.website_url);
+    $('#official_email').val(orgData.official_email);
+    $('#phone_number').val(orgData.phone_number);
+    $('#address').val(orgData.address);
+    $('#admin_name').val(orgData.admin_name);
+    $('#admin_email').val(orgData.admin_email);
+    $('#admin_phone').val(orgData.admin_phone);
+    $('#designation').val(orgData.designation);
+    $('#domain_name').val(orgData.domain_name);
+
+    // Set preview logo if exists
+    if (orgData.logo) {
+        $('#preview_logo').attr('src', '/storage/' + orgData.logo);
+    } else {
+        $('#preview_logo').attr('src', ''); // Empty image if no logo
+    }
+
+    $('#updateModal').modal('show'); // Show modal after setting values
+}
+
+        });
+    });
+
+    // Handle form submission for update
+    $('#updateForm').submit(function(e) {
+        e.preventDefault();
+        let formData = new FormData(this);
+        let id = $('#org_id').val();
+
+        $.ajax({
+            url: '/quickmate/admin/organization/update/' + id,
+            type: 'POST',
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(xhr) {
+                alert("Update failed! " + xhr.responseJSON.message);
+            }
+        });
+    });
+});
+
 
 </script>
 

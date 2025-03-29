@@ -11,17 +11,15 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\superadminController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\AuthenticationController;
-// use App\Http\Controllers\AuthController;
 
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ExcelImport;
 
-Route::post('/import-excel', [UserController::class, 'import'])->name('import-excel');
 
-Route::get('/import-user', function () {
-    return view('customer.dashboard');
-});
+
+
+
 
 Route::get('/quickmate/kloudstack/authenticate', [AuthenticationController::class, 'showSuccessPage'])
     ->middleware('role.auth')
@@ -40,19 +38,14 @@ Route::get('/quickmate/kloudstack/authenticate/{token}', [AuthenticationControll
     Route::get('/authorize-user', [AuthenticationController::class, 'authorizeUser'])
     ->name('authorize.user');
 
-    Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
-
-    Route::get('/getuser/data', [TicketController::class, 'getUsers'])->name('getuser.data');
- 
+    Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout'); 
     
     
-
 Route::get('user/login', [UserController::class,'login'])->name('customer.loginform');
 Route::post('user/login', [AuthController::class,'checkAuth'])->name('customer.login');
 Route::get('user/register', [UserController::class,'register'])->name('customer.register');
 Route::post('user/register', [UserController::class,'store'])->name('customer.store');
 
-Route::post('/update-ticket/{id}', [TicketController::class, 'updateTicket'])->name('update.ticket');
 // Route::get('/logout', [AuthenticationController::class, 'logout'])->name('logout');
 
 
@@ -76,6 +69,7 @@ Route::middleware('support')->prefix('supportdesk')->group(function () {
     Route::get('ticket-status', [TicketController::class,'ticketsStatusView'])->name('supportticketsstatus.view');
     Route::get('ticket-history', [TicketController::class,'ticketsHistoryView'])->name('supportticketshistory.view');
     Route::get('tickets/list', [TicketController::class,'supportTicketlist'])->name('supporttickets.list');
+    Route::post('/update-ticket/{id}', [TicketController::class, 'updateTicket'])->name('update.ticket');
     Route::get('tickets/all-tickets', [TicketController::class,'allTicketsList'])->name('supportdesk.alltickets');
     Route::get('tickets/assigned-tickets', [TicketController::class,'assignedTicketsList'])->name('supporttickets.assignticket');
     Route::get('tickets/solved-tickets', [TicketController::class,'solvedTicketsList'])->name('supportdesk.solvedtickets');
@@ -103,6 +97,15 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('assets', [AdminController::class,'assets'])->name('admin.assets');
     Route::get('siem', [AdminController::class,'addsiem'])->name('admin.siem');
     Route::get('manage/users', [AdminController::class,'manageuser'])->name('admin.manageuser');
+            
+        Route::get('/import-user', function () {
+            return view('admin.newuser');
+        })->name('import-user');
+        Route::post('/import-excel', [UserController::class, 'import'])->name('import-excel');
+
+        Route::post('/user/store', [UserController::class, 'newuserstore'])->name('new.user.store');
+
+
 
 
 
@@ -119,15 +122,16 @@ Route::middleware('superadmin')->prefix('quickmate')->group(function () {
     Route::get('/organizations/data', [OrganizationController::class, 'getOrganizations'])->name('organizations.data');
     Route::get('/lisense/organizations/data', [OrganizationController::class, 'getLisenseOrganizations'])->name('lisense.organizations.data');
     Route::get('/organizations/lisense/{id}', [OrganizationController::class, 'lisenseshow'])->name('lisenseorganizations.show');
+    Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy'])->name('organizations.delete');
     Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy']);
-
-
-    Route::get('/test', [OrganizationController::class, 'test']);
 
     Route::get('/organizations/{id}', [OrganizationController::class, 'show'])->name('organizations.show');
     Route::post('/organizations/approve/{id}', [OrganizationController::class, 'approve'])->name('organizations.approve');
     Route::get('lisense', [superadminController::class,'lisense'])->name('super.admin.lisense');
-
+    Route::get('/organizations/{id}/edit', [OrganizationController::class, 'edit'])->name('organizations.edit');
+    Route::post('/organization/update/{id}', [OrganizationController::class, 'update'])->name('organization.update');
+    Route::get('/organization/verifyorg', [OrganizationController::class, 'showOrganizations'])->name('organization.list');
+    Route::post('/verifyorg/update', [OrganizationController::class, 'verify'])->name('superadmin.verifyorg.update');
 });
 
 

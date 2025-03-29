@@ -177,8 +177,8 @@ $(function(){
         }
 
         $.ajax({
-            url: '/update-ticket/' + ticketId,
-            type: 'POST',
+          url: "{{ route('update.ticket', ':id') }}".replace(':id', ticketId),
+          type: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content'),
                 assignee: assignee,

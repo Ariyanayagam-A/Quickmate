@@ -206,7 +206,7 @@
     // Retrieve the edit ID from your hidden element or any other place
     var categoryId = $('#editaction').data('editid');
     // Construct the update URL using the stored categoryId
-    var updateUrl = '/categories/update/' + categoryId;
+var updateUrl = "{{ route('categories.update', ':id') }}".replace(':id', categoryId);
     // Optionally, if you’re using Laravel’s route helper in Blade,
     // you can set a placeholder and then replace it:
     // var updateUrl = "{{ route('categories.update', ':id') }}".replace(':id', categoryId);
@@ -278,7 +278,7 @@
   function deleteCategory(categoryId) {
     if (confirm("Are you sure you want to delete this category?")) {
       $.ajax({
-        url: `/categories/delete/${categoryId}`,
+        url:"{{ route('categories.delete', ':id') }}".replace(':id', categoryId),
         type: 'DELETE',
         data: {
           _token: $('meta[name="csrf-token"]').attr('content')
