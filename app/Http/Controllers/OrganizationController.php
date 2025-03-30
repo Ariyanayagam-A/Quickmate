@@ -9,15 +9,17 @@ use App\Models\Organization;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\MasterAuthService;
+
 
 
 class OrganizationController extends Controller
 { 
-    private $masterAuthService;
-    public function __construct(MasterAuthService $masterAuthService)
-    {
-        $this->masterAuthService = $masterAuthService;
-    }
+    // private $masterAuthService;
+    // public function __construct(MasterAuthService $masterAuthService)
+    // {
+    //     $this->masterAuthService = $masterAuthService;
+    // }
     public function addorg()
     {
         return view('organization.addorg');
@@ -327,12 +329,12 @@ public function showOrganizations()
 }
 
 public function verify(Request $request) {
+    // dd($request->all()); 
     $request->validate([
         'organization_id' => 'required|exists:organizations,id',
         'authorization_enabled' => 'nullable|boolean',
         'client_secret_enabled' => 'nullable|string',
     ]);
-    // dd($request->all()); 
 
     $organization = Organization::findOrFail($request->organization_id);
     $organization->is_authorize = $request->has('authorization_enabled');
