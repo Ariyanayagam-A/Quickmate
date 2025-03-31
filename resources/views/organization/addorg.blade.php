@@ -9,6 +9,16 @@
         <main class="app-main container">
           <!--begin::App Content Header-->
           <div class="app-content-header">
+          <script>
+          @if(Session::has('success'))
+               toastr.success("{{ Session::get('success') }}");
+           @endif
+
+           @if(Session::has('error'))
+               toastr.error("{{ Session::get('error') }}");
+           @endif
+          </script>
+
             <!--begin::Container-->
           
             <!--end::Container-->
@@ -43,11 +53,6 @@
                     <div class="card-header"><div class="card-title">Organisational Details</div></div>
                     <!--end::Header-->
                     <!--begin::Form-->
-                    @if(session('success'))
-                        <script>
-                            alert("{{ session('success') }}");
-                        </script>
-                    @endif
                     <form action="{{ route('organization.store') }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                       @csrf
                       <!--begin::Body-->
@@ -302,7 +307,7 @@
                             };
                     
                             $.ajax({
-                                url: {{route('organization.store')}},
+                                url: '{{ route('organization.store') }}',
                                 type: "POST",
                                 data: formData,
                                 headers: {

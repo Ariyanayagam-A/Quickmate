@@ -42,18 +42,26 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
     @stack('styles') <!-- Additional styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <!-- datatables -->
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.4/js/jquery.dataTables.min.js"></script>
     <link rel="stylesheet" href="{{ asset('assets/dist/css/jquery.dataTables.min.css')}}" />
 
     <script src="https://cdn.datatables.net/1.11.4/js/dataTables.bootstrap5.min.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.4/css/dataTables.bootstrap5.min.css">
-    
+
 
 </head>
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary app-loaded sidebar-open">
+
+@if(session('token'))
+      <script>
+          localStorage.setItem('token', '<?php echo session('token')?>');
+      </script>
+  @endif
 <div class="app-wrapper">
     <!-- Navigation Bar -->
     @include('layouts.adminpartials.navbar')

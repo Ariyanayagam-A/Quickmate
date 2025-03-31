@@ -62,9 +62,9 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ route('super.admin.lisense') }}" class="nav-link">
+                  <a href="{{ route('companies.list') }}" class="nav-link">
                     <i class="nav-icon bi  bi-clipboard2-check"></i>
-                    <p>Lisenced Organisation</p>
+                    <p>List Organizations</p> 
                   </a>
                 </li>
                 <li class="nav-item">

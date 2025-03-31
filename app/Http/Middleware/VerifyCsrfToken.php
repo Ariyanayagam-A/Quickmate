@@ -13,7 +13,7 @@ class VerifyCsrfToken
 
     protected $except = [
 
-       " /user/login"
+       "/login"
     ];
 
 

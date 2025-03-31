@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\superadminController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\AuthenticationController;
+use App\Http\Controllers\webHookController;
 
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -27,7 +28,7 @@ Route::get('/quickmate/kloudstack/authenticate', [AuthenticationController::clas
 
 
 Route::get('/', function () {
-    return redirect('user/login');
+    return redirect('/login');
 });
 
 Route::get('/open-requests', [TicketController::class, 'getOpenRequests'])->name('getOpenRequests');
@@ -41,14 +42,13 @@ Route::get('/quickmate/kloudstack/authenticate/{token}', [AuthenticationControll
     Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout'); 
     
     
-Route::get('user/login', [UserController::class,'login'])->name('customer.loginform');
-Route::post('user/login', [AuthController::class,'checkAuth'])->name('customer.login');
+Route::get('login', [UserController::class,'login'])->name('customer.loginform');
+Route::post('login', [AuthController::class,'checkAuth'])->name('customer.login');
 Route::get('user/register', [UserController::class,'register'])->name('customer.register');
 Route::post('user/register', [UserController::class,'store'])->name('customer.store');
+Route::post('/keycloak/webhook', [webHookController::class, 'handleWebhook']);
 
 // Route::get('/logout', [AuthenticationController::class, 'logout'])->name('logout');
-
-
 
 Route::middleware('new.user')->prefix('user')->group(function () {
     // Route::get('dashboard', [UserController::class,'dashboard'])->name('customer.dashboard');
@@ -81,6 +81,9 @@ Route::middleware('support')->prefix('supportdesk')->group(function () {
 // admin routes
 
 Route::middleware('admin')->prefix('admin')->group(function () {
+    Route::get('login', [AuthController::class,'orgAdminLoginPage'])->name('admin.loginform')->withoutMiddleware('admin');
+    Route::post('login', [AuthController::class,'orgAdminLogin'])->name('admin.login')->withoutMiddleware('admin');
+    Route::post('/user/create', [UserController::class, 'newuserstore'])->name('user.create');
     Route::get('dashboard', [AdminController::class,'index'])->name('admin.dashboard');
     Route::get('configurations', [AdminController::class,'configurations'])->name('admin.configurations');
     Route::get('tickets', [AdminController::class,'getTickets'])->name('admin.tickets');
@@ -97,19 +100,15 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('assets', [AdminController::class,'assets'])->name('admin.assets');
     Route::get('siem', [AdminController::class,'addsiem'])->name('admin.siem');
     Route::get('manage/users', [AdminController::class,'manageuser'])->name('admin.manageuser');
-            
+    Route::get('/users-list', [UserController::class, 'ajaxList'])->name('users.index'); 
+    Route::delete('/users/{id}', [UserController::class, 'deleteUser'])->name('users.destroy');
+    Route::post('/users/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
+    
+
         Route::get('/import-user', function () {
             return view('admin.newuser');
         })->name('import-user');
         Route::post('/import-excel', [UserController::class, 'import'])->name('import-excel');
-
-        Route::post('/user/store', [UserController::class, 'newuserstore'])->name('new.user.store');
-
-
-
-
-
-
 
 });
 
@@ -120,18 +119,21 @@ Route::middleware('superadmin')->prefix('quickmate')->group(function () {
 
     Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations.index');
     Route::get('/organizations/data', [OrganizationController::class, 'getOrganizations'])->name('organizations.data');
-    Route::get('/lisense/organizations/data', [OrganizationController::class, 'getLisenseOrganizations'])->name('lisense.organizations.data');
+    Route::get('/org/list', [OrganizationController::class, 'getLisenseOrganizations'])->name('org.list');
     Route::get('/organizations/lisense/{id}', [OrganizationController::class, 'lisenseshow'])->name('lisenseorganizations.show');
     Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy'])->name('organizations.delete');
     Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy']);
 
     Route::get('/organizations/{id}', [OrganizationController::class, 'show'])->name('organizations.show');
     Route::post('/organizations/approve/{id}', [OrganizationController::class, 'approve'])->name('organizations.approve');
-    Route::get('lisense', [superadminController::class,'lisense'])->name('super.admin.lisense');
+    Route::get('/companies/list', [superadminController::class,'lisense'])->name('companies.list');
     Route::get('/organizations/{id}/edit', [OrganizationController::class, 'edit'])->name('organizations.edit');
     Route::post('/organization/update/{id}', [OrganizationController::class, 'update'])->name('organization.update');
     Route::get('/organization/verifyorg', [OrganizationController::class, 'showOrganizations'])->name('organization.list');
     Route::post('/verifyorg/update', [OrganizationController::class, 'verify'])->name('superadmin.verifyorg.update');
+    Route::post('/toggle-organization', [OrganizationController::class, 'toggleEnable'])->name('toggle.organization');
+    Route::post('/toggle-role', [OrganizationController::class, 'toggleRoleEnable'])->name('toggle.roleEnable');
+
 });
 
 

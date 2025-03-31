@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use App\Models\Role;
 
 class AdminController extends Controller
 {
@@ -28,9 +30,13 @@ class AdminController extends Controller
     }
 
     public function manageuser(){
+        // dd(Session::all());
+        $roles = Role::select('id','name')->where('org_id',Session::get('organization')->id)->get()->toArray();
+
+        // dd($roles);
         // session()->flash('success', 'User added successfully!');
 
-        return view('admin.manageuser');
+        return view('admin.manageuser',compact('roles'));
     }
 
     /**

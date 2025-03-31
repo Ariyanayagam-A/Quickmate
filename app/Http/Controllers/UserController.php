@@ -11,11 +11,46 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ExcelImport;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-
-
-
+use App\Models\Organization;
+use Illuminate\Support\Facades\Session;
+use App\Services\MasterAuthService;
+use DataTables;
+use App\Models\Role;
+use Exception;
 class UserController extends Controller
 {
+    public function __construct(MasterAuthService $authService)
+    {
+        $this->authService = $authService;
+    }
+
+    public function ajaxList(Request $request)
+    {
+        if ($request->ajax()) {
+            // with(['organization', 'roles'])->
+            $orgId = Session::get('organization')->id;
+            // dd($orgId);
+            $users = User::where('organization_id',$orgId)->get();
+            // dd($users);
+            return DataTables::of($users)
+                ->addColumn('roles', function ($user) {
+                    $role = $user->role ? Role::find($user->role) : 'Not Assigned';
+                    return isset($role->name) ? $role->name : $role;
+                })
+                ->addColumn('action', function ($user) {
+                    return '
+                        <button class="btn btn-primary btn-sm editUser" data-id="' . $user->id . '">Edit</button>
+                        <button class="btn btn-danger btn-sm deleteUser" data-id="' . $user->id . '">Delete</button>
+                        <a class="btn btn-warning btn-sm assignRole" data-id="' . $user->id . '"  data-bs-toggle="modal" onclick="openRoleAssignModal('.$user->id .')" data-bs-target="#assignRoleModal"><i class="fas fa-user-shield"></i> Assign Role</a>
+                    ';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('admin.manageuser');
+    }
+
     public function verifylogin(Request $request)
     {
 
@@ -167,7 +202,7 @@ class UserController extends Controller
 
     $request->session()->regenerateToken();
 
-    return redirect('user/login')->with('success', 'Logged out successfully.');
+    return redirect('login')->with('success', 'Logged out successfully.');
   }
 
   public function import(Request $request)
@@ -253,39 +288,112 @@ class UserController extends Controller
 
   public function newuserstore(Request $request)
   {
-      $request->validate([
-          'name' => 'required|string|max:255',
-          'email' => 'required|email|unique:users',
-          'password' => 'required|min:6',
-          'role' => 'required|string'
+    // dd($request->all());
+    $validator = Validator::make($request->all(),[
+          'username' => 'required|string|max:255',
+          'fname' => 'required|string|max:255',
+          'lname' => 'required|string|max:255',
+        //   'email' => 'required|email|unique:users',
+          'email' => 'required|email',
+          'password' => 'required|min:6'
       ]);
 
+      if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    // dd();
+
       // Assign role value
-      $roleValues = [
-          'user' => 1,
-          'support team' => 2,
-          'engineer' => 3,
-      ];
+    //   $roleValues = [
+    //       'user' => 1,
+    //       'support team' => 2,
+    //       'engineer' => 3,
+    //   ];
 
-      $roleValue = $roleValues[$request->role] ?? null;
+    //   $roleValue = $roleValues[$request->role] ?? null;
 
-      if ($roleValue === null) {
-          return back()->withErrors(['role' => 'Invalid role selected']);
-      }
+    //   if ($roleValue === null) {
+    //       return back()->withErrors(['role' => 'Invalid role selected']);
+    //   }
         // dd($roleValue);
       // Create user
-      User::create([
-          'name' => $request->name,
+      $user = User::create([
+          'name' => $request->username,
+          'fname' => $request->fname,
+          'lname' => $request->lname,
           'email' => $request->email,
           'password' => Hash::make($request->password),
-          'role' => $roleValue,
-          'realm_id' => null,  // Change this if needed
-          'organization_id' => null, // Change this if needed
+          'role' => null,
+          'realm_id' => null,
           'email_verified_at' => now(),
       ]);
 
-      return redirect()->back()->with('success', 'User registered successfully!');
+      if($user)
+      {
+           $user['org_password'] = $request->password;
+           $user['organization_id'] = Session::get('organization')->id;
+
+          $userCreated =  $this->authService->createUser($user);
+
+          if($userCreated)
+          {
+            unset($user['org_password']);
+            $user->update(['organization_id' => $user['organization_id'],'realm' => $user->name ]);
+            return redirect()->back()->with('success', 'User registered successfully!');
+          }
+          else
+          {
+            return redirect()->back()->with('error', 'User not Created!!');
+          }
+      }
+      else
+      {
+        return redirect()->back()->with('error', 'Error while creating user');
+      }
+
   }
-  
-  
+  public function deleteUser($id)
+  {
+      $user = User::find($id);
+      if ($user) {
+          $user->delete();
+          return response()->json(['message' => 'User deleted successfully!']);
+      }
+      return response()->json(['message' => 'User not found!'], 404);
+  }
+
+  public function assignRole(Request $request)
+  {
+    try{
+      $request->validate([
+          'user_id' => 'required|exists:users,id',
+          'role' => 'required|exists:roles,id'
+      ]);
+
+      $validator = Validator::make($request->all(),[
+          'user_id' => 'required|exists:users,id',
+          'role' => 'required|exists:roles,id'
+    ]);
+
+    if ($validator->fails()) {
+        dd($validator->errors());
+      return redirect()->back()->withErrors($validator)->withInput();
+  }
+
+
+      $user = User::find($request->user_id);
+      if ($user) {
+
+          $user->update(['role' => $request->role]);
+
+          return response()->json(['status' => true,'message' => 'Role assigned successfully!']);
+      }
+      return response()->json(['message' => 'User not found!'], 404);
+    }
+    catch(Exception $error)
+    {
+        return response()->json(['message' => $error->getMessage()], 500);
+    }
+  }
 }

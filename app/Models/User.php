@@ -19,6 +19,9 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'name',
+        'fname',
+        'lname',
+        'realm',
         'email',
         'password',
         'realm_id',
@@ -74,5 +77,10 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function roles()
+    {
+        return $this->hasOne(Role::class,'id','role');
     }
 }

@@ -7,12 +7,12 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "directorytree/ldaprecord-laravel": "^3.3",
         "guzzlehttp/guzzle": "^7.9",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "maatwebsite/excel": "^3.1",
+        "opcodesio/log-viewer": "^3.15",
         "thenetworg/oauth2-azure": "^2.2",
         "tymon/jwt-auth": "^2.2",
         "yajra/laravel-datatables-oracle": "^11.1"

@@ -93,8 +93,7 @@
               <p>
                 SIEM
               </p>
-            </a>
-
+            </a></li> 
 
           <li class="nav-item ">
             <a href="{{ route('admin.assets') }}" class="nav-link">

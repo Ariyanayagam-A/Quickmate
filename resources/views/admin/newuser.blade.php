@@ -8,6 +8,14 @@
         {{ session('success') }}
     </div>
 @endif
+<script>
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            toastr.error("{{ $error }}");
+        @endforeach
+    @endif
+</script>
+
 <form action="{{route('import-excel')}}" method="POST" enctype="multipart/form-data">
     @csrf  <!-- Add this -->
     <input type="file" name="file">
@@ -15,23 +23,29 @@
   </form>
 
   <h2>User Registration</h2>
-  <form action="{{ route('new.user.store') }}" method="POST">
+  <form action="{{ route('user.create') }}" method="POST">
       @csrf
-      <label for="name">Username:</label>
-      <input type="text" name="name" required><br><br>
+      <label for="username">Username:</label>
+      <input type="text" name="username" required><br><br>
+
+      <label for="fname">Firstname :</label>
+      <input type="text" name="fname" required><br><br>
+
+      <label for="lname">Lastname :</label>
+      <input type="text" name="lname" required><br><br>
 
       <label for="email">Email:</label>
-      <input type="email" name="email" required><br><br>
+      <input type="text" name="email" required><br><br>
 
       <label for="password">Password:</label>
       <input type="password" name="password" required><br><br>
 
-      <label for="role">Role:</label>
+      <!-- <label for="role">Role:</label>
       <select name="role" required>
           <option value="user">User</option>
           <option value="support team">Support Team</option>
           <option value="engineer">Engineer</option>
-      </select><br><br>
+      </select><br><br> -->
 
       <button type="submit">Register</button>
   </form>

@@ -40,8 +40,6 @@ class superadminController extends Controller
     }
 
     public function lisense(){
-        // return view('superadmin.assets');
-       
         return view('superadmin.lisense');
     }
 }
