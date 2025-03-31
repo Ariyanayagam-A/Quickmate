@@ -4,38 +4,33 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Auth\LdapController;
+use App\Services\MasterAuthService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
-    protected $ldapController;
-
-    public function __construct(LdapController $ldapController)
+    public function __construct(MasterAuthService $authService)
     {
-        $this->ldapController = $ldapController;
+        // dd('aaaaaa');
+        $this->authService = $authService;
+       // $this->middleware('admin')->except(['orgAdminLoginPage', 'orgAdminLogin']);
     }
-
-    
 
     public function checkAuth(Request $request)
     {
-
-
-
+        // dd($request->all());
         $credentials = $request->validate([
             'name_email' => 'required',
             'password' => 'required',
         ]);
 
-        $isAuthenticated = $this->ldapController->checkLDAPAuthentication($request->name_email);
-
-        // dd($isAuthenticated);
-        // if (Auth::attempt($credentials)) {
+        $token = $this->authService->loginServiceUser($credentials,'user');
             
-        if ($isAuthenticated) 
+        if ($token) 
         {
-        // $request->session()->regenerate();
-        // dd(Auth::user()->role);
+            Session::put('access_token',$token);
+
         if(true)
         {
             // dd('redirect');
@@ -56,4 +51,30 @@ class AuthController extends Controller
         return back()->with('error', 'Invalid email or password.')->withInput(); 
     }
 
+    public function orgAdminLoginPage()
+    {
+      return view('admin.auth.login');
+    }
+
+    public function orgAdminLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        $token = $this->authService->loginService($credentials,'org');
+
+        Session::put('access_token',$token);
+
+        if($token)
+        {
+            return redirect()->route('admin.dashboard')
+            ->with(compact('token'))
+            ->with('success' , 'Logged in successfully');
+        }
+
+        return back()->with('error', 'Invalid email or password.')->withInput(); 
+
+  }
 }

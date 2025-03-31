@@ -1,6 +1,9 @@
 <?php
 namespace App\Services;
 
+use App\Models\Organization;
+use Illuminate\Support\Facades\Session;
+use App\Models\User;
 class MasterAuthService
 {
     protected $connection;
@@ -10,95 +13,128 @@ class MasterAuthService
 
     }
 
-    public function loginService()
+    public function loginService($userData,$type)
     {
+        $userData['email'] = isset($userData['email']) ? $userData['email'] : $userData['name_email'];
+
+        $domain = explode("@", $userData['email'] )[1];
+        $company = explode(".", $domain)[0];
+
+        $Organization = Organization::where('domain_name','like',$company)->first();
+        $userResData = User::where('email',$userData['email'])->first();
+        Session::put('organization',$Organization);
+        Session::put('userdata',$userResData);
+
         $payload  = [
-            'client_id' => 'admin-cli',
-            'username' => 'admin',
-            'password' => 'admin',
-            'grant_type' => 'password',
+            'realm' => $Organization->realm,
+            'username' => $userData['email'],
+            'password' => $userData['password'],
+            'type'     =>  $type
         ];
 
-        //echo json_encode($payload);die;
+        $secretKey = $Organization->secret;
 
-        $endpoint = 'https://auth.kloudstacks.com/realms/master/protocol/openid-connect/token';
+        $endpoint = 'http://127.0.0.1:3000/api/v1/auth/login';
 
-        $getAccessObject =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/x-www-form-urlencoded');
+        $headers = [
+            'authkey:'.$secretKey,
+            'Content-Type: application/json'
+        ];
+
+        $getAccessObject =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);
 
         if($getAccessObject['status_code'] == '200' || isset($getAccessObject['response']['access_token']))
         {
-           return $getAccessObject['response']['access_token'];
+           return $getAccessObject['response']['access_token'];  
         }
-
     }
 
-    public function createOrgRealm()
+    public function loginServiceUser($userData,$type)
     {
-        $this->createUser();
-        $getAccessToken = $this->loginService();
-        $endpoint = 'https://auth.kloudstacks.com/admin/realms';
+        // $type = $action;
+        $userData['email'] = isset($userData['email']) ? $userData['email'] : $userData['name_email'];
+        
+        $userResData = User::where('email',$userData['email'])->first();
+        $Organization = Organization::where('id',$userResData->organization_id)->first();
+        // dd($userResData);
+        Session::put('organization',$Organization);
+        Session::put('userdata',$userResData);
+
         $payload  = [
-            'realm' => 'Arya',
-            'enabled' =>  true
+            'realm' => $Organization->realm,
+            'username' => $userData['email'],
+            'password' => $userData['password'],
+            'type'     =>  $type
+        ];
+
+        $secretKey = $Organization->secret;
+
+        // dd($secretKey);
+
+        $endpoint = 'http://127.0.0.1:3000/api/v1/auth/login';
+
+        $headers = [
+            'authkey:'.$secretKey,
+            'Content-Type: application/json'
+        ];
+
+        $getAccessObject =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);
+
+        // dd($getAccessObject);
+
+        if($getAccessObject['status_code'] == '200' || isset($getAccessObject['response']['access_token']))
+        {
+           return $getAccessObject['response']['access_token'];  
+        }
+    }
+
+    public function createOrgRealm($realmData)
+    {
+        $endpoint = 'https://sso.kloudstacks.com/api/v1/auth/create';
+        $payload  = [
+            'username' => $realmData
         ];
         $headers = [
-              'Authorization: Bearer '.$getAccessToken,
               'Content-Type: application/json'
         ];
 
         $realmResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers,'test');
 
-        dd($realmResponse);
+        return $realmResponse;
     }
 
-
-    public function createUser()
+    public function createUser($userData)
     {
-        $getAccessToken = $this->loginService();
+        $org = Organization::find($userData->organization_id);
 
-        $endpoint = 'https://auth.kloudstacks.com/admin/realms/Arya/users';
+       $endpoint = "https://sso.kloudstacks.com/api/v1/auth/user/create";
 
        $payload = [
-            "username" => "Arya",
-            "firstName" => "A",
-            "lastName" => "T",
-            "email" => "arya@yopmail.com",
-            "emailVerified" => true,
-            "enabled" => true,
-            "credentials" => [
-                [
-                    "type" => "password",
-                    "value" => "Arya@123",
-                    "temporary" => false
-                ]
-            ]
+            "username" => $userData->name,
+            "firstname" => $userData->fname,
+            "lastname" => $userData->lname,
+            "email" => $userData->email,
+            "password" => $userData->org_password,
+            "account" => $org->realm
         ];
         
-        $headers = [
-              'Authorization: Bearer '.$getAccessToken,
-              'Content-Type: application/json'
-        ];
+        $headers = [ 'Content-Type: application/json'];
 
-        $realmResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers,'test');
+        $realmResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);
 
-        dd($realmResponse);
+        // dd($realmResponse);
+
+        if($realmResponse['status_code'] == '200' || isset($getAccessObject['response']['status']))
+        {
+           return true;
+        }
+
+          return false;
     }
 
-    private function cURLHttpClient($method, $url, $data = [], $contentType = 'application/json', $headers = [],$type=null)
+    private function cURLHttpClient($method, $url, $data = [], $contentType, $headers = [],$type=null)
    {
     $curl = curl_init();
-
-    // Default headers
-    // $defaultHeaders = [
-    //     "Content-Type" => $contentType
-    // ];
-
-    // $headers = array_merge($defaultHeaders, $headers);
-
-    if($type =='test')
-    {
-    //    dd($headers);
-    }
 
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -110,15 +146,17 @@ class MasterAuthService
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
             curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); 
-            // dd($contentType);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, ($contentType === 'application/json') ? json_encode($data) : http_build_query($data));
+            // dd(json_encode($data));
+            curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
             break;
         case "GET":
             if (!empty($data)) {
-                $url .= '?' . http_build_query($data);
+                //$url .= '?' . http_build_query($data);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); 
                 curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
+
             }
             break;
         case "PUT":
@@ -129,6 +167,7 @@ class MasterAuthService
     }
 
     $response = curl_exec($curl);
+    // dd($curl,$response);
     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
     
     // Handle errors
@@ -139,6 +178,76 @@ class MasterAuthService
     curl_close($curl);
 
     return ['status_code' => $httpCode, 'response' => json_decode($response, true) ?? $response];
+  }
+
+  public function clientSecretService($realm)
+  {
+    $endpoint = "http://127.0.0.1:3000/api/v1/auth/clientid/enable/$realm";
+    
+    $clientSecretEnableResponse =  $this->cURLHttpClient('GET',$endpoint,[],'application/json',[]);
+
+    // dd($clientSecretEnableResponse);
+    if($clientSecretEnableResponse['status_code'] == '200' && isset($clientSecretEnableResponse['response']['status']))
+    {
+       return $clientSecretEnableResponse['response'];
+    }
+  }
+
+  public function getRoleByUserId()
+  {
+    $endpoint = "http://127.0.0.1:3000/api/v1/auth/clientid/enable/$realm";
+    
+    $clientSecretEnableResponse =  $this->cURLHttpClient('GET',$endpoint,[],'application/json',[]);
+
+    // dd($clientSecretEnableResponse);
+    if($clientSecretEnableResponse['status_code'] == '200' && isset($clientSecretEnableResponse['response']['status']))
+    {
+       return $clientSecretEnableResponse['response'];
+    }
+
+  }
+
+
+  public function createRoleService($realmData)
+  {
+    $endpoint = "http://127.0.0.1:3000/api/v1/roles/create";
+    
+    $payload = [
+        'username' => $realmData
+    ];
+    
+    $headers = [ 'Content-Type: application/json'];
+
+    $clientRoleEnableResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);
+
+    if($clientRoleEnableResponse['status_code'] == '200' && isset($clientRoleEnableResponse['response']['status']))
+    {
+       return $clientRoleEnableResponse['response']['data'];
+    }
+    else{
+        return false;
+    }
+  }
+
+  public function getUserIdandUpdate($realmData)
+  {
+    $endpoint = "http://127.0.0.1:3000/api/v1/auth/user/Arya/sabari";
+    
+    $payload = [
+        'username' => $realmData
+    ];
+    
+    $headers = [ 'Content-Type: application/json'];
+
+    $clientRoleEnableResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);
+
+    if($clientRoleEnableResponse['status_code'] == '200' && isset($clientRoleEnableResponse['response']['status']))
+    {
+       return $clientRoleEnableResponse['response']['data'];
+    }
+    else{
+        return false;
+    }
   }
 
 }

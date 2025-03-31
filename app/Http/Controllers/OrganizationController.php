@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Hash;
 use Illuminate\Http\Request;
 use DataTables;
 use App\Models\Organization;
@@ -9,14 +10,17 @@ use App\Models\Organization;
 use Firebase\JWT\JWT;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use App\Services\MasterAuthService;
+use App\Models\Role;
+// use Illuminate\Support\Facades\DB;
 
 
 class OrganizationController extends Controller
 { 
     private $masterAuthService;
-    public function __construct(MasterAuthService $masterAuthService)
+    public function __construct(MasterAuthService $authService)
     {
-        $this->masterAuthService = $masterAuthService;
+        $this->masterAuthService = $authService;
     }
     public function addorg()
     {
@@ -51,21 +55,28 @@ class OrganizationController extends Controller
             $logoPath = $logoFile->storeAs('logos', $logoName, 'public'); 
         }
     
+        // dd($request->all());
+        
+        
         // Define the data to send to Node.js
-        $nodeAppUrl = 'http://localhost:5000/create-realm';
-        $realmData = ['realmName' => $request->domain_name];
+        // $nodeAppUrl = 'http://localhost:5000/create-realm';
+        // $realmData = ['realmName' => $request->domain_name];
     
-        // Send data to Node.js first
-        $response = Http::withHeaders([
-            'Content-Type' => 'application/json',
-        ])->post($nodeAppUrl, $realmData);
+        // // Send data to Node.js first
+        // $response = Http::withHeaders([
+        //     'Content-Type' => 'application/json',
+        // ])->post($nodeAppUrl, $realmData);
     
         // Check if Node.js request was successful
-        if ($response->failed()) {
-            return redirect()->back()->with('error', 'Failed to send realmName to Node.js app.');
-        }
+        // if ($response->failed()) {
+        //     return redirect()->back()->with('error', 'Failed to send realmName to Node.js app.');
+        // }
     
         // Store organization details in DB only if Node.js request is successful
+        // dd(Organization::all());
+
+        $password = Hash::make('Azeus@123');
+
         $organization = Organization::create([
             'organization_name' => $request->organization_name,
             'industry' => $request->industry,
@@ -80,27 +91,35 @@ class OrganizationController extends Controller
             'admin_phone' => $request->admin_phone,
             'designation' => $request->designation,
             'domain_name' => $request->domain_name,
-            'realm_id' => 324,
-            'realm' => 'kloudstack22',
-            'master_orgid' => 17,
+            'password' => $password,
+            'realm_id' => "QUID".Organization::count()+1,
+            'realm' => $request->domain_name,
             'logo' => $logoPath,
         ]);
-    
-        // Generate JWT token
-        $secretKey = env('JWT_SECRET'); 
-        $payload = [
-            'id' => $organization->id,
-            'organization_name' => $organization->organization_name,
-            'issued_at' => time(),
-            'expires_at' => time() + 86400, // 1-day expiration
-        ];
-        $token = JWT::encode($payload, $secretKey, 'HS256');
-    
-        // Store token in the database (if column exists)
-        $organization->update(['token' => $token]);
-    
-        return redirect()->back()->with('success', 'Organization stored successfully!');
+
+        if($organization)
+        {
+            $response = $this->masterAuthService->createOrgRealm($organization['domain_name']);
+
+            if($response['status_code'] == 200)
+            {
+                Organization::find($organization['id'])->update([
+                    'realm' => $response['response']['accountId']
+                ]);
+                return redirect()->back()->with('success', 'Organization stored successfully!');
+            }
+            else
+            {
+                return redirect()->back()->with('error', 'Error occured while creating Organization.');
+            }
+        }
+        else
+        {
+            return redirect()->back()->with('error', 'Error occured while storing Organization.');
+        }
     }
+
+        
     
     public function getOrganizations(Request $request)
 {
@@ -132,7 +151,7 @@ public function destroy($id) {
 
 public function getLisenseOrganizations(Request $request)
 {
-    $organizations = Organization::select(['id', 'organization_name', 'official_email']);
+    $organizations = Organization::select(['id', 'organization_name', 'official_email'])->orderBy('id', 'desc');
 
     return DataTables::of($organizations)
     ->addColumn('action', function ($row) {
@@ -160,7 +179,7 @@ public function getLisenseOrganizations(Request $request)
         $organization = Organization::find($id);
         
         // Check if logo exists, then append full URL
-        if ($organization->logo) {
+        if (isset($organization->logo)) {
             $organization->logo = asset('storage/' . $organization->logo); // Adjust if necessary
         }
     
@@ -252,6 +271,7 @@ public function update(Request $request, $id)
         'admin_phone' => $request->admin_phone,
         'designation' => $request->designation,
         'domain_name' => $request->domain_name,
+        'password' => Hash::make('Azeus@123'),
         'logo' => $logoPath
     ]);
 
@@ -260,13 +280,7 @@ public function update(Request $request, $id)
 
 public function showOrganizations()
 {
-    // Fetch organizations that don't already have both authorization and client secret enabled
-    $organizations = Organization::where(function ($query) {
-        $query->whereNull('is_authorize')
-              ->orWhere('is_authorize', false);
-    })
-    ->whereNull('secret')
-    ->get();
+    $organizations = Organization::all();
 
     return view('superadmin.verifyorg', compact('organizations'));
 }
@@ -287,6 +301,68 @@ public function verify(Request $request) {
 
     return redirect()->back()->with('success', 'Organization settings updated successfully.');
 }
+
+public function toggleEnable(Request $request)
+{
+    try {
+        $organization = Organization::find($request->organizationId);
+
+        $response = $this->masterAuthService->clientSecretService($organization->realm);
+
+        if ($response['status']) {
+
+            $organization->update([ 'secret' => isset($response['secret']) ? $response['secret'] : null,'is_authorize' => true]);
+
+            return response()->json(['status' => true,'message' => 'Organization Authorization Enabled Successfully!']);
+        } else {
+            return response()->json(['status' => false,'error' => 'Failed to update organization status']);
+        }
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
+public function toggleRoleEnable(Request $request)
+{
+    try {
+        $organization = Organization::find($request->organizationId);
+
+        $roleExists =  Role::where('org_id',$request->organizationId)->exists();
+
+        if(!$roleExists)
+        {
+            $roleResponse = $this->masterAuthService->createRoleService($organization->realm);
+
+            if(!$roleResponse)
+            {
+                return response()->json(['status' => true,'message' => 'Default roles disabled successfully!!']);
+            }
+        }
+        else{
+            return response()->json(['status' => true,'message' => 'Default Roles Enabled Successfully!']);
+        }
+    
+
+        $roleResponse = array_map(function($role) use ($request) {
+            $role['org_id'] = $request->organizationId;
+            return $role;
+        }, $roleResponse);
+
+        $roleCreation = Role::insert($roleResponse);
+
+        if($roleCreation) 
+        {
+            return response()->json(['status' => true,'message' => 'Default Roles Enabled Successfully!']);
+        } else {
+            return response()->json(['status' => false,'error' => 'Failed to Enable Roles for this Organization']);
+        }
+
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+}
+
+// public function 
     
 }
 

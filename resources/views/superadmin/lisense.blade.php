@@ -145,7 +145,7 @@
             var table = $('#organizations-table').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('lisense.organizations.data') }}",
+                ajax: "{{ route('org.list') }}",
                 columns: [
                     { data: 'organization_name', name: 'organization_name'},
                     { data: 'official_email', name: 'official_email' },
@@ -207,7 +207,7 @@ $(document).on('click', '.delete-btn', function() {
     if (!confirm("Are you sure you want to delete this organization?")) return;
 
     $.ajax({
-        url: "/quickmate/admin/organizations/delete/" + organizationId, // Correct URL format
+        url: "/quickmate/organizations/delete/" + organizationId, // Correct URL format
         type: 'DELETE',
         data: {
             _token: $('meta[name="csrf-token"]').attr('content')
