@@ -16,7 +16,7 @@ use App\Models\Role;
 
 
 class OrganizationController extends Controller
-{ 
+{
     private $masterAuthService;
     public function __construct(MasterAuthService $authService)
     {
@@ -26,7 +26,7 @@ class OrganizationController extends Controller
     {
         return view('organization.addorg');
     }
- 
+
     public function store(Request $request)
     {
         // Validate request
@@ -46,32 +46,32 @@ class OrganizationController extends Controller
             'domain_name' => 'required|string|max:255',
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
-    
+
         // Handle file upload
         $logoPath = null;
         if ($request->hasFile('logo')) {
             $logoFile = $request->file('logo');
             $logoName = time() . '_' . $logoFile->getClientOriginalName();
-            $logoPath = $logoFile->storeAs('logos', $logoName, 'public'); 
+            $logoPath = $logoFile->storeAs('logos', $logoName, 'public');
         }
-    
+
         // dd($request->all());
-        
-        
+
+
         // Define the data to send to Node.js
         // $nodeAppUrl = 'http://localhost:5000/create-realm';
         // $realmData = ['realmName' => $request->domain_name];
-    
+
         // // Send data to Node.js first
         // $response = Http::withHeaders([
         //     'Content-Type' => 'application/json',
         // ])->post($nodeAppUrl, $realmData);
-    
+
         // Check if Node.js request was successful
         // if ($response->failed()) {
         //     return redirect()->back()->with('error', 'Failed to send realmName to Node.js app.');
         // }
-    
+
         // Store organization details in DB only if Node.js request is successful
         // dd(Organization::all());
 
@@ -119,8 +119,8 @@ class OrganizationController extends Controller
         }
     }
 
-        
-    
+
+
     public function getOrganizations(Request $request)
 {
     $organizations = Organization::select(['id', 'organization_name', 'official_email'])->where('is_active', 0);
@@ -177,24 +177,24 @@ public function getLisenseOrganizations(Request $request)
     public function show($id)
     {
         $organization = Organization::find($id);
-        
+
         // Check if logo exists, then append full URL
         if (isset($organization->logo)) {
             $organization->logo = asset('storage/' . $organization->logo); // Adjust if necessary
         }
-    
+
         return response()->json($organization);
     }
 
     public function lisenseshow($id)
     {
         $organization = Organization::find($id);
-        
+
         // Check if logo exists, then append full URL
         if ($organization->logo) {
             $organization->logo = asset('storage/' . $organization->logo); // Adjust if necessary
         }
-    
+
         return response()->json($organization);
     }
 
@@ -291,13 +291,13 @@ public function verify(Request $request) {
         'authorization_enabled' => 'nullable|boolean',
         'client_secret_enabled' => 'nullable|string',
     ]);
-    // dd($request->all()); 
+    // dd($request->all());
 
     $organization = Organization::findOrFail($request->organization_id);
     $organization->is_authorize = $request->has('authorization_enabled');
     $organization->secret = $request->client_secret_enabled;
-    
-    $organization->save();
+
+    // $organization->save();
 
     return redirect()->back()->with('success', 'Organization settings updated successfully.');
 }
@@ -305,9 +305,12 @@ public function verify(Request $request) {
 public function toggleEnable(Request $request)
 {
     try {
+
         $organization = Organization::find($request->organizationId);
 
+        // dd($organization);
         $response = $this->masterAuthService->clientSecretService($organization->realm);
+
 
         if ($response['status']) {
 
@@ -324,6 +327,7 @@ public function toggleEnable(Request $request)
 
 public function toggleRoleEnable(Request $request)
 {
+
     try {
         $organization = Organization::find($request->organizationId);
 
@@ -341,7 +345,7 @@ public function toggleRoleEnable(Request $request)
         else{
             return response()->json(['status' => true,'message' => 'Default Roles Enabled Successfully!']);
         }
-    
+
 
         $roleResponse = array_map(function($role) use ($request) {
             $role['org_id'] = $request->organizationId;
@@ -350,7 +354,7 @@ public function toggleRoleEnable(Request $request)
 
         $roleCreation = Role::insert($roleResponse);
 
-        if($roleCreation) 
+        if($roleCreation)
         {
             return response()->json(['status' => true,'message' => 'Default Roles Enabled Successfully!']);
         } else {
@@ -362,7 +366,7 @@ public function toggleRoleEnable(Request $request)
     }
 }
 
-// public function 
-    
+// public function
+
 }
 

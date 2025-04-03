@@ -25,8 +25,8 @@
   display: flex;
   justify-content: center;
 }
- 
- 
+
+
  label {
    font-size: 18px;
    margin-right: 10px;
@@ -103,7 +103,7 @@
 
                     <div class="col-md-6">
                       <label for="validationCustom04" class="form-label">Select Organization</label>
-                      <select class="form-select" name="organization_id" id="organization_id" required>  
+                      <select class="form-select" name="organization_id" id="organization_id" required>
                       <option value="0"> Select Organization</option>
                   @foreach($organizations as $org)
                     <option value="{{ $org->id }}">{{ $org->organization_name }}</option>
@@ -185,7 +185,7 @@ crossorigin="anonymous"
 <script>
   $(document).ready(function() {
     $('.toggleOption').change(function() {
-        
+
         var organizationId = $('#organization_id').val();
 
         if(organizationId == 0)
@@ -209,7 +209,7 @@ crossorigin="anonymous"
             },
             error: function(xhr) {
               toastr.error(xhr.responseJSON.error);
-                // alert(xhr.responseJSON.error || "An error occurred.");
+                alert(xhr.responseJSON.error || "An error occurred.");
             }
         });
     });
@@ -236,7 +236,7 @@ crossorigin="anonymous"
             },
             error: function(xhr) {
               toastr.error(xhr.responseJSON.error);
-                // alert(xhr.responseJSON.error || "An error occurred.");
+                alert(xhr.responseJSON.error || "An error occurred.");
             }
         });
     })

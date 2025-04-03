@@ -10,7 +10,7 @@ class AuthService
 
     public function loginService($loginData)
     {
-        $this->cURLHttpClient('POST','https://sso.kloudstacks.com/api/v1/auth/login', [
+        $this->cURLHttpClient('POST','http://127.0.0.1:3000/api/v1/auth/login', [
             'client_id' => 'admin-cli',
             'username' => $loginData['name_email'],
             'password' => $loginData['password'],
@@ -32,14 +32,14 @@ private function cURLHttpClient($method, $url, $data = [], $contentType = 'appli
         case "POST":
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); 
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
             curl_setopt($curl, CURLOPT_POSTFIELDS, ($contentType === 'application/json') ? json_encode($data) : http_build_query($data));
             break;
         case "GET":
             if (!empty($data)) {
                 $url .= '?' . http_build_query($data);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); 
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
                 curl_setopt($curl, CURLOPT_URL, $url);
             }
             break;
@@ -52,7 +52,7 @@ private function cURLHttpClient($method, $url, $data = [], $contentType = 'appli
 
     $response = curl_exec($curl);
     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    
+
     // Handle errors
     if ($response === false) {
         return ['error' => curl_error($curl)];

@@ -59,6 +59,8 @@ class UserController extends Controller
             'password' => 'required',
         ]);
 
+        // dd($credentials);
+
         if (Auth::attempt($credentials)) {
 
             $request->session()->regenerate();
@@ -79,7 +81,7 @@ class UserController extends Controller
         }
 
         // dd('invalid!!');
-        return back()->with('error', 'Invalid email or password.')->withInput(); 
+        return back()->with('error', 'Invalid email or password.')->withInput();
     }
     public function login()
     {
@@ -101,7 +103,7 @@ class UserController extends Controller
     public function dashboard()
     {
         return view('customer.dashboard');
-    }  
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -207,23 +209,23 @@ class UserController extends Controller
 
   public function import(Request $request)
   {
-    
+
       // Validate the uploaded file
       $request->validate([
           'file' => 'required|mimes:xlsx,xls'
       ]);
-  
+
       // Import the Excel file
       $import = new ExcelImport();
       Excel::import($import, $request->file('file'));
-  
+
       // Get the imported data as an array
       $data = $import->data;
       $index = 0;
       // Loop through the data and insert into the users table
       foreach ($data as $index => $row) {
         $data[$index] = [
-            'name' => $row['name'] ?? 'Unknown', 
+            'name' => $row['name'] ?? 'Unknown',
             'email' => $row['email'],
             'password' => $row['password'], // Use already hashed password
             'role' => 1,
@@ -247,23 +249,23 @@ class UserController extends Controller
       $request->validate([
           'token' => 'required|string',
       ]);
-  
+
       try {
           // 2️⃣ Get Secret Key from .env
           $secretKey = env('JWT_SECRET');
-  
+
           // 3️⃣ Decode JWT Token using Firebase JWT
           $payload = JWT::decode($request->token, new Key($secretKey, 'HS256'));
-  
+
           // 4️⃣ Extract User Data
           $username = $payload->username ?? null;
           $email = $payload->email ?? null;
           $password = $payload->password ?? null;
-  
+
           if (!$username || !$email || !$password) {
               return response()->json(['error' => 'Invalid token payload'], 400);
           }
-  
+
           // 5️⃣ Store User Data in Database with Default Values
           $user = User::create([
               'name' => $username,
@@ -274,13 +276,13 @@ class UserController extends Controller
               'role' => $payload->role ?? 1, // Default role
               'email_verified_at' => now(), // Auto-verify email
           ]);
-  
+
           // 6️⃣ Return Response
           return response()->json([
               'success' => 'User created successfully!',
               'user' => $user
           ], 201);
-  
+
       } catch (\Exception $e) {
           return response()->json(['error' => 'Invalid token: ' . $e->getMessage()], 400);
       }
@@ -365,35 +367,40 @@ class UserController extends Controller
 
   public function assignRole(Request $request)
   {
-    try{
-      $request->validate([
-          'user_id' => 'required|exists:users,id',
-          'role' => 'required|exists:roles,id'
-      ]);
+      try {
+        // dd($request->role_name);
+          // Validate the incoming request
+          $request->validate([
+              'user_id' => 'required|exists:users,id',
+              'role_id' => 'required|exists:roles,id',
+              'role_name' => 'required|string',
+          ]);
 
-      $validator = Validator::make($request->all(),[
-          'user_id' => 'required|exists:users,id',
-          'role' => 'required|exists:roles,id'
-    ]);
+          // Find the user
+          $user = User::find($request->user_id);
+          if (!$user) {
+              return response()->json(['message' => 'User not found!'], 404);
+          }
 
-    if ($validator->fails()) {
-        dd($validator->errors());
-      return redirect()->back()->withErrors($validator)->withInput();
-  }
+          // Map role name to a specific value
+          $roleMap = [
+              'supportdesk' => 1,
+              'engineer' => 2,
+              'user' => 3,
+              // Add more mappings as needed
+          ];
 
+          $roleValue = $roleMap[strtolower($request->role_name)] ?? null;
+          if ($roleValue === null) {
+              return response()->json(['message' => 'Invalid role name!'], 400);
+          }
 
-      $user = User::find($request->user_id);
-      if ($user) {
+          // Update the user's role_id (or another column) with the mapped value
+          $user->update(['role' => $roleValue]);
 
-          $user->update(['role' => $request->role]);
-
-          return response()->json(['status' => true,'message' => 'Role assigned successfully!']);
+          return response()->json(['status' => true, 'message' => 'Role assigned successfully!']);
+      } catch (Exception $error) {
+          return response()->json(['message' => $error->getMessage()], 500);
       }
-      return response()->json(['message' => 'User not found!'], 404);
-    }
-    catch(Exception $error)
-    {
-        return response()->json(['message' => $error->getMessage()], 500);
-    }
-  }
+}
 }

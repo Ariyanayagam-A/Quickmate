@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\MasterAuthService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -26,29 +27,31 @@ class AuthController extends Controller
         ]);
 
         $token = $this->authService->loginServiceUser($credentials,'user');
-            
-        if ($token) 
+
+
+        if ($token)
         {
             Session::put('access_token',$token);
 
-        if(true)
+
+        if(Auth::User()->role == 1){
+            return redirect()->route('supporttickets.view')->with('success', 'Logged in successfully.');
+        }
+        else if(Auth::User()->role == 3){
+            return redirect()->route('customer.tickets')->with('success', 'Logged in successfully.');
+        }
+        else if(Auth::User()->role == 2){
+            return redirect()->route('agenttickets.view')->with('success', 'Logged in successfully.');
+        }
+        else
         {
             // dd('redirect');
             return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
         }
-        if(Auth::user()->role == 2){
-            return redirect()->route('supporttickets.view')->with('success', 'Logged in successfully.');
-        }
-        else if(Auth::user()->role == 3){
-            return redirect()->route('customer.tickets')->with('success', 'Logged in successfully.');
-        }
-        else{
-            return redirect()->route('agenttickets.view')->with('success', 'Logged in successfully.');
-        }
         }
 
         // dd('invalid!!');
-        return back()->with('error', 'Invalid email or password.')->withInput(); 
+        return back()->with('error', 'Invalid email or password.')->withInput();
     }
 
     public function orgAdminLoginPage()
@@ -66,7 +69,7 @@ class AuthController extends Controller
         $token = $this->authService->loginService($credentials,'org');
 
         Session::put('access_token',$token);
-
+        // dd($token);
         if($token)
         {
             return redirect()->route('admin.dashboard')
@@ -74,7 +77,7 @@ class AuthController extends Controller
             ->with('success' , 'Logged in successfully');
         }
 
-        return back()->with('error', 'Invalid email or password.')->withInput(); 
+        return back()->with('error', 'Invalid email or password.')->withInput();
 
   }
 }
