@@ -15,6 +15,7 @@ class Ticket extends Model
         'assignee',
         'status',
         'raised_by',
+        'user_mail',
         'organization_id',
         'closed_at',
     ];

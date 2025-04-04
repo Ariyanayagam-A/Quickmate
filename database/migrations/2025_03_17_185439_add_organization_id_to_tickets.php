@@ -12,8 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tickets', function (Blueprint $table) {
-            $table->unsignedBigInteger('organization_id')->after('id')->nullable();
-            $table->foreign('organization_id')->references('id')->on('organizations')->onDelete('cascade');
+            $table->integer('organization_id')->after('id')->nullable();
         });
     }
 

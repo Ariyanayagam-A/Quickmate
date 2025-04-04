@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use DataTables;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Session;
+
 
 class TicketController extends Controller
 {
@@ -40,23 +42,23 @@ class TicketController extends Controller
                 'category' => 'required',
                 'ticket_file' => 'nullable|mimes:jpg,jpeg,png,pdf|max:2048', // Limit file type & size
             ]);
-    
+
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-    
+
             // Retrieve user_id and organization_id from session
             // $organizationId = session('organization_id');
             // $userId = session('user_id');
-            
-    
+
+
             // if (!$userId) {
             //     return redirect()->back()->with('error', 'User ID not found in session.');
             // }
-    
+
             // Debugging: Check if session values are set
-            // dd(session()->all()); 
-    
+            // dd(session()->all());
+
             // Create new ticket
             $ticket = new Ticket();
             $ticket->subject = $request->title;
@@ -65,8 +67,10 @@ class TicketController extends Controller
             $ticket->summary = $request->desc;
             $ticket->status = 0;
             $ticket->raised_by = 1; // Store the logged-in user's ID
-            $ticket->organization_id = 1;
-    
+            $ticket->organization_id = Session::get('organization_id');
+            $ticket->user_mail = Session::get('name_email');
+
+
             // Handle file upload
             if ($request->hasFile('ticket_file')) {
                 $file = $request->file('ticket_file');
@@ -74,7 +78,7 @@ class TicketController extends Controller
                 $filePath = $file->storeAs('uploads/tickets', $fileName, 'public');
                 $ticket->image = $filePath;
             }
-    
+
             // Save ticket
             if ($ticket->save()) {
                 return redirect('/user/tickets')->with('success', 'Ticket created successfully.');
@@ -85,7 +89,7 @@ class TicketController extends Controller
             return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
         }
     }
-    
+
 
     /**
      * Store a newly created resource in storage.
@@ -124,7 +128,7 @@ class TicketController extends Controller
      */
     public function destroy(string $id)
     {
-        
+
     }
 
 
@@ -142,8 +146,13 @@ class TicketController extends Controller
     //  // Fetch the user associated with this organization_id
     //  $user = User::where('organization_id', $organizationId)->first();
 
-        $tickets = Ticket::with('category')->orderBy('id', 'desc')->get();
-    
+
+    $email = Session::get('name_email');
+
+    $tickets = Ticket::with('category')
+        ->where('user_mail', $email) // Assuming 'user_mail' is the column in tickets
+        ->orderBy('id', 'desc')
+        ->get();
         return DataTables::of($tickets)
             ->addIndexColumn()
             ->addColumn('ticket_id', function($row) {
@@ -191,16 +200,16 @@ class TicketController extends Controller
             // })
             // ->rawColumns(['status', 'level', 'action'])
             ->make(true);
-            
+
 }
-    
+
 
     public function adminTicketsList()
     {
-        
+
 
         $tickets = Ticket::with('category','user')->orderBy('id', 'desc')->get();
-        
+
 
         return Datatables::of($tickets)
                 ->addIndexColumn()
@@ -235,13 +244,13 @@ class TicketController extends Controller
                         return '-';
                     }
                 })
-                
+
                 ->addColumn('indicator', function($row) {
                     $flag = $row->status ?? 'default';
                     $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
                     return $flag_img;
-                
-                }) 
+
+                })
                 ->addColumn('level', function($row){
                    $level_html = is_null($row->priority) ? '-' : '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
                                 data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary"
@@ -275,27 +284,27 @@ class TicketController extends Controller
                     $btn = '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" title="View Ticket" onclick="viewTicket('.$row->id.')">
                                 <i class="bi bi-eye"></i>
                             </button>';
-                
+
                     // Show Assign and Reject buttons only if status is not 2 (Assigned) or 3 (Rejected)
                     if ($row->status != 2 && $row->status != 3) {
                         // Check if 'assignee' is NULL or empty before showing the Assign button
-                        if (empty($row->assignee)) { 
+                        if (empty($row->assignee)) {
                             $btn .= '<br/>
                                      <button class="btn btn-outline-warning btn-sm assign-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-warning" title="Assign Ticket">
                                         <i class="bi bi-pencil-square"></i>
                                      </button>';
                         }
-                        
+
                         $btn .= '<br/>
                                  <button class="btn btn-outline-danger btn-sm delete-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-danger" title="Reject Ticket">
                                     <i class="bi bi-x-circle"></i>
                                  </button>';
                     }
-                
+
                     return $btn;
                 })
-                
-                
+
+
                 ->rawColumns(['action','status','level','indicator'])
                 ->make(true);
     }
@@ -316,7 +325,7 @@ class TicketController extends Controller
     // Apply filtering if a search value is provided
     if ($request->has('search') && isset($request->input('search')['value'])) {
         $searchValue = $request->input('search')['value'];
-        
+
         // Convert text status to corresponding number
         if (isset($statusMapping[$searchValue])) {
             $query->where('status', $statusMapping[$searchValue]);
@@ -369,15 +378,15 @@ class TicketController extends Controller
             'assignee' => 'required',
             'priority' => 'required'
         ]);
-    
+
         $ticket = Ticket::find($request->ticket_id);
         $ticket->assignee = $request->assignee;
         $ticket->priority = $request->priority;
         $ticket->save();
-    
+
         return response()->json(['message' => 'Ticket assigned successfully!']);
     }
-    
+
 
     public function ticketsView()
     {
@@ -428,7 +437,7 @@ class TicketController extends Controller
             else{
                 return '-';
             }
- 
+
         })
         ->addColumn('country', function($row){
             return $row->assignee ? 'India' : '-';
@@ -466,13 +475,13 @@ class TicketController extends Controller
             if($row->assignee)
             {
                 $btn = '<button id="openModalBtn" data-agent="'.$row->assignee.'" data-priority="'.$row->priority.'" onclick="editTicketAssignment(this,'.$row->id.')" class="btn btn-outline-info btn-sm assign_ticket">Edit Ticket</button>';
-                      
+
             }
             else
             {
                 $btn = '<button id="openModalBtn" onclick="AssignAgent('.$row->id.')" class="btn btn-outline-primary btn-sm assign_ticket">Assign Ticket</button>';
             }
-           
+
         //     <button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" data-bs-title="Edit">
         //     <i class="">L3</i>
         //   </button>
@@ -484,7 +493,7 @@ class TicketController extends Controller
     function assignTicket(Request $request)
     {
         // dd($request->all());
-        
+
         $ticket = Ticket::find($request->ticketid);
         $ticket->assignee = $request->agent;
         $ticket->status = $ticket->status == 0 || is_null($ticket->status) ?  1 : $ticket->status;
@@ -535,7 +544,10 @@ class TicketController extends Controller
 
     public function assignedTicketsList()
     {
-        $tickets = Ticket::with('category','user')->whereIn('status',['1','2'])->orderBy('id', 'desc')->get();
+        $orgId = Session::get('organization_id');
+
+        $tickets = Ticket::with('category','user')->whereIn('status',['1','2'])->where('organization_id', $orgId)
+        ->orderBy('id', 'desc')->get();
 
         return Datatables::of($tickets)
         ->addIndexColumn()
@@ -555,7 +567,7 @@ class TicketController extends Controller
             $flag = $row->status ?? 'default';
             $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
             return $flag_img;
-        
+
         })
         ->addColumn('engineer', function($row) {
             if ($row->assignee == '4') {
@@ -648,7 +660,7 @@ class TicketController extends Controller
         ->addColumn('action', function($row){
 
             $btn = '';
-            $hasFeedback = is_null($row->feedback) ? 0 : 1; 
+            $hasFeedback = is_null($row->feedback) ? 0 : 1;
                 if($row->status != 2){
                 $btn = '<button id="openModalBtn" data-type="close" data-hasfeedback="'.$hasFeedback.'" data-status="'.$row->status.'" onclick="closeRejectTicket(this,'.$row->id.')" class="btn btn-outline-success btn-sm assign_ticket">Solved Ticket</button>
                 &nbsp;';
@@ -663,28 +675,28 @@ class TicketController extends Controller
                 $btn .= '<button id="openModalBtn" data-type="hold" data-hasfeedback="'.$hasFeedback.'" data-status="'.$row->status.'" onclick="closeRejectTicket(this,'.$row->id.')" class="btn btn-outline-info btn-sm assign_ticket">Hold Ticket</button>';
                 }
 
-               
+
                 return $btn;
             })
             ->addColumn('action', function($row){
 
                 $btn = '';
-                $hasFeedback = is_null($row->feedback) ? 0 : 1; 
+                $hasFeedback = is_null($row->feedback) ? 0 : 1;
                     if($row->status != 2){
                     $btn = '<button id="openModalBtn" data-type="close" data-hasfeedback="'.$hasFeedback.'" data-status="'.$row->status.'" onclick="closeRejectTicket(this,'.$row->id.')" class="btn btn-outline-success btn-sm assign_ticket">Solved Ticket</button>
                     &nbsp;';
                     }
-    
+
                     if($row->status != 3){
                     $btn .= '<button id="openModalBtn" data-type="reject" data-hasfeedback="'.$hasFeedback.'" data-status="'.$row->status.'" onclick="closeRejectTicket(this,'.$row->id.')" class="btn btn-outline-danger btn-sm assign_ticket">Reject Ticket</button>&nbsp;';
                     }
-    
-    
+
+
                     if($row->status != 4){
                     $btn .= '<button id="openModalBtn" data-type="hold" data-hasfeedback="'.$hasFeedback.'" data-status="'.$row->status.'" onclick="closeRejectTicket(this,'.$row->id.')" class="btn btn-outline-info btn-sm assign_ticket">Hold Ticket</button>';
                     }
-    
-                   
+
+
                 return $btn;
         })->rawColumns(['view','action','status','priority'])
         ->make(true);
@@ -695,7 +707,7 @@ class TicketController extends Controller
         // dd($tickets);
         return Datatables::of($tickets)
         ->addIndexColumn()
-      
+
         ->addColumn('request_by', function($row){
             // dd($row->user->name);
             return $row->user->name;
@@ -738,17 +750,20 @@ class TicketController extends Controller
      ->rawColumns(['status','priority'])
     ->make(true);
     }
-    
+
     public function allTicketsList(Request $request)
     {
+        $orgId = Session::get('organization_id');
+
         $query = Ticket::with('category', 'user')
             ->whereNull('assignee')
+            ->where('organization_id', $orgId)
             ->orderBy('id', 'desc');
-    
+
         // Apply search filter
         if (!empty($request->input('search')['value'])) {
             $search = $request->input('search')['value'];
-    
+
             $query->where(function ($q) use ($search) {
                 $q->where('ticket_id', 'LIKE', "%{$search}%")
                   ->orWhere('summary', 'LIKE', "%{$search}%")
@@ -760,7 +775,7 @@ class TicketController extends Controller
                   });
             });
         }
-    
+
         return Datatables::of($query)
             ->addIndexColumn()
             ->addColumn('ticket_no', function($row) {
@@ -776,15 +791,26 @@ class TicketController extends Controller
                 return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
             })
             ->addColumn('users_mail', function($row) {
-                return $row->user->email ?? '-';
+                return $row->user_mail ?? '-';
             })
-            ->addColumn('engineers', function($row) {
-                return '<select class="form-select engineers" data-id="'.$row->id.'">
-                            <option selected="" disabled="" value="">Assign Engineer</option>
-                            <option value="4" '.($row->assignee == '4' ? 'selected' : '').'>Karthikeyan</option>
-                            <option value="3" '.($row->assignee == '3' ? 'selected' : '').'>Sabari</option>
-                        </select>';
+            ->addColumn('engineers', function($row) use ($orgId) {
+                $engineers = \App\Models\User::where('organization_id', $orgId)
+                                             ->where('role', 2)
+                                             ->get();
+
+                $html = '<select class="form-select engineers" data-id="'.$row->id.'">
+                            <option selected disabled value="">Assign Engineer</option>';
+
+                foreach ($engineers as $engineer) {
+                    $selected = ($row->assignee == $engineer->id) ? 'selected' : '';
+                    $html .= '<option value="'.$engineer->id.'" '.$selected.'>'.$engineer->name.'</option>';
+                }
+
+                $html .= '</select>';
+
+                return $html;
             })
+
             ->addColumn('level', function($row) {
                 return '<select class="form-select level" data-id="'.$row->id.'" required="">
                             <option selected="" disabled="" value="">Select Level</option>
@@ -801,12 +827,12 @@ class TicketController extends Controller
             ->rawColumns(['engineers', 'level', 'action'])
             ->make(true);
     }
-    
+
 
     public function updateTicket(Request $request, $id)
     {
         $ticket = Ticket::find($id);
-    
+
         if (!$ticket) {
             return response()->json(['message' => 'Ticket not found'], 404);
         }
@@ -815,19 +841,22 @@ class TicketController extends Controller
     if ($ticket->assignee !== $request->assignee || $ticket->priority !== $request->priority) {
         $ticket->assigned_at = now(); // Set assigned_at only when these fields change
     }
-    
+
         $ticket->assignee = $request->assignee;
         $ticket->priority = $request->priority;
         $ticket->save();
-    
+
         return response()->json(['message' => 'Ticket updated successfully!']);
     }
-    
+
 
 
     public function solvedTicketsList()
     {
-        $tickets = Ticket::with('category','user')->whereIn('status', [3, 4, 1, 2 ,0])->orderBy('id', 'desc')->get();
+        $orgId = Session::get('organization_id');
+
+        $tickets = Ticket::with('category','user')->whereIn('status', [3, 4, 1, 2 ,0])->where('organization_id', $orgId)
+        ->orderBy('id', 'desc')->get();
 
         return Datatables::of($tickets)
         ->addIndexColumn()
@@ -847,7 +876,7 @@ class TicketController extends Controller
             $flag = $row->status ?? 'default';
             $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
             return $flag_img;
-        
+
         })
         ->addColumn('status', function($row) {
             if ($row->status == 0) {
@@ -935,10 +964,13 @@ class TicketController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Ticket update Failed.']);
         }
     }
-    
+
     public function agentTicketlist()
     {
-        $tickets = Ticket::with('user')->where('assignee', 4)->where('status', 0)->orderBy('id', 'desc')->get();
+        // dd('agent');
+        $orgId = Session::get('organization_id');
+        $engineerId = Session::get('engineer_id');
+        $tickets = Ticket::with('user')->where('status', 0)->where('organization_id', $orgId)->where('assignee', $engineerId)->orderBy('id', 'desc')->get();
         // dd($tickets);
         return Datatables::of($tickets)
         ->addIndexColumn()
@@ -947,12 +979,12 @@ class TicketController extends Controller
                               <i class="fa-regular fa-eye"></i>
                             </button>';
         })
-        ->addColumn('request_by', function($row){
-            // dd($row->user->name);
-            return $row->user->name;
+        ->addColumn('request_by', function($row) {
+            $user = \App\Models\User::where('email', $row->user_mail)->first();
+            return $user ? $user->name : '-';
         })
-        ->addColumn('email', function($row){
-            return $row->user->email;
+        ->addColumn('email', function($row) {
+            return $row->user_mail ?? '-';
         })
         ->addColumn('subject', function($row){
             return $row->subject;
@@ -988,24 +1020,24 @@ class TicketController extends Controller
         })
         ->addColumn('action', function($row){
             $btn = '';
-            $hasFeedback = is_null($row->feedback) ? 0 : 1; 
-        
+            $hasFeedback = is_null($row->feedback) ? 0 : 1;
+
             // Hide all buttons if the ticket is solved (status = 2) or rejected (status = 3)
             if ($row->status != 2 && $row->status != 3) {
                 if($row->status != 2){
                     $btn = '<button id="openModalBtn" data-type="close" data-hasfeedback="'.$hasFeedback.'" data-status="'.$row->status.'" onclick="closeRejectTicket(this,'.$row->id.')" class="btn btn-outline-success btn-sm assign_ticket">Solved Ticket</button>
                     &nbsp;';
                 }
-        
+
                 if($row->status != 3){
                     $btn .= '<button id="openModalBtn" data-type="reject" data-hasfeedback="'.$hasFeedback.'" data-status="'.$row->status.'" onclick="closeRejectTicket(this,'.$row->id.')" class="btn btn-outline-danger btn-sm assign_ticket">Reject Ticket</button>&nbsp;';
                 }
-        
+
                 if($row->status != 4){
                     $btn .= '<button id="openModalBtn" data-type="hold" data-hasfeedback="'.$hasFeedback.'" data-status="'.$row->status.'" onclick="closeRejectTicket(this,'.$row->id.')" class="btn btn-outline-info btn-sm assign_ticket">Hold Ticket</button>';
                 }
             }
-        
+
             return $btn;
         })->rawColumns(['view','action','status','priority'])
     ->make(true);
@@ -1017,20 +1049,20 @@ class TicketController extends Controller
         $data = Ticket::selectRaw('priority, COUNT(*) as count')
             ->groupBy('priority')
             ->pluck('count', 'priority');
-    
+
         // Map priority numbers to L1, L2, L3
         $formattedData = [
             'L1' => $data[1] ?? 0,
             'L2' => $data[2] ?? 0,
             'L3' => $data[3] ?? 0
         ];
-    
+
         return response()->json($formattedData);
     }
 
 
-    
-    
+
+
 }
 
 
