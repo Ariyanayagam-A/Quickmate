@@ -386,8 +386,8 @@ class UserController extends Controller
           // Map role name to a specific value
           $roleMap = [
               'supportdesk' => 1,
-              'engineerdesk' => 2,
-              'users' => 3,
+              'engineer' => 2,
+              'user' => 3,
               // Add more mappings as needed
           ];
 
