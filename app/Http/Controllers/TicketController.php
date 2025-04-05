@@ -217,11 +217,12 @@ class TicketController extends Controller
                 ->addColumn('ticket_no', function($row){
                     return $row->ticket_id;
                 })
-               ->addColumn('requested_by', function($row){
-                    return $row->user->name ?? '-';
+                ->addColumn('requested_by', function($row) {
+                    $user = \App\Models\User::where('email', $row->user_mail)->first();
+                    return $user ? $user->name : '-';
                 })
                 ->addColumn('email', function($row){
-                    return $row->user->email ?? '-';
+                    return $row->user_mail ?? '-';
                 })
                 ->addColumn('title', function($row){
                     return $row->subject;
@@ -232,18 +233,9 @@ class TicketController extends Controller
                 ->addColumn('category', function($row){
                         return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
                 })
-                ->addColumn('assigned_to', function($row){
-                    if($row->assignee == '4')
-                    {
-                        return 'Karthikeyan';
-                    }
-                    else if($row->assignee == '3')
-                    {
-                        return 'Sabari';
-                    }
-                    else{
-                        return '-';
-                    }
+                ->addColumn('assigned_to', function($row) {
+                    $engineer = \App\Models\User::where('id', $row->assignee)->where('role', 2)->first();
+                    return $engineer ? $engineer->name : '-';
                 })
 
                 ->addColumn('indicator', function($row) {
@@ -604,6 +596,26 @@ class TicketController extends Controller
 
     }
 
+    public function getEngineers($ticketId)
+{
+    $ticket = Ticket::find($ticketId);
+
+    if (!$ticket) {
+        return response()->json(['status' => false, 'message' => 'Ticket not found'], 404);
+    }
+
+    $orgId = $ticket->organization_id;
+
+    // Fetch users with role=2 (engineer) from same organization
+    $engineers = User::where('organization_id', $orgId)
+                    ->where('role', 2)
+                    ->select('id', 'name')
+                    ->get();
+
+    return response()->json(['status' => true, 'engineers' => $engineers]);
+}
+
+
     public function getagentHoldTickets()
     {
         $orgId = Session::get('organization_id');
@@ -933,7 +945,11 @@ class TicketController extends Controller
             'summary' => $ticket->summary,
             'feedback' => $ticket->feedback,
             'image' => $ticket->image,
-            'category' => $categoryName // send the name, not the ID
+            'category' => $categoryName, // send the name, not the ID
+            'created_at' => $ticket->created_at,
+            'assigned_at' => $ticket->assigned_at,
+            'deleted_at' => $ticket->deleted_at,
+            'closed_at' => $ticket->closed_at,
         ]
     ]);
 }

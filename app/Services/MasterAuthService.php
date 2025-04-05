@@ -55,7 +55,7 @@ class MasterAuthService
         $userData['email'] = isset($userData['email']) ? $userData['email'] : $userData['name_email'];
 
         $userResData = User::where('email',$userData['email'])->first();
-        // dd($userResData);
+        //  dd($userResData);
         $Organization = Organization::where('id',$userResData->organization_id)->first();
         // dd($userResData);
         Session::put('organization',$Organization);
@@ -132,6 +132,26 @@ class MasterAuthService
 
           return false;
     }
+
+    public function sendLdapDetails($ldapData)
+    {
+        $endpoint = "http://localhost:3000/api/v1//ldapConnection";
+
+        $payload = [
+            "ldap_id" => $ldapData['ldap_id'],
+            "ldap_password" => $ldapData['ldap_password'],
+            "domain_name" => $ldapData['domain_name'],
+            "connection_url" => $ldapData['connection_url']
+        ];
+
+        $headers = ['Content-Type: application/json'];
+
+        $response = $this->cURLHttpClient('POST', $endpoint, $payload, 'application/json', $headers);
+
+        // Don't just return true/false, return the full response
+        return $response;
+    }
+
 
     private function cURLHttpClient($method, $url, $data = [], $contentType, $headers = [],$type=null)
    {

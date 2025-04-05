@@ -37,9 +37,9 @@
               </p>
             </a>
           </li>
-         
 
- 
+
+
             <li class="nav-item ">
               <a href="#" class="nav-link">
                 <i class="bi bi-person nav-icon "></i>
@@ -47,7 +47,7 @@
                   Organisation Details
                   <i class="nav-arrow bi bi-chevron-right"></i>
                 </p>
-              </a>              
+              </a>
               <ul class="nav nav-treeview">
                 {{-- <li class="nav-item">
                   <a href="{{ route('super.admin.org') }}" class="nav-link">
@@ -64,7 +64,7 @@
                 <li class="nav-item">
                   <a href="{{ route('companies.list') }}" class="nav-link">
                     <i class="nav-icon bi  bi-clipboard2-check"></i>
-                    <p>List Organizations</p> 
+                    <p>List Organizations</p>
                   </a>
                 </li>
                 <li class="nav-item">
@@ -73,21 +73,27 @@
                     <p>Verify Organisation</p>
                   </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('organization.ldap') }}" class="nav-link">
+                      <i class="nav-icon bi  bi-clipboard2-check"></i>
+                      <p>LDAP Organization</p>
+                    </a>
+                  </li>
               </ul>
             </li>
 
-      
-
-          
-       
-          
 
 
-     
-         
+
+
+
+
+
+
+
 
       </ul>
-  
+
       </nav>
     </div>
 

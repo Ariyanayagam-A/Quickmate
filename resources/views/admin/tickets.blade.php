@@ -2,14 +2,14 @@
       @extends('layouts.adminlayout.app')
 
       @section('title', 'Dashboard')
-      
+
       @section('content')
       <!--end::Header-->
       <!--begin::Sidebar-->
-     
+
       <!--end::Sidebar-->
       <!--begin::App Main-->
-      
+
     <main class="app-main">
 
        <!-- Row start -->
@@ -31,10 +31,10 @@
         <div class="col-12 col-xl-6">
 
           <!-- Breadcrumb start -->
-         
+
 
           <ol class="breadcrumb m-3">
-            
+
             <li class="breadcrumb-item ">
               All Ticket
             </li>
@@ -58,24 +58,24 @@
 
         <div class="modal-body">
           <h2 class="text-center mb-4">Ticket Details</h2>
-          
+
           <!-- Ticket Subject -->
           <div class="form-group mb-3">
             <label for="subject" class="form-label">Ticket Subject</label>
-            <input 
-              type="text" 
-              name="subject" 
-              id="subject" 
+            <input
+              type="text"
+              name="subject"
+              id="subject"
               class="form-control" readonly>
           </div>
-          
+
           <!-- Ticket Description -->
           <div class="form-group mb-3">
             <label for="description" class="form-label">Ticket Description</label>
-            <textarea 
-              name="description" 
-              id="description" 
-              class="form-control" 
+            <textarea
+              name="description"
+              id="description"
+              class="form-control"
               rows="4" readonly></textarea>
           </div>
 
@@ -94,17 +94,17 @@
           {{-- <!-- Ticket Feedback -->
           <div class="form-group mb-3">
             <label for="feedback" class="form-label">Ticket Feedback</label>
-            <textarea 
-              name="feedback" 
-              id="feedback" 
-              class="form-control" 
+            <textarea
+              name="feedback"
+              id="feedback"
+              class="form-control"
               rows="4"></textarea>
           </div> --}}
-          
+
           <!-- Submit Button -->
           {{-- <div class="d-flex justify-content-center">
-            <button 
-              id="submitBtn" 
+            <button
+              id="submitBtn"
               class="btn btn-primary btn-sm px-4">
               Submit
             </button>
@@ -138,9 +138,7 @@
           <div class="mb-3">
             <label for="assignee" class="form-label">Assign to Engineer</label>
             <select class="form-control" id="assignee" name="assignee" required>
-              <option value="" selected disabled>-- Select Engineer --</option>
-              <option value="3">Sabari</option>
-              <option value="4">Karthikeyan</option>
+                <option value="" selected disabled>-- Select Engineer --</option>
             </select>
           </div>
           <div class="mb-3">
@@ -197,20 +195,20 @@
       </div>
 
       <!-- Row end -->
-    
+
 
     </main>
- 
 
 
-  
+
+
 
 
 
     <script>
    $(function() {
 
-    
+
 
         console.log($('.tickets')); // Ensure it logs the table element
 
@@ -233,10 +231,10 @@
             // {data: 'created_at', name: 'created_at'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
-    });  
+    });
 
        // Dropdown filter functionality
-    
+
 
 
     });
@@ -253,7 +251,7 @@
 
 
 
-    
+
     function viewTicket(ticketId) {
     $('#ticketid').val(ticketId);
     $.ajax({
@@ -299,7 +297,7 @@ $('.close').click(function(){
           $('#myModal').hide();
         })
 
-        
+
 
 
     </script>
@@ -331,22 +329,55 @@ $('.close').click(function(){
 </script>
 
 <script>
-  $(document).ready(function () {
+ $(document).ready(function () {
+    $(document).on('click', '.assign-ticket-btn', function () {
+        let ticketId = $(this).data('id');
+        $('#ticket_id').val(ticketId); // Set hidden ticket ID
+        $('#assignee').empty().append('<option selected disabled>Loading...</option>');
+
+        // Fetch engineers dynamically
+        $.ajax({
+            url: `/get-engineers/${ticketId}`,
+            type: 'GET',
+            success: function (response) {
+                if (response.status) {
+                    let options = '<option value="" selected disabled>-- Select Engineer --</option>';
+                    response.engineers.forEach(engineer => {
+                        options += `<option value="${engineer.id}">${engineer.name}</option>`;
+                    });
+                    $('#assignee').html(options); // Populate select box
+                } else {
+                    alert("No engineers found.");
+                    $('#assignee').html('<option disabled>No engineers available</option>');
+                }
+
+                $('#assignTicketModal').modal('show'); // Show the modal after data loads
+            },
+            error: function () {
+                alert("Failed to load engineers.");
+                $('#assignee').html('<option disabled>Error loading engineers</option>');
+            }
+        });
+    });
+
+    // Your existing form submission logic remains unchanged
+});
+$(document).ready(function () {
       // Open modal when clicking the "Assign Ticket" button
       $(document).on('click', '.assign-ticket-btn', function () {
           let ticketId = $(this).data('id');
           $('#ticket_id').val(ticketId); // Set hidden input value
           $('#assignTicketModal').modal('show'); // Show the modal
       });
-  
+
       // Handle form submission
       $('#assignTicketForm').submit(function (e) {
           e.preventDefault();
-  
+
           let ticketId = $('#ticket_id').val();
           let assignee = $('#assignee').val();
           let priority = $('#priority').val();
-  
+
           $.ajax({
               url: "{{ route('assign.ticket-admin') }}", // Route to handle assignment
               type: "POST",
@@ -417,6 +448,6 @@ $('#statusFilter').on('change', function () {
 </script>
 
 
-  
+
 
 @endsection

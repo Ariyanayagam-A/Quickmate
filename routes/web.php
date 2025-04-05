@@ -133,7 +133,8 @@ Route::middleware('superadmin')->prefix('quickmate')->group(function () {
     Route::post('/verifyorg/update', [OrganizationController::class, 'verify'])->name('superadmin.verifyorg.update');
     Route::post('/toggle-organization', [OrganizationController::class, 'toggleEnable'])->name('toggle.organization');
     Route::post('/toggle-role', [OrganizationController::class, 'toggleRoleEnable'])->name('toggle.roleEnable');
-
+    Route::get('/organization/ldap', [OrganizationController::class, 'showLdap'])->name('organization.ldap');
+    Route::post('/organization/ldap/update', [OrganizationController::class, 'updateLdap'])->name('superadmin.ldaporg.update');
 });
 
 
@@ -176,3 +177,5 @@ Route::delete('/categories/delete/{id}', [CategoryController::class, 'categories
 Route::get('/dummy', function () {
     return view('pages.dummy');
 })->name('dummy');
+
+Route::get('/get-engineers/{ticketId}', [TicketController::class, 'getEngineers'])->name('get.engineers');
