@@ -33,7 +33,7 @@ class MasterAuthService
         ];
 
         $secretKey = $Organization->secret;
-
+        // dd($secretKey);
         $endpoint = 'http://127.0.0.1:3000/api/v1/auth/login';
 
         $headers = [
@@ -45,7 +45,7 @@ class MasterAuthService
 
         if($getAccessObject['status_code'] == '200' || isset($getAccessObject['response']['access_token']))
         {
-           return $getAccessObject['response']['access_token'];  
+           return $getAccessObject['response']['access_token'];
         }
     }
 
@@ -53,8 +53,9 @@ class MasterAuthService
     {
         // $type = $action;
         $userData['email'] = isset($userData['email']) ? $userData['email'] : $userData['name_email'];
-        
+
         $userResData = User::where('email',$userData['email'])->first();
+        // dd($userResData);
         $Organization = Organization::where('id',$userResData->organization_id)->first();
         // dd($userResData);
         Session::put('organization',$Organization);
@@ -84,13 +85,13 @@ class MasterAuthService
 
         if($getAccessObject['status_code'] == '200' || isset($getAccessObject['response']['access_token']))
         {
-           return $getAccessObject['response']['access_token'];  
+           return $getAccessObject['response']['access_token'];
         }
     }
 
     public function createOrgRealm($realmData)
     {
-        $endpoint = 'https://sso.kloudstacks.com/api/v1/auth/create';
+        $endpoint = 'http://127.0.0.1:3000/api/v1/auth/create';
         $payload  = [
             'username' => $realmData
         ];
@@ -107,7 +108,7 @@ class MasterAuthService
     {
         $org = Organization::find($userData->organization_id);
 
-       $endpoint = "https://sso.kloudstacks.com/api/v1/auth/user/create";
+       $endpoint = "http://127.0.0.1:3000/api/v1/auth/user/create";
 
        $payload = [
             "username" => $userData->name,
@@ -117,7 +118,7 @@ class MasterAuthService
             "password" => $userData->org_password,
             "account" => $org->realm
         ];
-        
+
         $headers = [ 'Content-Type: application/json'];
 
         $realmResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);
@@ -145,7 +146,7 @@ class MasterAuthService
         case "POST":
             curl_setopt($curl, CURLOPT_POST, true);
             curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); 
+            curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
             // dd(json_encode($data));
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
             break;
@@ -153,7 +154,7 @@ class MasterAuthService
             if (!empty($data)) {
                 //$url .= '?' . http_build_query($data);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false); 
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
                 curl_setopt($curl, CURLOPT_URL, $url);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
 
@@ -169,7 +170,7 @@ class MasterAuthService
     $response = curl_exec($curl);
     // dd($curl,$response);
     $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-    
+
     // Handle errors
     if ($response === false) {
         return ['error' => curl_error($curl)];
@@ -183,7 +184,7 @@ class MasterAuthService
   public function clientSecretService($realm)
   {
     $endpoint = "http://127.0.0.1:3000/api/v1/auth/clientid/enable/$realm";
-    
+
     $clientSecretEnableResponse =  $this->cURLHttpClient('GET',$endpoint,[],'application/json',[]);
 
     // dd($clientSecretEnableResponse);
@@ -196,7 +197,7 @@ class MasterAuthService
   public function getRoleByUserId()
   {
     $endpoint = "http://127.0.0.1:3000/api/v1/auth/clientid/enable/$realm";
-    
+
     $clientSecretEnableResponse =  $this->cURLHttpClient('GET',$endpoint,[],'application/json',[]);
 
     // dd($clientSecretEnableResponse);
@@ -211,11 +212,11 @@ class MasterAuthService
   public function createRoleService($realmData)
   {
     $endpoint = "http://127.0.0.1:3000/api/v1/roles/create";
-    
+
     $payload = [
         'username' => $realmData
     ];
-    
+
     $headers = [ 'Content-Type: application/json'];
 
     $clientRoleEnableResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);
@@ -232,11 +233,11 @@ class MasterAuthService
   public function getUserIdandUpdate($realmData)
   {
     $endpoint = "http://127.0.0.1:3000/api/v1/auth/user/Arya/sabari";
-    
+
     $payload = [
         'username' => $realmData
     ];
-    
+
     $headers = [ 'Content-Type: application/json'];
 
     $clientRoleEnableResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);

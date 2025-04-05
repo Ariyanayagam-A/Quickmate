@@ -41,7 +41,7 @@
         }
 
         $(document).ready(function() {
-            
+
             $('#usersTable').DataTable({
                 processing: true,
                 serverSide: true,
@@ -96,67 +96,67 @@
 
     </script>
     {{-- <title>Organization Groups Form</title> --}}
-    
+
 <!-- Assign Role Modal -->
 <div class="modal fade" id="assignRoleModal" tabindex="-1" aria-labelledby="assignRoleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="assignRoleModalLabel">Assign Role</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="assignRoleForm">
-                        <input type="hidden" id="userId" name="user_id">
-                        <!-- <input type="hidden" id="roleId" name="user_id"> -->
-                        <div class="mb-3">
-                            <label for="role" class="form-label">Select Role</label>
-                            <select class="form-control" id="role" name="role">
-   
-                                @foreach ($roles as $role)
-                                    <option value="{{ $role['id'] }}"> {{ $role['name'] }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" id="assignRoleButton">Assign Role</button>
-                        </div>
-                    </form>
-                </div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="assignRoleModalLabel">Assign Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="assignRoleForm">
+                    <input type="hidden" id="userId" name="user_id">
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Select Role</label>
+                        <select class="form-control" id="role" name="role">
+                            @foreach ($roles as $role)
+                                <option value="{{ $role['id'] }}" data-name="{{ $role['name'] }}">{{ $role['name'] }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="assignRoleButton">Assign Role</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
+</div>
 </section>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 $(document).ready(function () {
+    $("#assignRoleButton").click(function (e) {
+        e.preventDefault(); // Prevent default form submission
+        let userId = $("#userId").val();
+        let roleId = $("#role").val();
+        let roleName = $("#role option:selected").data('name'); // Get the selected role name
 
-    $("#assignRoleButton").click(function () {
-        let role = $("#role").val();
-        let userId = $("#userId").val()
-        console.log('userId : ',userId)
-        console.log('role : ',role)
-
+        console.log('userId: ', userId);
+        console.log('roleId: ', roleId);
+        console.log('roleName: ', roleName);
 
         $.ajax({
             url: "{{ route('users.assignRole') }}",
             type: "POST",
             data: {
                 _token: "{{ csrf_token() }}",
-                user_id : userId ,
-                role: role
+                user_id: userId,
+                role_id: roleId,  // Send role ID
+                role_name: roleName // Send role name
             },
             success: function (response) {
-                debugger;
-                console.log('response : ',response)
-                if (response.success) {
-                    //alert("Role assigned successfully!");
-                    $("#assignRoleModal").modal("hide"); // Close modal
-                    return true;
+                console.log('response: ', response);
+                if (response.status) {
+                    alert("Role assigned successfully!");
+                    // $("#assignRoleModal").modal("hide"); // Close the modal
+                    $('#usersTable').DataTable().ajax.reload(); // Reload the table
                 } else {
-                    // alert("Failed to assign role.");
+                    alert("Failed to assign role: " + response.message);
                 }
             },
             error: function (xhr) {
@@ -164,14 +164,13 @@ $(document).ready(function () {
             }
         });
     });
-
 });
 
 
 function openRoleAssignModal(userid)
 {
     $('#userId').val(userid)
-    
+
     // console.log('popup : ',data)
 }
 </script>

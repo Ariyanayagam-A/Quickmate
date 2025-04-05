@@ -141,7 +141,7 @@
                       value=""
                       required
                       name="username"                    />
-                  
+
                   </div>
                   <div class="col-md-6">
                     <label for="validationCustom01" class="form-label">Email</label>
@@ -176,21 +176,7 @@
 
                   <!--end::Col-->
                   <!--begin::Col-->
-                  <div class="col-12">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="invalidCheck"
-                        required
-                      />
-                      <label class="form-check-label" for="invalidCheck">
-                        Agree and Continue
-                      </label>
-                      <div class="invalid-feedback">You must agree before submitting.</div>
-                    </div>
-                  </div>
+                 
                   <!--end::Col-->
                 </div>
                 <!--end::Row-->
@@ -240,11 +226,11 @@
     <!--end::Container-->
   </div>
 
-  
+
 <script>
     const passwordInput = document.getElementById('Password');
     const togglePassword = document.getElementById('togglePassword');
-  
+
     togglePassword.addEventListener('click', function () {
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
       passwordInput.setAttribute('type', type);

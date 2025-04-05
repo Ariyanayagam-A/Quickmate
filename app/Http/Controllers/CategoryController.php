@@ -29,22 +29,24 @@ class CategoryController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'is_active' => 'required|in:0,1',
-        ]);
-  
-        Category::create([
-            'org_id' => 1, // Default org_id
-            'name' => $request->name,
-            'description' => $request->description,
-            'is_active' => $request->is_active ?? 1,
-        ]);
-  
-        return response()->json(['success' => 'Category added successfully']);
-    }
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'is_active' => 'required|in:0,1',
+    ]);
+
+    // $orgId = Session::get('organization_id'); // Get the ID from session
+
+    Category::create([
+        'org_id' => $request->org_id, // Dynamically set the organization ID
+        'name' => $request->name,
+        'description' => $request->description,
+        'is_active' => $request->is_active ?? 1,
+    ]);
+
+    return response()->json(['success' => 'Category added successfully']);
+}
 
 
   // Store function
@@ -65,13 +67,13 @@ class CategoryController extends Controller
           'description' => 'nullable|string',
           'is_active' => 'required|boolean',
       ]);
-  
+
       $category = Category::findOrFail($id);
       $category->update($data);
-  
+
       return response()->json(['success' => true, 'message' => 'Category updated successfully']);
   }
-  
+
 
 
 
@@ -119,19 +121,20 @@ class CategoryController extends Controller
 
         // dd('wsdsadd');
         $category = Category::find($id);
-    
+
         if (!$category) {
             return response()->json(['error' => 'Category not found!'], 404);
         }
-    
+
         $category->delete();
-    
+
         return response()->json(['success' => 'Category deleted successfully!']);
     }
-    
+
     public function list()
     {
-        $categories = Category::all();
+        $orgId = session('organization_id');
+        $categories = Category::all()->where('org_id',$orgId);
 
         // dd($categories);
 
@@ -150,7 +153,7 @@ class CategoryController extends Controller
                     return $status_btn;
                 })
                 ->addColumn('action', function($row){
-                    
+
                     $statusText = $row->status ? 'Disable' : 'Enable';
                     $bgColor    = $row->status ? 'info' : 'danger';
                     $btn = '<button onclick="CategoryModalAction(this,'.$row->id.')" data-action="status" data-current='.$row->status.' class="btn btn-outline-'.$bgColor.' btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" title="'.$statusText.' Category">
@@ -162,17 +165,17 @@ class CategoryController extends Controller
                     <button class="btn btn-outline-danger btn-sm" data-action="delete" onclick="CategoryModalAction(this,'.$row->id.')" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-danger" title="Delete Category">
                         <i class="fa-regular fa-trash-can"></i>
                     </button>';
-                
+
                     return $btn;
                 })
                 ->rawColumns(['action','status'])
                 ->make(true);
-    }   
+    }
 
     public function changeStatus(Request $request)
     {
        $hasUpdated =  Category::where('id',$request->id)->update([
-            'status' => $request->status 
+            'status' => $request->status
         ]);
 
         if($hasUpdated){
