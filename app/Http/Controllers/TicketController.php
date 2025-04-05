@@ -25,7 +25,8 @@ class TicketController extends Controller
 
     public function raiseTicket()
     {
-        $categories = Category::where('is_active',1)->get();
+        $orgId = Session::get('organization_id');
+        $categories = Category::where('is_active',1)->where('org_id', $orgId)->get();
         return view('customer.raise-ticket')->with('categories',$categories);
     }
 
@@ -570,14 +571,10 @@ class TicketController extends Controller
 
         })
         ->addColumn('engineer', function($row) {
-            if ($row->assignee == '4') {
-                return 'Karthikeyan';
-            } elseif ($row->assignee == '3') {
-                return 'Sabari';
-            } else {
-                return '-';
-            }
+            $engineer = \App\Models\User::where('id', $row->assignee)->where('role', 2)->first();
+            return $engineer ? $engineer->name : '-';
         })
+
         ->addColumn('status', function($row) {
             if ($row->status == 0) {
                 $status_btn = '<span class="badge bg-warning">Open</span>';
@@ -609,7 +606,11 @@ class TicketController extends Controller
 
     public function getagentHoldTickets()
     {
-        $tickets = Ticket::with('user')->where('assignee', 4)->where('status', 4)->orderBy('id', 'desc')->get();
+        $orgId = Session::get('organization_id');
+
+        $engineerId = Session::get('engineer_id');
+
+        $tickets = Ticket::with('user')->where('assignee', $engineerId)->where('organization_id', $orgId)->where('status', 4)->orderBy('id', 'desc')->get();
         // dd($tickets);
         return Datatables::of($tickets)
         ->addIndexColumn()
@@ -618,12 +619,12 @@ class TicketController extends Controller
                               <i class="fa-regular fa-eye"></i>
                             </button>';
         })
-        ->addColumn('request_by', function($row){
-            // dd($row->user->name);
-            return $row->user->name;
+        ->addColumn('request_by', function($row) {
+            $user = \App\Models\User::where('email', $row->user_mail)->first();
+            return $user ? $user->name : '-';
         })
         ->addColumn('email', function($row){
-            return $row->user->email;
+            return $row->user_mail;
         })
         ->addColumn('subject', function($row){
             return $row->subject;
@@ -703,17 +704,21 @@ class TicketController extends Controller
     }
     public function getagenthistoryTickets()
     {
-        $tickets = Ticket::with('user')->where('assignee', 4)->whereIn('status', [2, 3, 4])->orderBy('id', 'desc')->get();
+        $orgId = Session::get('organization_id');
+
+        $engineerId = Session::get('engineer_id');
+
+        $tickets = Ticket::with('user')->where('assignee', $engineerId)->where('organization_id', $orgId)->whereIn('status', [2, 3, 4])->orderBy('id', 'desc')->get();
         // dd($tickets);
         return Datatables::of($tickets)
         ->addIndexColumn()
 
-        ->addColumn('request_by', function($row){
-            // dd($row->user->name);
-            return $row->user->name;
+        ->addColumn('request_by', function($row) {
+            $user = \App\Models\User::where('email', $row->user_mail)->first();
+            return $user ? $user->name : '-';
         })
         ->addColumn('email', function($row){
-            return $row->user->email;
+            return $row->user_mail;
         })
         ->addColumn('subject', function($row){
             return $row->subject;
@@ -899,31 +904,62 @@ class TicketController extends Controller
         ->addColumn('level', function($row) {
             return !is_null($row->priority) ? "L".$row->priority : '-';
         })
-        ->addColumn('assigned_to', function($row){
-            if($row->assignee == '4')
-            {
-                return 'Karthikeyan';
-            }
-            else if($row->assignee == '3')
-            {
-                return 'Sabari';
-            }
-            else{
-                return '-';
-            }
+        ->addColumn('assigned_to', function($row) {
+            $engineer = \App\Models\User::where('id', $row->assignee)->where('role', 2)->first();
+            return $engineer ? $engineer->name : '-';
         })
+
         ->rawColumns(['status','indicator'])
         ->make(true);
 
     }
 
     public function getTicketById($id)
-    {
-        $ticket = Ticket::find($id);
-        // dd($ticket);
-        return response()->json(['status' => 'success', 'data' => $ticket]);
+{
+    $ticket = Ticket::find($id);
 
+    if (!$ticket) {
+        return response()->json(['status' => 'error', 'message' => 'Ticket not found'], 404);
     }
+
+    // Get category name manually
+    $categoryName = \App\Models\Category::where('id', $ticket->category)->value('name');
+
+    return response()->json([
+        'status' => 'success',
+        'data' => [
+            'id' => $ticket->id,
+            'subject' => $ticket->subject,
+            'summary' => $ticket->summary,
+            'feedback' => $ticket->feedback,
+            'image' => $ticket->image,
+            'category' => $categoryName // send the name, not the ID
+        ]
+    ]);
+}
+
+
+
+    //     public function getTicketById($id)
+    // {
+    //     $ticket = Ticket::with('category')->find($id); // Eager load the category
+
+    //     if (!$ticket) {
+    //         return response()->json(['status' => 'error', 'message' => 'Ticket not found']);
+    //     }
+
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'data' => [
+    //             'subject' => $ticket->subject,
+    //             'summary' => $ticket->summary,
+    //             'feedback' => $ticket->feedback,
+    //             'image' => $ticket->image,
+    //             'category' => $ticket->category->name ?? 'N/A', // return category name here
+    //         ]
+    //     ]);
+    // }
+
     public function resolveTicket(Request $request)
     {
         if($request->has('feedback'))

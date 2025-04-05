@@ -153,7 +153,7 @@ $(document).ready(function () {
                 console.log('response: ', response);
                 if (response.status) {
                     alert("Role assigned successfully!");
-                    $("#assignRoleModal").modal("hide");
+                    // $("#assignRoleModal").modal("hide"); // Close the modal
                     $('#usersTable').DataTable().ajax.reload(); // Reload the table
                 } else {
                     alert("Failed to assign role: " + response.message);

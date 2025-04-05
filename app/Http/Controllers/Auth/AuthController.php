@@ -77,18 +77,28 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $token = $this->authService->loginService($credentials,'org');
+        $token = $this->authService->loginService($credentials, 'org');
 
-        Session::put('access_token',$token);
-        // dd($token);
-        if($token)
-        {
+        if ($token) {
+            Session::put('access_token', $token);
+
+            // 🔍 Fetch the organization admin user (based on email or credentials)
+            $admin = \App\Models\Organization::where('official_email', $credentials['email'])->first();
+
+            if ($admin) {
+                // ✅ Put the org_id in session (you can store the ID or full object)
+                Session::put('organization_id', $admin->id);
+                // dd($admin->id);
+                // Or if you want to store full organization:
+                // Session::put('organization', $admin->organization);
+            }
+
             return redirect()->route('admin.dashboard')
-            ->with(compact('token'))
-            ->with('success' , 'Logged in successfully');
+                ->with(compact('token'))
+                ->with('success', 'Logged in successfully');
         }
 
         return back()->with('error', 'Invalid email or password.')->withInput();
+    }
 
-  }
 }

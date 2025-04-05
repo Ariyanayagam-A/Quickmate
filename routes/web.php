@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UserController; 
-use App\Http\Controllers\TicketController;     
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\TicketController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\AzureAuthController;
@@ -39,9 +39,9 @@ Route::get('/quickmate/kloudstack/authenticate/{token}', [AuthenticationControll
     Route::get('/authorize-user', [AuthenticationController::class, 'authorizeUser'])
     ->name('authorize.user');
 
-    Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout'); 
-    
-    
+    Route::post('/logout', [AuthenticationController::class, 'logout'])->name('logout');
+
+
 Route::get('login', [UserController::class,'login'])->name('customer.loginform');
 Route::post('login', [AuthController::class,'checkAuth'])->name('customer.login');
 Route::get('user/register', [UserController::class,'register'])->name('customer.register');
@@ -75,7 +75,7 @@ Route::middleware('support')->prefix('supportdesk')->group(function () {
     Route::get('tickets/solved-tickets', [TicketController::class,'solvedTicketsList'])->name('supportdesk.solvedtickets');
     // test
     Route::post('assign-ticket', [TicketController::class,'assignTicket'])->name('supporttickets.assign');
-    Route::get('ticket/{id}', [TicketController::class,'getTicketById'])->name('supportticket.get'); 
+    Route::get('ticket/{id}', [TicketController::class,'getTicketById'])->name('supportticket.get');
 });
 
 // admin routes
@@ -100,10 +100,10 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('assets', [AdminController::class,'assets'])->name('admin.assets');
     Route::get('siem', [AdminController::class,'addsiem'])->name('admin.siem');
     Route::get('manage/users', [AdminController::class,'manageuser'])->name('admin.manageuser');
-    Route::get('/users-list', [UserController::class, 'ajaxList'])->name('users.index'); 
+    Route::get('/users-list', [UserController::class, 'ajaxList'])->name('users.index');
     Route::delete('/users/{id}', [UserController::class, 'deleteUser'])->name('users.destroy');
     Route::post('/users/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
-    
+
 
         Route::get('/import-user', function () {
             return view('admin.newuser');

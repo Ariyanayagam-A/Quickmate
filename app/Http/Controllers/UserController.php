@@ -320,6 +320,7 @@ class UserController extends Controller
     //   }
         // dd($roleValue);
       // Create user
+      $org_name = Session::get('organization')->organization_name;
       $user = User::create([
           'name' => $request->username,
           'fname' => $request->fname,
@@ -341,7 +342,7 @@ class UserController extends Controller
           if($userCreated)
           {
             unset($user['org_password']);
-            $user->update(['organization_id' => $user['organization_id'],'realm' => $user->name ]);
+            $user->update(['organization_id' => $user['organization_id'],'realm' => $org_name ]);
             return redirect()->back()->with('success', 'User registered successfully!');
           }
           else
@@ -385,8 +386,8 @@ class UserController extends Controller
           // Map role name to a specific value
           $roleMap = [
               'supportdesk' => 1,
-              'engineer' => 2,
-              'user' => 3,
+              'engineerdesk' => 2,
+              'users' => 3,
               // Add more mappings as needed
           ];
 

@@ -5,9 +5,9 @@
 @section('content')
 
 
- 
 
- 
+
+
     <main class="app-main">
     <!-- Page wrapper start -->
     <div class="page-wrapper">
@@ -16,11 +16,11 @@
       <div class="app-container">
 
         <!-- App header starts -->
-       
+
         <!-- App header ends -->
 
         <!-- App navbar starts -->
-       
+
         <!-- App Navbar ends -->
 
         <!-- App body starts -->
@@ -34,8 +34,8 @@
                 </button>
               </div>
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                
-               
+
+
                <!-- Assign model -->
                <div class="modal modal-lg" id="myModal">
                 <div class="modal-dialog modal-dialog-centered">
@@ -50,24 +50,33 @@
 
                     <div class="modal-body">
                       <h2 class="text-center mb-4">Ticket Details</h2>
-                      
+
                       <!-- Ticket Subject -->
                       <div class="form-group mb-3">
                         <label for="subject" class="form-label">Ticket Subject</label>
-                        <input 
-                          type="text" 
-                          name="subject" 
-                          id="subject" 
+                        <input
+                          type="text"
+                          name="subject"
+                          id="subject"
                           class="form-control" readonly>
                       </div>
-                      
+
+                      <div class="form-group mb-3">
+                        <label for="subject" class="form-label">Ticket Category</label>
+                        <input
+                          type="text"
+                          name="subject"
+                          id="category"
+                          class="form-control" readonly>
+                      </div>
+
                       <!-- Ticket Description -->
                       <div class="form-group mb-3">
                         <label for="description" class="form-label">Ticket Description</label>
-                        <textarea 
-                          name="description" 
-                          id="description" 
-                          class="form-control" 
+                        <textarea
+                          name="description"
+                          id="description"
+                          class="form-control"
                           rows="4" readonly></textarea>
                       </div>
 
@@ -80,17 +89,17 @@
                       {{-- <!-- Ticket Feedback -->
                       <div class="form-group mb-3">
                         <label for="feedback" class="form-label">Ticket Feedback</label>
-                        <textarea 
-                          name="feedback" 
-                          id="feedback" 
-                          class="form-control" 
+                        <textarea
+                          name="feedback"
+                          id="feedback"
+                          class="form-control"
                           rows="4"></textarea>
                       </div>
-                      
+
                       <!-- Submit Button -->
                       <div class="d-flex justify-content-center">
-                        <button 
-                          id="submitBtn" 
+                        <button
+                          id="submitBtn"
                           class="btn btn-primary btn-sm px-4">
                           Submit
                         </button>
@@ -119,7 +128,7 @@
           <div class="container">
 
             <!-- Row start -->
-          
+
             <!-- Row end -->
 
             <!-- Row start -->
@@ -141,7 +150,7 @@
                             <th>Actions</th>
                           </tr>
                         </thead>
-                        <tbody>          
+                        <tbody>
                         </tbody>
                       </table>
                     </div>
@@ -158,7 +167,7 @@
         <!-- App body ends -->
 
         <!-- App footer start -->
-       
+
         <!-- App footer end -->
 
       </div>
@@ -167,7 +176,7 @@
     </div>
   </main>
   <!--end::App Main-->
- 
+
 </div>
     <!-- Page wrapper end -->
 
@@ -200,7 +209,7 @@
             {data:'priority', name:'priority'},
             {data: 'action', name: 'action', orderable: false, searchable: false},
         ]
-    });  
+    });
 
         $('.close').click(function(){
           $('#myModal').hide();
@@ -208,7 +217,7 @@
 
         $('#submitBtn').click(function()
         {
-          
+
           if (($('#feedback').val() == '' )) {
             alert('Please enter a Feedback.');
             return;
@@ -235,7 +244,7 @@
           $.ajax({
             url: "{{ route('solveticket') }}",
             type: 'POST',
-            data: JSON.stringify(payload), 
+            data: JSON.stringify(payload),
             contentType: 'application/json',
             success: function(response){
               console.log('response : ',response);
@@ -268,6 +277,7 @@
                 console.log('response data => ', response.data);
 
                 // Populate the form fields
+                $('#category').val(response.data.category);
                 $('#subject').val(response.data.subject);
                 $('#description').val(response.data.summary);
                 $('#feedback').val(response.data.feedback);
@@ -302,9 +312,9 @@
           if(!$(object).attr('data-hasfeedback'))
           {
             alert(`Please Open the Ticket and fill a feedback`)
-            return; 
+            return;
           }
-          
+
           if(confirm(message)){
             var payload = {
               ticketId : ticketId,
@@ -317,6 +327,6 @@
           }
 
         }
-        
+
     </script>
  @endsection

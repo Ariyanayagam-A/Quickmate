@@ -84,6 +84,7 @@
                 <option value="0">Inactive</option>
               </select>
             </div>
+            <input type="hidden" name="org_id" value="{{ session('organization_id') }}">
             <input type="hidden" name="is_edit" id="editaction" value="0">
             <div class="d-flex justify-content-center">
               <button type="submit" id="submitBtn" class="btn btn-primary btn-sm">Submit</button>
@@ -132,7 +133,7 @@
         searchable: false,
         render: function(data, type, row) {
           return `
-                
+
 				<button class="btn btn-warning btn-sm"
                         onclick="CategoryModalAction(this, ${data})"
                         data-action="edit"
@@ -242,7 +243,7 @@ var updateUrl = "{{ route('categories.update', ':id') }}".replace(':id', categor
         success: function(response) {
           console.log('Category updated successfully');
           $('#myModal').css('display', 'none');
-          // Reload DataTable 
+          // Reload DataTable
           $('#table').DataTable().ajax.reload(null, false);
           // Optionally close modal and refresh data
         },
@@ -265,7 +266,7 @@ var updateUrl = "{{ route('categories.update', ':id') }}".replace(':id', categor
           $('#categoryForm')[0].reset();
           // $('#categoryForm').close();
           $('#myModal').css('display', 'none');
-          // Reload DataTable 
+          // Reload DataTable
           $('#table').DataTable().ajax.reload(null, false);
         },
         error: function(error) {
