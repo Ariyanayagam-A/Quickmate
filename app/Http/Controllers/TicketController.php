@@ -209,13 +209,108 @@ class TicketController extends Controller
     {
 
 
-        $tickets = Ticket::with('category','user')->orderBy('id', 'desc')->get();
+        // $tickets = Ticket::with('category','user')->orderBy('id', 'desc')->get();
+
+
+        // return Datatables::of($tickets)
+        //         ->addIndexColumn()
+        //         ->addColumn('ticket_no', function($row){
+        //             return $row->ticket_id;
+        //         })
+        //         ->addColumn('requested_by', function($row) {
+        //             $user = \App\Models\User::where('email', $row->user_mail)->first();
+        //             return $user ? $user->name : '-';
+        //         })
+        //         ->addColumn('email', function($row){
+        //             return $row->user_mail ?? '-';
+        //         })
+        //         ->addColumn('title', function($row){
+        //             return $row->subject;
+        //         })
+        //         // ->addColumn('created_at', function($row){
+        //         //     return $row->created_at;
+        //         // })
+        //         ->addColumn('category', function($row){
+        //                 return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
+        //         })
+        //         ->addColumn('assigned_to', function($row) {
+        //             $engineer = \App\Models\User::where('id', $row->assignee)->where('role', 2)->first();
+        //             return $engineer ? $engineer->name : '-';
+        //         })
+
+        //         ->addColumn('indicator', function($row) {
+        //             $flag = $row->status ?? 'default';
+        //             $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
+        //             return $flag_img;
+
+        //         })
+        //         ->addColumn('level', function($row){
+        //            $level_html = is_null($row->priority) ? '-' : '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
+        //                         data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary"
+        //                         data-bs-title="Edit">
+        //                         <i class="">L'.$row->priority.'</i>
+        //                       </button>';
+        //             return $level_html;
+        //         })
+        //         ->addColumn('status', function($row){
+        //             if ($row->status == 0) {
+        //                 $status_btn = '<span class="badge bg-warning">Open</span>';
+        //             }
+        //             elseif ($row->status == 1) {
+        //                 $status_btn = '<span class="badge bg-info">On Progress</span>';
+        //             }
+        //             elseif ($row->status == 2) {
+        //                 $status_btn = '<span class="badge bg-success">Solved</span>';
+        //             }
+        //             elseif($row->status == 3) {
+        //                 $status_btn = '<span class="badge bg-danger">Rejected</span>';
+        //             }
+        //             else{
+        //                 $status_btn = '<span class="badge bg-secondary">On Hold</span>';
+        //             }
+        //             return $status_btn;
+        //         })
+        //         ->addColumn('created_at', function($row){
+        //             return $row->created_at;
+        //         })
+        //         ->addColumn('action', function($row) {
+        //             $btn = '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" title="View Ticket" onclick="viewTicket('.$row->id.')">
+        //                         <i class="bi bi-eye"></i>
+        //                     </button>';
+
+        //             // Show Assign and Reject buttons only if status is not 2 (Assigned) or 3 (Rejected)
+        //             if ($row->status != 2 && $row->status != 3) {
+        //                 // Check if 'assignee' is NULL or empty before showing the Assign button
+        //                 if (empty($row->assignee)) {
+        //                     $btn .= '<br/>
+        //                              <button class="btn btn-outline-warning btn-sm assign-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-warning" title="Assign Ticket">
+        //                                 <i class="bi bi-pencil-square"></i>
+        //                              </button>';
+        //                 }
+
+        //                 $btn .= '<br/>
+        //                          <button class="btn btn-outline-danger btn-sm delete-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-danger" title="Reject Ticket">
+        //                             <i class="bi bi-x-circle"></i>
+        //                          </button>';
+        //             }
+
+        //             return $btn;
+        //         })
+
+
+        //         ->rawColumns(['action','status','level','indicator'])
+        //         ->make(true);
+
+        $orgId = session('organization')->id;
+
+
+        $tickets = Ticket::with('category','user')->with('organization_id' ,$orgId)->orderBy('id', 'desc')->get();
 
 
         return Datatables::of($tickets)
                 ->addIndexColumn()
                 ->addColumn('ticket_no', function($row){
-                    return $row->ticket_id;
+                    return $row->ticket_id ?? '-';
                 })
                 ->addColumn('requested_by', function($row) {
                     $user = \App\Models\User::where('email', $row->user_mail)->first();
@@ -225,7 +320,7 @@ class TicketController extends Controller
                     return $row->user_mail ?? '-';
                 })
                 ->addColumn('title', function($row){
-                    return $row->subject;
+                    return $row->subject ?? '-';
                 })
                 // ->addColumn('created_at', function($row){
                 //     return $row->created_at;
@@ -241,7 +336,7 @@ class TicketController extends Controller
                 ->addColumn('indicator', function($row) {
                     $flag = $row->status ?? 'default';
                     $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
-                    return $flag_img;
+                    return $flag_img ?? '-';
 
                 })
                 ->addColumn('level', function($row){
@@ -250,7 +345,7 @@ class TicketController extends Controller
                                 data-bs-title="Edit">
                                 <i class="">L'.$row->priority.'</i>
                               </button>';
-                    return $level_html;
+                    return $level_html ?? '-';
                 })
                 ->addColumn('status', function($row){
                     if ($row->status == 0) {
@@ -268,10 +363,10 @@ class TicketController extends Controller
                     else{
                         $status_btn = '<span class="badge bg-secondary">On Hold</span>';
                     }
-                    return $status_btn;
+                    return $status_btn ?? '-';
                 })
                 ->addColumn('created_at', function($row){
-                    return $row->created_at;
+                    return $row->created_at ?? '-';
                 })
                 ->addColumn('action', function($row) {
                     $btn = '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" title="View Ticket" onclick="viewTicket('.$row->id.')">
@@ -294,7 +389,7 @@ class TicketController extends Controller
                                  </button>';
                     }
 
-                    return $btn;
+                    return $btn ?? '-';
                 })
 
 
