@@ -135,7 +135,7 @@ class MasterAuthService
 
     public function sendLdapDetails($ldapData)
     {
-        $endpoint = "http://localhost:3000/api/v1//ldapConnection";
+        $endpoint = "https://sso.kloudstacks.com/api/v1//ldapConnection";
 
         $payload = [
             "ldap_id" => $ldapData['ldap_id'],
