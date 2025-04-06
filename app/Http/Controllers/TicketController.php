@@ -470,6 +470,7 @@ class TicketController extends Controller
         $ticket = Ticket::find($request->ticket_id);
         $ticket->assignee = $request->assignee;
         $ticket->priority = $request->priority;
+        $ticket->assigned_at = now();
         $ticket->save();
 
         return response()->json(['message' => 'Ticket assigned successfully!']);
