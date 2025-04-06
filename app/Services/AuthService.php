@@ -10,7 +10,7 @@ class AuthService
 
     public function loginService($loginData)
     {
-        $this->cURLHttpClient('POST','http://127.0.0.1:3000/api/v1/auth/login', [
+        $this->cURLHttpClient('POST','https://sso.kloudstacks.com/api/v1/auth/login', [
             'client_id' => 'admin-cli',
             'username' => $loginData['name_email'],
             'password' => $loginData['password'],
