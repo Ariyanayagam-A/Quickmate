@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use DataTables;
 use App\Models\Category;
 use Response;
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
@@ -35,7 +36,8 @@ class CategoryController extends Controller
         'description' => 'nullable|string',
         'is_active' => 'required|in:0,1',
     ]);
-
+    // dd($request->all());
+    // Log::alert("message", ['data' => $request->all()]);
     // $orgId = Session::get('organization_id'); // Get the ID from session
 
     Category::create([
@@ -133,7 +135,8 @@ class CategoryController extends Controller
 
     public function list()
     {
-        $orgId = session('organization_id');
+        // <input type="hidden" name="org_id" value="{{ session('organization')->id }}">
+        $orgId = session('organization')->id; // Get the ID from session
         $categories = Category::all()->where('org_id',$orgId);
 
         // dd($categories);
