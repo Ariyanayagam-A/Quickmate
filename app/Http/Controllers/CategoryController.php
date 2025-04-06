@@ -133,9 +133,8 @@ class CategoryController extends Controller
 
     public function list()
     {
-        $orgId = session('organization_id');
+        $orgId = session('organization')->id; // Get the ID from session
         $categories = Category::all()->where('org_id',$orgId);
-
         // dd($categories);
 
         return Datatables::of($categories)

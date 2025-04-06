@@ -84,7 +84,7 @@
                 <option value="0">Inactive</option>
               </select>
             </div>
-            <input type="hidden" name="org_id" value="{{ session('organization_id') }}">
+            <input type="hidden" name="org_id" value="{{ session('organization')->id }}">
             <input type="hidden" name="is_edit" id="editaction" value="0">
             <div class="d-flex justify-content-center">
               <button type="submit" id="submitBtn" class="btn btn-primary btn-sm">Submit</button>
