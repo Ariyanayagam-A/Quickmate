@@ -159,7 +159,10 @@ class MasterAuthService
 
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    if($method != 'GET')
+    {
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    }
 
     // Handle different request methods
     switch (strtoupper($method)) {
@@ -171,14 +174,8 @@ class MasterAuthService
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
             break;
         case "GET":
-            if (!empty($data)) {
-                //$url .= '?' . http_build_query($data);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-                curl_setopt($curl, CURLOPT_URL, $url);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-
-            }
             break;
         case "PUT":
         case "DELETE":
