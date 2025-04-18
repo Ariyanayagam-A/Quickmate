@@ -16,11 +16,22 @@
     @endif
 </script>
 
-{{-- <form action="{{route('import-excel')}}" method="POST" enctype="multipart/form-data">
-    @csrf  <!-- Add this -->
-    <input type="file" name="file">
-    <button type="submit">Upload</button>
-  </form> --}}
+@if(session('import_errors'))
+    <div class="alert alert-danger">
+        <ul>
+            @foreach(session('import_errors') as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
+
   <style>
     main{
       overflow-x: hidden !important;
@@ -153,6 +164,9 @@
                       required
                       name="email"
                       />
+                      @error('email')
+                      <span class="text-danger">{{ $message }}</span>
+                  @enderror
                   </div>
                   <div class="col-md-6 password-container">
                     <label for="validationCustom01" class="form-label">Password</label>
@@ -190,6 +204,35 @@
             </form>
             <!--end::Form-->
             <!--begin::JavaScript-->
+            <!-- Enter User Using Exel file -->
+          <div class="card-body">
+              <!--begin::Row-->
+              <div class="row g-9">
+                <!--begin::Col-->
+                <div class="col-md-6">
+                  <form action="{{route('import-excel')}}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <label for="validationCustom01" class="form-label">Upload Users Using Excel File</label>
+            
+                    <!-- Form elements in a row -->
+                    <div class="d-flex align-items-center gap-2">
+                      <input
+                        type="file"
+                        class="form-control"
+                        id="User-Name"
+                        required
+                        name="file" />
+                      
+                      <button type="submit" class="btn btn-info">Upload</button>
+                    </div>
+                    
+                  </form>
+                </div>
+              </div>
+            </div>
+            
+                <!--end::Col-->
+             
             <script>
               // Example starter JavaScript for disabling form submissions if there are invalid fields
               (() => {

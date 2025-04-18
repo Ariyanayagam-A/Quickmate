@@ -18,6 +18,7 @@ class Ticket extends Model
         'user_mail',
         'organization_id',
         'closed_at',
+        'category',
     ];
 
 
@@ -26,8 +27,10 @@ class Ticket extends Model
         return $this->belongsTo(User::class, 'raised_by');
     }
 
-    public function Category()
+    public function category()
     {
-        return $this->hasOne(Category::class, 'id', 'category');
+        return $this->belongsTo(Category::class, 'category', 'id');
     }
+    
+    
 }

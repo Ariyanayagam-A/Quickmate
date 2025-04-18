@@ -1,8 +1,8 @@
 <?php
+
 namespace App\Imports;
 
 use Maatwebsite\Excel\Concerns\ToArray;
-use Illuminate\Support\Facades\Hash; // Import Hash
 
 class ExcelImport implements ToArray
 {
@@ -17,10 +17,10 @@ class ExcelImport implements ToArray
         foreach ($rows as $row) {
             $this->data[] = [
                 'name' => $row[0] ?? null,
-                'email' => $row[1] ?? null,
-                'password' => isset($row[2]) ? Hash::make($row[2]) : Hash::make('password123'), // Hash password
-                'realm_id' => $row[3] ?? 1,  
-                'organization_id' => $row[4] ?? 1,
+                'fname' => $row[1] ?? null,
+                'lname' => $row[2] ?? null,
+                'email' => $row[3] ?? null,
+                'password' => $row[4] ?? null, // Don't hash here, hash in controller
             ];
         }
     }

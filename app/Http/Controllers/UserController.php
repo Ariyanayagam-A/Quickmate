@@ -17,7 +17,10 @@ use App\Services\MasterAuthService;
 use DataTables;
 use App\Models\Role;
 use Exception;
+use Illuminate\Support\Str;
+
 class UserController extends Controller
+
 {
     public function __construct(MasterAuthService $authService)
     {
@@ -38,12 +41,20 @@ class UserController extends Controller
                     return isset($role->name) ? $role->name : $role;
                 })
                 ->addColumn('action', function ($user) {
-                    return '
-                        <button class="btn btn-primary btn-sm editUser" data-id="' . $user->id . '">Edit</button>
-                        <button class="btn btn-danger btn-sm deleteUser" data-id="' . $user->id . '">Delete</button>
-                        <a class="btn btn-warning btn-sm assignRole" data-id="' . $user->id . '"  data-bs-toggle="modal" onclick="openRoleAssignModal('.$user->id .')" data-bs-target="#assignRoleModal"><i class="fas fa-user-shield"></i> Assign Role</a>
-                    ';
+                    if (!$user->role) {
+                        return '
+                            <button class="btn btn-primary btn-sm editUser" hidden data-id="' . $user->id . '">Edit</button>
+                            <button class="btn btn-danger btn-sm deleteUser" hidden data-id="' . $user->id . '">Delete</button>
+                            <a class="btn btn-warning btn-sm assignRole" data-id="' . $user->id . '" data-bs-toggle="modal" onclick="openRoleAssignModal(' . $user->id . ')" data-bs-target="#assignRoleModal">
+                                <i class="fas fa-user-shield"></i> Assign Role
+                            </a>';
+                    } else {
+                        return 
+                           '<span class="badge bg-success">User assigned successfully</span>';
+
+                    }
                 })
+                
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -209,38 +220,89 @@ class UserController extends Controller
 
   public function import(Request $request)
   {
-
-      // Validate the uploaded file
       $request->validate([
           'file' => 'required|mimes:xlsx,xls'
       ]);
-
-      // Import the Excel file
+  
       $import = new ExcelImport();
       Excel::import($import, $request->file('file'));
-
-      // Get the imported data as an array
+  
       $data = $import->data;
-      $index = 0;
-      // Loop through the data and insert into the users table
+      $org = Session::get('organization');
+      $org_name = $org->organization_name;
+      $org_id = $org->id;
+      $organizationDomain = $org->domain_name;
+  
+      $errors = [];
+  
+      // First: validate all rows before inserting
       foreach ($data as $index => $row) {
-        $data[$index] = [
-            'name' => $row['name'] ?? 'Unknown',
-            'email' => $row['email'],
-            'password' => $row['password'], // Use already hashed password
-            'role' => 1,
-            'email_verified_at' => null,
-            'realm_id' => $row['realm_id'] ?? 1,
-            'organization_id' => $row['organization_id'] ?? 1,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ];
+          $email = $row['email'] ?? '';
+          $emailDomain = substr(strrchr($email, "@"), 1);
+          if ($emailDomain !== "{$organizationDomain}.com") {
+              $errors[] = "Row " . ($index + 1) . ": Email domain must be {$organizationDomain}.com";
+              continue;
+          }
+  
+          $validator = Validator::make($row, [
+              'name' => 'required|string|max:255',
+              'email' => 'required|email',
+              'password' => 'required|min:6',
+          ]);
+  
+          if ($validator->fails()) {
+              $errorMessages = implode(', ', $validator->errors()->all());
+              $errors[] = "Row " . ($index + 1) . ": " . $errorMessages;
+          }
       }
-    // dd($data);
-      User::insert($data);
+  
+      // If any errors, return without inserting
+      if (count($errors)) {
+          return redirect()->route('import-user')
+              ->with('error', 'Import failed. Please fix the errors and try again.')
+              ->with('import_errors', $errors);
+      }
+  
+      // Now: insert users only if all data is valid
+      foreach ($data as $row) {
+          try {
+              $user = User::create([
+                  'name' => $row['name'],
+                  'fname' => $row['fname'] ?? '',
+                  'lname' => $row['lname'] ?? '',
+                  'email' => $row['email'],
+                  'password' => Hash::make($row['password']),
+                  'role' => null,
+                  'realm_id' => null,
+                  'email_verified_at' => now(),
+              ]);
+  
+              if ($user) {
+                  $user['org_password'] = $row['password'];
+                  $user['organization_id'] = $org_id;
+  
+                  $userCreated = $this->authService->createUser($user);
+  
+                  if ($userCreated) {
+                      unset($user['org_password']);
+                      $user->update([
+                          'organization_id' => $org_id,
+                          'realm' => $org_name
+                      ]);
+                  } else {
+                      return redirect()->route('import-user')->with('error', 'Import failed.')->with('import_errors', ['External authService failed for ' . $row['email']]);
+                  }
+              }
+  
+          } catch (\Exception $e) {
+              return redirect()->route('import-user')->with('error', 'Import failed.')->with('import_errors', [$e->getMessage()]);
+          }
+      }
+  
       return redirect()->route('import-user')->with('success', 'Users imported successfully!');
-
   }
+  
+  
 
 
   public function storeUser(Request $request)
@@ -291,18 +353,38 @@ class UserController extends Controller
   public function newuserstore(Request $request)
   {
     // dd($request->all());
-    $validator = Validator::make($request->all(),[
-          'username' => 'required|string|max:255',
-          'fname' => 'required|string|max:255',
-          'lname' => 'required|string|max:255',
-        //   'email' => 'required|email|unique:users',
-          'email' => 'required|email',
-          'password' => 'required|min:6'
-      ]);
+    $organizationDomain = Session::get('organization')->domain_name; // e.g., 'aot'
+    
+    $validator = Validator::make($request->all(), [
+        'username' => 'required|string|max:255',
+        'fname' => 'required|string|max:255',
+        'lname' => 'required|string|max:255',
+        'email' => [
+            'required',
+            'email',
+            function ($attribute, $value, $fail) use ($organizationDomain) {
+                $emailDomain = substr(strrchr($value, "@"), 1); // e.g., 'aot.com'
+                
+                // Match against organization domain with optional .com
+                if (!Str::is("{$organizationDomain}.*", $emailDomain)) {
+                    $fail("The email domain must match the organization domain (e.g., {$organizationDomain}.com).");
+                }
+            }
+        ],
+        'password' => 'required|min:6'
+    ]);
+    
+    
 
       if ($validator->fails()) {
         return redirect()->back()->withErrors($validator)->withInput();
     }
+
+    $organization_domain = Session::get('organization')->domain_name;
+
+    
+
+    
 
     // dd();
 
@@ -321,6 +403,7 @@ class UserController extends Controller
         // dd($roleValue);
       // Create user
       $org_name = Session::get('organization')->organization_name;
+      
       $user = User::create([
           'name' => $request->username,
           'fname' => $request->fname,

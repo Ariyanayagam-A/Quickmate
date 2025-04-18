@@ -13,9 +13,16 @@ class AgentMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
-        // die('AgentMiddleware');
+        if (!auth()->check()) {
+            return redirect()->route('customer.loginform');
+        }
+    
+        if (auth()->user()->role != 2) { // 2 = Engineer
+            abort(403, 'Unauthorized');
+        }
+    
         return $next($request);
     }
 }

@@ -1,10 +1,22 @@
 <nav class="app-header navbar navbar-expand bg-body">
   
-  @php
-      $user = Session::get('user');
-      $azureUser = isset($user['username']) ? $user['username']  : 'Admin';
-      $azureMail = isset($user['email']) ?  $user['email'] :  'admin@kloudstacks.com';
+ 
+@php
+    $organization = Session::get('organization');
+    $organizationName = isset($organization['organization_name']) ? $organization['organization_name'] : 'Admin';
+    $organizationEmail = isset($organization['admin_email']) ? $organization['admin_email'] : 'admin@kloudstacks.com';
+    $logoPath = isset($organization['logo']) ? $organization['logo'] : null;
+
+    if ($logoPath) {
+        $folder = dirname($logoPath); // logos
+        $filename = basename($logoPath); // 1744008302_cloud .png
+        $encodedFile = rawurlencode($filename); // encodes space as %20
+        $organizationLogo = asset("storage/{$folder}/{$encodedFile}");
+    } else {
+        $organizationLogo = asset('assets/dist/assets/img/dp.jpg');
+    }
 @endphp
+
     <!--begin::Container-->
     <div class="container-fluid">
       <!--begin::Start Navbar Links-->
@@ -82,7 +94,7 @@
         <li class="nav-item dropdown user-menu">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
             <img
-              src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
+              src="{{ $organizationLogo }}"
               class="user-image rounded-circle shadow"
               alt="User Image"
             />
@@ -92,13 +104,13 @@
             <!--begin::User Image-->
             <li class="user-header text-bg-primary">
               <img
-                src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
-                class="rounded-circle shadow"
-                alt="User Image"
-              />
+              src="{{ $organizationLogo }}"
+              class="user-image rounded-circle shadow"
+              alt="User Image"
+            />
               <p>
-                 {{ $azureUser }}
-                <small> {{ $azureMail }} </small>
+                 {{ $organizationName }}
+                <small> {{  $organizationEmail }} </small>
               </p>
             </li>
             <!--end::User Image-->
@@ -115,9 +127,17 @@
             <!--end::Menu Body-->
             <!--begin::Menu Footer-->
             <li class="user-footer">
-              <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
-              <a href="{{ route('customer.loginform')}}" class="btn btn-default btn-flat ">Sign out</a>
-            </li>
+              <a href="{{ route('logout.admin') }}" class="btn btn-default btn-flat"
+                 onclick="event.preventDefault(); document.getElementById('logout-admin-form').submit();">
+                  Sign out
+              </a>
+          </li>
+          
+          <form id="logout-admin-form" action="{{ route('logout.admin') }}" method="POST" style="display: none;">
+              @csrf
+          </form>
+             
+          
             <!--end::Menu Footer-->
           </ul>
         </li>

@@ -93,6 +93,10 @@ class AdminController extends Controller
         return view('admin.tickets')->with('activeLink','tickets');
     }
 
+    public function getReports(){
+
+        return view('admin.report')->with('activeLink','tickets');
+    }
 
     public function configurations()
     {

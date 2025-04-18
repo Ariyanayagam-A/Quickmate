@@ -9,15 +9,28 @@
         <main class="app-main container">
           <!--begin::App Content Header-->
           <div class="app-content-header">
-          <script>
-          @if(Session::has('success'))
-               toastr.success("{{ Session::get('success') }}");
-           @endif
+            <!-- Toastr CSS -->
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
-           @if(Session::has('error'))
-               toastr.error("{{ Session::get('error') }}");
-           @endif
+              <!-- Toastr JS -->
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+            <script>
+              @if(Session::has('success'))
+                  toastr.success("{{ Session::get('success') }}");
+              @endif
+          
+              @if(Session::has('error'))
+                  toastr.error("{{ Session::get('error') }}");
+              @endif
+          
+              @if ($errors->any())
+                  @foreach ($errors->all() as $error)
+                      toastr.error("{{ $error }}");
+                  @endforeach
+              @endif
           </script>
+          
 
             <!--begin::Container-->
           

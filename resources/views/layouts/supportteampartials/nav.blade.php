@@ -1,3 +1,18 @@
+@php
+    $userdata = Session::get('userdata');
+    $organization = Session::get('organization');
+    $username = isset($userdata['name']) ? $userdata['name'] : 'Support Engineer';
+    $userEmail = isset($userdata['email']) ? $userdata['email'] : 'support@company.com';
+    $logoPath = isset($organization->logo) ? $organization->logo : null;
+    if ($logoPath) {
+        $folder = dirname($logoPath); // 'logos'
+        $filename = basename($logoPath); // e.g., 'image with space.png'
+        $encodedFile = rawurlencode($filename); // space => %20
+        $organizationLogo = asset("storage/{$folder}/{$encodedFile}");
+    } else {
+        $organizationLogo = asset('assets/dist/assets/img/dp.jpg');
+    }
+@endphp
 <nav class="app-header navbar navbar-expand bg-body">
     <!--begin::Container-->
     <div class="container-fluid">
@@ -60,7 +75,7 @@
         <li class="nav-item dropdown user-menu">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
             <img
-              src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}"
+              src="{{ $organizationLogo }}"
               class="user-image rounded-circle shadow"
               alt="User Image"
             />
@@ -70,32 +85,43 @@
             <!--begin::User Image-->
             <li class="user-header text-bg-primary">
               <img
-                src="{{ asset('assets/dist/assets/img/user2-160x160.jpg')}}"
+                src="{{ $organizationLogo }}"
                 class="rounded-circle shadow"
                 alt="User Image"
               />
               <p>
-                Alexander Pierce
-                <small>Alex@gmail.com</small>
+                {{ $username }}
+                <small>{{ $userEmail }}</small>
               </p>
             </li>
             <!--end::User Image-->
             <!--begin::Menu Body-->
             <li class="user-body">
               <!--begin::Row-->
-              <div class="row">
+              {{-- <div class="row">
                 <div class="col-4 text-center"><a href="#">Account</a></div>
                 <!-- <div class="col-4 text-center"><a href="#">Sales</a></div> -->
                 <div class="col-4 text-center"><a href="#">Personalize</a></div>
-              </div>
+              </div> --}}
               <!--end::Row-->
             </li>
             <!--end::Menu Body-->
             <!--begin::Menu Footer-->
+
+            <form id="logout-user-form" action="{{ route('logout.user') }}" method="POST" style="display: none;">
+              @csrf
+          </form>
+
+          
             <li class="user-footer">
-              <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
-              <a href="{{route('customer.loginform')}}" class="btn btn-default btn-flat ">Sign out</a>
-            </li>
+              <a href="{{ route('logout.user') }}" class="btn btn-default btn-flat"
+                 onclick="event.preventDefault(); document.getElementById('logout-user-form').submit();">
+                  Sign out
+              </a>
+          </li>
+          
+         
+          
             <!--end::Menu Footer-->
           </ul>
         </li>

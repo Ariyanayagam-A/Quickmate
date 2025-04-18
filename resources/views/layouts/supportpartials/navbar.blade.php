@@ -1,3 +1,20 @@
+@php
+    $userdata = Session::get('userdata');
+    $organization = Session::get('organization');
+    $username = isset($userdata['name']) ? $userdata['name'] : 'Engineer';
+    $userEmail = isset($userdata['email']) ? $userdata['email'] : 'engineer@company.com';
+    $logoPath = isset($organization->logo) ? $organization->logo : null;
+
+if ($logoPath) {
+    $folder = dirname($logoPath); // 'logos'
+    $filename = basename($logoPath); // e.g., 'image with space.png'
+    $encodedFile = rawurlencode($filename); // space => %20
+    $organizationLogo = asset("storage/{$folder}/{$encodedFile}");
+} else {
+    $organizationLogo = asset('assets/dist/assets/img/dp.jpg');
+    
+}
+@endphp
 <nav class="app-header navbar navbar-expand bg-body">
     <!--begin::Container-->
     <div class="container-fluid">
@@ -60,7 +77,7 @@
         <li class="nav-item dropdown user-menu">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
             <img
-            src="{{ asset('assets/dist/assets/img/dp.jpg') }}"
+            src="{{ $organizationLogo }}"
             alt="AdminLTE Logo"
             class="user-image rounded-circle shadow"
           />
@@ -69,15 +86,20 @@
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
             <!--begin::User Image-->
             <li class="user-header text-bg-primary">
-              
+            <img
+                src="{{ $organizationLogo }}"
+                class="rounded-circle shadow"
+                alt="User Image"
+              />
               <p>
-                Karthikeyan
-                <small>Karthikeyan@gmail.com</small>
+                {{ $username }}
+                <small>{{ $userEmail }}</small>
+                {{-- <small>Member since Nov. 2012</small> --}}
               </p>
             </li>
             <!--end::User Image-->
             <!--begin::Menu Body-->
-            <li class="user-body">
+            {{-- <li class="user-body">
               <!--begin::Row-->
               <div class="row">
                 <div class="col-4 text-center"><a href="#">Account</a></div>
@@ -85,7 +107,7 @@
                 <div class="col-4 text-center"><a href="#">Personalize</a></div>
               </div>
               <!--end::Row-->
-            </li>
+            </li> --}}
             <!--end::Menu Body-->
             <!--begin::Menu Footer-->
             <li class="user-footer">

@@ -50,6 +50,16 @@ class OrganizationController extends Controller
             'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
         ]);
 
+        $emailDomain = explode('@', $request->admin_email)[1]; // e.g., "example.com"
+        $emailBase = explode('.', $emailDomain)[0];            // e.g., "example"
+
+        if ($emailBase !== $request->domain_name) {
+            return redirect()->back()->with('error', 'Admin email domain must match the organization domain.');
+        }
+
+        // dd($emailBase);
+
+
         // Handle file upload
         $logoPath = null;
         if ($request->hasFile('logo')) {
@@ -57,6 +67,7 @@ class OrganizationController extends Controller
             $logoName = time() . '_' . $logoFile->getClientOriginalName();
             $logoPath = $logoFile->storeAs('logos', $logoName, 'public');
         }
+
 
         // dd($request->all());
 
@@ -78,7 +89,7 @@ class OrganizationController extends Controller
         // Store organization details in DB only if Node.js request is successful
         // dd(Organization::all());
 
-        $password = Hash::make('Azeus@123');
+        $password = Hash::make($request->organization_name . '@123');
 
         $organization = Organization::create([
             'organization_name' => $request->organization_name,
@@ -95,7 +106,7 @@ class OrganizationController extends Controller
             'designation' => $request->designation,
             'domain_name' => $request->domain_name,
             'password' => $password,
-            'realm_id' => "QUID".Organization::count()+1,
+            'realm_id' => "QUID".Organization::count()+5,
             'realm' => $request->domain_name,
             'logo' => $logoPath,
         ]);
@@ -348,6 +359,7 @@ public function updateLdap(Request $request)
 
             User::create([
                 'name' => $username,
+                'realm' => $organization->organization_name,
                 'email' => $email,
                 'password' => Hash::make('1234'), // Or whatever default password you want
                 'organization_id' => $organization->id

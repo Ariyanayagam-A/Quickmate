@@ -13,9 +13,17 @@ class SupportMiddleware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
-       // die('SupportMiddleware');
+        if (!auth()->check()) {
+            return redirect()->route('customer.loginform');
+        }
+    
+        if (auth()->user()->role != 1) { // 1 = support team
+            abort(403, 'Unauthorized');
+        }
+    
         return $next($request);
     }
+    
 }

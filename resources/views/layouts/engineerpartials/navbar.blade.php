@@ -1,3 +1,21 @@
+@php
+    $userdata = Session::get('userdata');
+    $organization = Session::get('organization');
+    $username = isset($userdata['name']) ? $userdata['name'] : 'User';
+    $userEmail = isset($userdata['email']) ? $userdata['email'] : 'user@company.com';
+    $logoPath = isset($organization->logo) ? $organization->logo : null;
+
+    if ($logoPath) {
+        $folder = dirname($logoPath); // 'logos'
+        $filename = basename($logoPath); // e.g., 'image with space.png'
+        $encodedFile = rawurlencode($filename); // space => %20
+        $organizationLogo = asset("storage/{$folder}/{$encodedFile}");
+    } else {
+        $organizationLogo = asset('assets/dist/assets/img/dp.jpg');
+        
+    }
+@endphp
+
 <nav class="app-header navbar navbar-expand bg-body">
     <!--begin::Container-->
     <div class="container-fluid">
@@ -61,7 +79,10 @@
         <li class="nav-item dropdown user-menu">
           <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
             <img
-            src="{{ asset('assets/dist/assets/img/dp.jpg') }}"
+            src="{{ $organizationLogo }}"
+            {{-- src="{{ asset('assets/dist/assets/img/dp.png') }}" --}}
+            {{-- src="{{ asset('assets/dist/assets/img/user2-160x160.jpg') }}" --}}
+            {{-- src="{{ asset('assets/dist/assets/img/user4-128x128.jpg') }}" --}}
             alt="AdminLTE Logo"
             class="user-image rounded-circle shadow"
           />
@@ -70,10 +91,15 @@
           <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
             <!--begin::User Image-->
             <li class="user-header text-bg-primary">
-              
+               <img
+                src="{{ $organizationLogo }}"
+
+                class="rounded-circle shadow"
+                alt="User Image"
+              />
               <p>
-                Karthikeyan
-                <small>Karthikeyan@gmail.com</small>
+                {{ $username }}
+                <small>{{ $userEmail }}</small>
               </p>
             </li>
             <!--end::User Image-->
@@ -93,13 +119,19 @@
               <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
               {{-- <a href="{{ route('logout') }}" class="btn btn-default btn-flat ">Sign out</a> --}}
 
-              <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+              
+              <form id="logout-user-form" action="{{ route('logout.user') }}" method="POST" style="display: none;">
                 @csrf
             </form>
             
-            <a href="#" class="btn btn-default btn-flat" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                Sign out
-            </a>
+              <li class="user-footer">
+                <a href="{{ route('logout.user') }}" class="btn btn-default btn-flat"
+                   onclick="event.preventDefault(); document.getElementById('logout-user-form').submit();">
+                    Sign out
+                </a>
+            </li>
+            
+            
             
             </li>
             <!--end::Menu Footer-->

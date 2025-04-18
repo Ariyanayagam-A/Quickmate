@@ -53,6 +53,7 @@ Route::post('/keycloak/webhook', [webHookController::class, 'handleWebhook']);
 Route::middleware('new.user')->prefix('user')->group(function () {
     // Route::get('dashboard', [UserController::class,'dashboard'])->name('customer.dashboard');
     // Route::post('logout', [UserController::class,'logout'])->name('customer.logout');
+    Route::post('/logout/user', [AuthController::class, 'userLogout'])->name('logout.user')->withoutMiddleware('new.user');
     Route::post('create-ticket', [TicketController::class,'create'])->name('raise.ticket');
     Route::get('dashboard', [TicketController::class,'raiseTicket'])->name('ticketform');
     Route::get('tickets', [TicketController::class,'index'])->name('customer.tickets');
@@ -83,15 +84,18 @@ Route::middleware('support')->prefix('supportdesk')->group(function () {
 Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('login', [AuthController::class,'orgAdminLoginPage'])->name('admin.loginform')->withoutMiddleware('admin');
     Route::post('login', [AuthController::class,'orgAdminLogin'])->name('admin.login')->withoutMiddleware('admin');
+    Route::post('/logout/admin', [AuthController::class, 'orgAdminLogout'])->name('logout.admin');
     Route::post('/user/create', [UserController::class, 'newuserstore'])->name('user.create');
     Route::get('dashboard', [AdminController::class,'index'])->name('admin.dashboard');
     Route::get('configurations', [AdminController::class,'configurations'])->name('admin.configurations');
     Route::get('tickets', [AdminController::class,'getTickets'])->name('admin.tickets');
+    Route::get('reports',[AdminController::class, 'getReports'])->name('admin.reports');
     Route::get('tickets/list', [TicketController::class,'adminTicketsList'])->name('tickets.adminlist');
+    Route::get('reports/list', [TicketController::class,'adminreportList'])->name('tickets.reprotslist');
     Route::get('categories', [CategoryController::class,'index'])->name('admin.categories');
     Route::get('category/list',[CategoryController::class,'list'])->name('categories.list');
     Route::post('category/add', [CategoryController::class,'store'])->name('add.category');
-    Route::get('ticket/view/{id}', [TicketController::class,'getTicketById'])->name('ticket.view');
+    Route::get('ticket/view/{id}', [TicketController::class,'getTicketById'])->name('admin.ticket.view');
     Route::post('category/edit', [CategoryController::class,'update'])->name('edit.category');
     Route::post('category/delete',[CategoryController::class,'destroy'])->name('delete.category');
     Route::post('category/status', [CategoryController::class,'changeStatus'])->name('disable.category');
@@ -103,6 +107,9 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/users-list', [UserController::class, 'ajaxList'])->name('users.index');
     Route::delete('/users/{id}', [UserController::class, 'deleteUser'])->name('users.destroy');
     Route::post('/users/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
+    Route::get('/get-engineers',[TicketController::class,'getengineersreport'])->name('engineers.list.report');
+    Route::get('/reports/export', [TicketController::class, 'export'])->name('tickets.reports.export');
+
 
 
         Route::get('/import-user', function () {
@@ -113,6 +120,10 @@ Route::middleware('admin')->prefix('admin')->group(function () {
 });
 
 Route::middleware('superadmin')->prefix('quickmate')->group(function () {
+    Route::get('login', [AuthController::class,'quickmateAdminLoginPage'])->name('quickmate.loginform')->withoutMiddleware('superadmin');
+    Route::post('login', [AuthController::class,'quickmateAdminLogin'])->name('quickmate.login')->withoutMiddleware('superadmin');
+    Route::post('/logout/quickmate', [AuthController::class, 'superAdminLogout'])->name('logout.superadmin');
+
     Route::get('dashboard', [superadminController::class,'index'])->name('super.admin.dashboard');
     Route::get('organization', [superadminController::class,'addorgnization'])->name('super.admin.org');
     Route::get('add/organization', [superadminController::class,'addneworgnization'])->name('super.admin.neworg');

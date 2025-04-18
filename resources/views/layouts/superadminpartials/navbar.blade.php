@@ -115,9 +115,16 @@
               <!--end::Menu Body-->
               <!--begin::Menu Footer-->
               <li class="user-footer">
-                <!-- <a href="#" class="btn btn-default btn-flat"></a> -->
-                <a href="{{ route('customer.loginform')}}" class="btn btn-default btn-flat ">Sign out</a>
-              </li>
+                <a href="{{ route('logout.superadmin') }}" class="btn btn-default btn-flat"
+                   onclick="event.preventDefault(); document.getElementById('logout-superadmin-form').submit();">
+                    Sign out
+                </a>
+            </li>
+            
+            <form id="logout-superadmin-form" action="{{ route('logout.superadmin') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
+            
               <!--end::Menu Footer-->
             </ul>
           </li>

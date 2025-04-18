@@ -230,7 +230,7 @@ $(document).ready(function() {
     $(document).on('click', '.update-btn', function () {
     let organizationId = $(this).data('id'); // Get the ID from data-id attribute
      $.ajax({
-            url: '/quickmate/admin/organizations/' + organizationId + '/edit',
+            url: '/quickmate/organizations/' + organizationId + '/edit',
             type: 'GET',
             success: function(response) {  // "response" contains the full object
     let orgData = response.data; // Extract the actual organization data
@@ -272,7 +272,7 @@ $(document).ready(function() {
         let id = $('#org_id').val();
 
         $.ajax({
-            url: '/quickmate/admin/organization/update/' + id,
+            url: '/quickmate/organization/update/' + id,
             type: 'POST',
             data: formData,
             contentType: false,

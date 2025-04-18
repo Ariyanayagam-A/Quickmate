@@ -83,7 +83,8 @@ class AuthController extends Controller
             Session::put('access_token', $token);
 
             // 🔍 Fetch the organization admin user (based on email or credentials)
-            $admin = \App\Models\Organization::where('official_email', $credentials['email'])->first();
+            $admin = \App\Models\Organization::where('admin_email', $credentials['email'])->first();
+            
 
             if ($admin) {
                 // ✅ Put the org_id in session (you can store the ID or full object)
@@ -100,5 +101,51 @@ class AuthController extends Controller
 
         return back()->with('error', 'Invalid email or password.')->withInput();
     }
+
+    public function quickmateAdminLoginPage()
+    {
+        return view('superadmin.login');
+    }
+    
+    public function quickmateAdminLogin(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+    
+        if ($credentials['email'] == "quickmateadmin12@kloudstack.com" && $credentials['password'] == "siva1@goku") {
+            Session::put('superadmin_logged_in', true); // set session
+            return redirect()->route('super.admin.dashboard');
+        }
+    
+        return back()->with('error', 'Invalid credentials'); // error handling
+    }
+
+    public function orgAdminLogout(Request $request)
+    {
+        auth()->logout();
+        Session::forget(['access_token', 'organization_id']);
+        return redirect()->route('admin.loginform')->with('success', 'Admin logged out.');
+    }
+
+        public function userLogout(Request $request)
+    {
+        Session::forget(['access_token', 'user_id']);
+        auth()->logout();
+
+        return redirect()->route('customer.loginform')->with('success', 'Logged out successfully');
+    }
+
+        public function superAdminLogout(Request $request)
+    {
+        Session::forget(['access_token', 'superadmin_id']);
+        auth()->logout();
+
+        return redirect()->route('quickmate.loginform')->with('success', 'Logged out successfully');
+    }
+
+
+    
 
 }

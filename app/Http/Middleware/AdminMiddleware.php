@@ -61,7 +61,35 @@ class AdminMiddleware
     //         return response()->json(['error' => 'Token validation failed: ' . $e->getMessage()], 401);
     //     }
         
-        return $next($request);
+        // return $next($request);
+
+        
+    // ✅ Step 1: Check for access token
+    if (!Session::has('access_token')) {
+        return redirect()->route('admin.loginform');
+    }
+
+    // ✅ Step 2: Check for organization_id
+    if (!Session::has('organization_id')) {
+        return redirect()->route('admin.loginform')->with('error', 'Session expired. Please login again.');
+    }
+
+    // ✅ Step 3: (Optional but safe) Confirm it's a valid admin org
+    $admin = \App\Models\Organization::find(Session::get('organization_id'));
+
+    if (!$admin) {
+        Session::forget(['access_token', 'organization_id']);
+        return redirect()->route('admin.loginform')->with('error', 'Invalid admin session.');
+    }
+
+    // 🟡 If you have a role or flag in Organization model (e.g., is_admin), you can add:
+    // if (!$admin->is_admin) {
+    //     abort(403, 'Unauthorized admin access.');
+    // }
+
+    return $next($request);
+
+
     }
 
     private function convertJwkToPem($jwk)

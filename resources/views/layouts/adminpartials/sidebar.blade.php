@@ -88,6 +88,14 @@
           </li>
 
           <li class="nav-item ">
+            <a href="{{ route('admin.reports') }}" class="nav-link">
+              <i class="nav-icon bi bi-people"></i>
+              <p>
+                Reports
+              </p>
+            </a></li> 
+
+          <li class="nav-item ">
             <a href="{{ route('admin.siem') }}" class="nav-link">
               <i class="nav-icon bi bi-people"></i>
               <p>

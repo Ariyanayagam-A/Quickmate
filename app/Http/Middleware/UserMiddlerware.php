@@ -13,10 +13,16 @@ class UserMiddlerware
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response
+    public function handle($request, Closure $next)
     {
-        // die('UserMiddlerware');
-        return $next($request);
+        if (!auth()->check()) {
+            return redirect()->route('customer.loginform');
+        }
     
+        if (auth()->user()->role != 3) { // 1 = User
+            abort(403, 'Unauthorized');
+        }
+    
+        return $next($request);
     }
 }

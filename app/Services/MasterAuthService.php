@@ -147,7 +147,7 @@ class MasterAuthService
         $headers = ['Content-Type: application/json'];
 
         $response = $this->cURLHttpClient('POST', $endpoint, $payload, 'application/json', $headers);
-
+        // dd($response);
         // Don't just return true/false, return the full response
         return $response;
     }
@@ -160,6 +160,9 @@ class MasterAuthService
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+    curl_setopt($curl, CURLOPT_TIMEOUT, 300); // Wait max 300 seconds for the entire response
+    curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30); // Wait max 30 seconds for connection
 
     // Handle different request methods
     switch (strtoupper($method)) {

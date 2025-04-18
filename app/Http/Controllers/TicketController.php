@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use DataTables;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
+use App\Exports\FilteredTicketsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class TicketController extends Controller
@@ -207,15 +209,16 @@ class TicketController extends Controller
 
     public function adminTicketsList()
     {
+        $orgId = session('organization')->id;
 
 
-        $tickets = Ticket::with('category','user')->orderBy('id', 'desc')->get();
+        $tickets = Ticket::with('category','user')->where('organization_id' ,$orgId)->orderBy('id', 'desc')->get();
 
 
         return Datatables::of($tickets)
                 ->addIndexColumn()
                 ->addColumn('ticket_no', function($row){
-                    return $row->ticket_id;
+                    return $row->ticket_id ?? '-';
                 })
                 ->addColumn('requested_by', function($row) {
                     $user = \App\Models\User::where('email', $row->user_mail)->first();
@@ -225,7 +228,7 @@ class TicketController extends Controller
                     return $row->user_mail ?? '-';
                 })
                 ->addColumn('title', function($row){
-                    return $row->subject;
+                    return $row->subject ?? '-';
                 })
                 // ->addColumn('created_at', function($row){
                 //     return $row->created_at;
@@ -241,7 +244,7 @@ class TicketController extends Controller
                 ->addColumn('indicator', function($row) {
                     $flag = $row->status ?? 'default';
                     $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
-                    return $flag_img;
+                    return $flag_img ?? '-';
 
                 })
                 ->addColumn('level', function($row){
@@ -250,7 +253,7 @@ class TicketController extends Controller
                                 data-bs-title="Edit">
                                 <i class="">L'.$row->priority.'</i>
                               </button>';
-                    return $level_html;
+                    return $level_html ?? '-';
                 })
                 ->addColumn('status', function($row){
                     if ($row->status == 0) {
@@ -268,10 +271,10 @@ class TicketController extends Controller
                     else{
                         $status_btn = '<span class="badge bg-secondary">On Hold</span>';
                     }
-                    return $status_btn;
+                    return $status_btn ?? '-';
                 })
                 ->addColumn('created_at', function($row){
-                    return $row->created_at;
+                    return $row->created_at ?? '-';
                 })
                 ->addColumn('action', function($row) {
                     $btn = '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" title="View Ticket" onclick="viewTicket('.$row->id.')">
@@ -294,7 +297,91 @@ class TicketController extends Controller
                                  </button>';
                     }
 
-                    return $btn;
+                    return $btn ?? '-';
+                })
+
+
+                ->rawColumns(['action','status','level','indicator'])
+                ->make(true);
+    }
+
+    public function adminreportList()
+    {
+        $orgId = session('organization')->id;
+
+
+        $tickets = Ticket::with('category','user')->where('organization_id' ,$orgId)->orderBy('id', 'desc')->get();
+
+        
+        return Datatables::of($tickets)
+                ->addIndexColumn()
+                ->addColumn('ticket_no', function($row){
+                    return $row->ticket_id ?? '-';
+                })
+                ->addColumn('requested_by', function($row) {
+                    $user = \App\Models\User::where('email', $row->user_mail)->first();
+                    return $user ? $user->name : '-';
+                })
+                ->addColumn('email', function($row){
+                    return $row->user_mail ?? '-';
+                })
+                ->addColumn('title', function($row){
+                    return $row->subject ?? '-';
+                })
+                // ->addColumn('created_at', function($row){
+                //     return $row->created_at;
+                // })
+                ->addColumn('category', function($row){
+                        return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
+                })
+                ->addColumn('assigned_to', function($row) {
+                    $engineer = \App\Models\User::where('id', $row->assignee)->where('role', 2)->first();
+                    return $engineer ? $engineer->name : '-';
+                })
+
+                ->addColumn('indicator', function($row) {
+                    $flag = $row->status ?? 'default';
+                    $flag_img = "<img src='" . asset("assets/dist/assets/img/flag-icon/$flag.png") . "' alt='flag' width='50' height='50'>";
+                    return $flag_img ?? '-';
+
+                })
+                ->addColumn('level', function($row){
+                   $level_html = is_null($row->priority) ? '-' : '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip"
+                                data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary"
+                                data-bs-title="Edit">
+                                <i class="">L'.$row->priority.'</i>
+                              </button>';
+                    return $level_html ?? '-';
+                })
+                ->addColumn('status', function($row){
+                    if ($row->status == 0) {
+                        $status_btn = '<span class="badge bg-warning">Open</span>';
+                    }
+                    elseif ($row->status == 1) {
+                        $status_btn = '<span class="badge bg-info">On Progress</span>';
+                    }
+                    elseif ($row->status == 2) {
+                        $status_btn = '<span class="badge bg-success">Solved</span>';
+                    }
+                    elseif($row->status == 3) {
+                        $status_btn = '<span class="badge bg-danger">Rejected</span>';
+                    }
+                    else{
+                        $status_btn = '<span class="badge bg-secondary">On Hold</span>';
+                    }
+                    return $status_btn ?? '-';
+                })
+                ->addColumn('created_at', function($row){
+                    return $row->created_at ?? '-';
+                })
+                ->addColumn('assigned_at', function($row){
+                    return $row->assigned_at ?? '-';
+                })
+                ->addColumn('closed_at', function($row){ //rejected time
+                    return $row->closed_at ?? '-';
+                })
+                ->addColumn('deleted_at', function($row) { //solved time
+                    return $row->deleted_at ?? '-';
                 })
 
 
@@ -375,6 +462,7 @@ class TicketController extends Controller
         $ticket = Ticket::find($request->ticket_id);
         $ticket->assignee = $request->assignee;
         $ticket->priority = $request->priority;
+        $ticket->assigned_at = now();
         $ticket->save();
 
         return response()->json(['message' => 'Ticket assigned successfully!']);
@@ -615,6 +703,22 @@ class TicketController extends Controller
     return response()->json(['status' => true, 'engineers' => $engineers]);
 }
 
+public function getengineersreport(){
+    $orgId = Session::get('organization_id');
+
+   $engineers = User::where('organization_id',$orgId)->where('role', 2) ->get();
+
+   return response()->json(['status' => true, 'engineers' => $engineers]);
+}
+
+
+
+public function export(Request $request)
+{
+    $engineerId = $request->query('engineer_id'); // passed from frontend
+
+    return Excel::download(new FilteredTicketsExport($engineerId), 'filtered_tickets.xlsx');
+}
 
     public function getagentHoldTickets()
     {
@@ -775,6 +879,7 @@ class TicketController extends Controller
         $query = Ticket::with('category', 'user')
             ->whereNull('assignee')
             ->where('organization_id', $orgId)
+            ->whereNull('priority')
             ->orderBy('id', 'desc');
 
         // Apply search filter
@@ -1098,7 +1203,9 @@ class TicketController extends Controller
     //Chart Data
     public function getOpenRequests()
     {
+        $organizationId = Session::get('organization')->id;
         $data = Ticket::selectRaw('priority, COUNT(*) as count')
+            ->where('organization_id', $organizationId)
             ->groupBy('priority')
             ->pluck('count', 'priority');
 
