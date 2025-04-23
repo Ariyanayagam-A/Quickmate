@@ -140,6 +140,7 @@ class AuthController extends Controller
         public function superAdminLogout(Request $request)
     {
         Session::forget(['access_token', 'superadmin_id']);
+        Session::forget('superadmin_logged_in'); // 🔑 Add this line to remove superadmin session
         auth()->logout();
 
         return redirect()->route('quickmate.loginform')->with('success', 'Logged out successfully');
