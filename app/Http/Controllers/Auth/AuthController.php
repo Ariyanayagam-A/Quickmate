@@ -114,7 +114,7 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
     
-        if ($credentials['email'] == "quickmateadmin12@kloudstack.com" && $credentials['password'] == "quickmate@123") {
+        if ($credentials['email'] == "quickmateadmin12@kloudstack.com" && $credentials['password'] == "siva1@goku") {
             Session::put('superadmin_logged_in', true); // set session
             return redirect()->route('super.admin.dashboard');
         }
