@@ -34,7 +34,7 @@ class MasterAuthService
 
         $secretKey = $Organization->secret;
         // dd($secretKey);
-        $endpoint = 'http://127.0.0.1:3000/api/v1/auth/login';
+        $endpoint = 'https://sso.kloudstacks.com/api/v1/auth/login';
 
         $headers = [
             'authkey:'.$secretKey,
@@ -72,7 +72,7 @@ class MasterAuthService
 
         // dd($secretKey);
 
-        $endpoint = 'http://127.0.0.1:3000/api/v1/auth/login';
+        $endpoint = 'https://sso.kloudstacks.com/api/v1/auth/login';
 
         $headers = [
             'authkey:'.$secretKey,
@@ -91,7 +91,7 @@ class MasterAuthService
 
     public function createOrgRealm($realmData)
     {
-        $endpoint = 'http://127.0.0.1:3000/api/v1/auth/create';
+        $endpoint = 'https://sso.kloudstacks.com/api/v1/auth/create';
         $payload  = [
             'username' => $realmData
         ];
@@ -108,7 +108,7 @@ class MasterAuthService
     {
         $org = Organization::find($userData->organization_id);
 
-       $endpoint = "http://127.0.0.1:3000/api/v1/auth/user/create";
+       $endpoint = "https://sso.kloudstacks.com/api/v1/auth/user/create";
 
        $payload = [
             "username" => $userData->name,
@@ -137,7 +137,7 @@ class MasterAuthService
     {
         set_time_limit(300);
         
-        $endpoint = "http://localhost:3000/api/v1//ldapConnection";
+        $endpoint = "https://sso.kloudstacks.com/api/v1//ldapConnection";
 
         $payload = [
             "ldap_id" => $ldapData['ldap_id'],
@@ -211,7 +211,7 @@ class MasterAuthService
 
   public function clientSecretService($realm)
   {
-    $endpoint = "http://127.0.0.1:3000/api/v1/auth/clientid/enable/$realm";
+    $endpoint = "https://sso.kloudstacks.com/api/v1/auth/clientid/enable/$realm";
 
     $clientSecretEnableResponse =  $this->cURLHttpClient('GET',$endpoint,[],'application/json',[]);
 
@@ -224,7 +224,7 @@ class MasterAuthService
 
   public function getRoleByUserId()
   {
-    $endpoint = "http://127.0.0.1:3000/api/v1/auth/clientid/enable/$realm";
+    $endpoint = "https://sso.kloudstacks.com/api/v1/auth/clientid/enable/$realm";
 
     $clientSecretEnableResponse =  $this->cURLHttpClient('GET',$endpoint,[],'application/json',[]);
 
@@ -239,7 +239,7 @@ class MasterAuthService
 
   public function createRoleService($realmData)
   {
-    $endpoint = "http://127.0.0.1:3000/api/v1/roles/create";
+    $endpoint = "https://sso.kloudstacks.com/api/v1/roles/create";
 
     $payload = [
         'username' => $realmData
@@ -260,7 +260,7 @@ class MasterAuthService
 
   public function getUserIdandUpdate($realmData)
   {
-    $endpoint = "http://127.0.0.1:3000/api/v1/auth/user/Arya/sabari";
+    $endpoint = "https://sso.kloudstacks.com/api/v1/auth/user/Arya/sabari";
 
     $payload = [
         'username' => $realmData
