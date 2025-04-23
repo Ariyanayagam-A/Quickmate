@@ -75,6 +75,19 @@
                     />
                     </div>
 
+                    <div class="col-md-6">
+                      <label for="validationCustom02" class="form-label">Users DN:</label>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="Industry"
+                        value=""
+                        placeholder="OU=Mumbai,DC=demodc,DC=local"
+                        required
+                        name="users_dn"
+                      />
+                      </div>
+
         <!--end::Col-->
         <!--begin::Col-->
         <div class="col-12">

@@ -315,7 +315,10 @@ public function updateLdap(Request $request)
         'connection_url' => 'required|string',
         'ldapadminname' => 'required|string',
         'ldapadminpassword' => 'required|string',
+        'users_dn' => 'required|string',
     ]);
+
+    // dd($request->all());
 
     $organization = Organization::findOrFail($request->organization_id);
 
@@ -333,7 +336,8 @@ public function updateLdap(Request $request)
             'ldap_id' => $request->ldapadminname,
             'ldap_password' => $request->ldapadminpassword,
             'domain_name' => $organization->domain_name,
-            'connection_url' => $request->connection_url
+            'connection_url' => $request->connection_url,
+            'users_dn' => $request->users_dn
         ]);
 
         // Check if response is valid and has expected structure

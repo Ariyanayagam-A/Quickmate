@@ -717,7 +717,13 @@ public function export(Request $request)
 {
     $engineerId = $request->query('engineer_id'); // passed from frontend
 
-    return Excel::download(new FilteredTicketsExport($engineerId), 'filtered_tickets.xlsx');
+    $engineer = User::where('id' ,$engineerId)->first();
+
+    $engineer_name = $engineer->name;
+
+    // dd('Engineernam:',$engineer_name);
+
+    return Excel::download(new FilteredTicketsExport($engineerId), $engineer_name.'_tickets.xlsx');
 }
 
     public function getagentHoldTickets()

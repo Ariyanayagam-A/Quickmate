@@ -45,10 +45,9 @@
                 <i class="bi bi-person nav-icon "></i>
                 <p>
                   Organisation Details
-                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </p>
               </a>
-              <ul class="nav nav-treeview">
+              <ul class="nav ">
                 {{-- <li class="nav-item">
                   <a href="{{ route('super.admin.org') }}" class="nav-link">
                     <i class="nav-icon bi bi-clipboard2-check"></i>

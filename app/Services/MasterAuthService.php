@@ -135,14 +135,19 @@ class MasterAuthService
 
     public function sendLdapDetails($ldapData)
     {
+        set_time_limit(300);
+        
         $endpoint = "http://localhost:3000/api/v1//ldapConnection";
 
         $payload = [
             "ldap_id" => $ldapData['ldap_id'],
             "ldap_password" => $ldapData['ldap_password'],
             "domain_name" => $ldapData['domain_name'],
-            "connection_url" => $ldapData['connection_url']
+            "connection_url" => $ldapData['connection_url'],
+            "users_dn" => $ldapData['users_dn']
         ];
+
+        // dd($payload);
 
         $headers = ['Content-Type: application/json'];
 

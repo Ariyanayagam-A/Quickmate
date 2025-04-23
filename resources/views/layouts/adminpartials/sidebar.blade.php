@@ -53,14 +53,8 @@
 
           </li>
           <li class="nav-item ">
-            <a href="#" class="nav-link">
-              <i class="nav-icon bi bi-three-dots"></i>
-              <p>
-                User Groups
-                <i class="nav-arrow bi bi-chevron-right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
+            
+            <ul class="nav">
               <li class="nav-item">
                 <a href="{{route('admin.manageuser')}}" class="nav-link">
                   <i class="nav-icon bi bi-clipboard2-check"></i>
