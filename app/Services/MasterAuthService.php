@@ -135,8 +135,8 @@ class MasterAuthService
 
     public function sendLdapDetails($ldapData)
     {
-        set_time_limit(300);
-        
+         set_time_limit(300);
+
         $endpoint = "https://sso.kloudstacks.com/api/v1//ldapConnection";
 
         $payload = [
@@ -144,15 +144,13 @@ class MasterAuthService
             "ldap_password" => $ldapData['ldap_password'],
             "domain_name" => $ldapData['domain_name'],
             "connection_url" => $ldapData['connection_url'],
-            "users_dn" => $ldapData['users_dn']
+            "users_dn" => $ldapData['users_dn'],
         ];
-
-        // dd($payload);
 
         $headers = ['Content-Type: application/json'];
 
         $response = $this->cURLHttpClient('POST', $endpoint, $payload, 'application/json', $headers);
-        // dd($response);
+
         // Don't just return true/false, return the full response
         return $response;
     }
@@ -164,10 +162,13 @@ class MasterAuthService
 
     curl_setopt($curl, CURLOPT_URL, $url);
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
     curl_setopt($curl, CURLOPT_TIMEOUT, 300); // Wait max 300 seconds for the entire response
     curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 30); // Wait max 30 seconds for connection
+
+    if($method != 'GET')
+    {
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+    }
 
     // Handle different request methods
     switch (strtoupper($method)) {
@@ -179,14 +180,8 @@ class MasterAuthService
             curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
             break;
         case "GET":
-            if (!empty($data)) {
-                //$url .= '?' . http_build_query($data);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
                 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-                curl_setopt($curl, CURLOPT_URL, $url);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
-
-            }
             break;
         case "PUT":
         case "DELETE":
