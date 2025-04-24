@@ -43,7 +43,7 @@
               class="form-control"
               id="Industry"
               value=""
-              placeholder="e.g. IT, Healthcare, Education, Finance, etc."
+              placeholder="example:dcadmin@demodc.local"
               required
               name="ldapadminname"
             />
@@ -56,7 +56,7 @@
                   class="form-control"
                   id="Industry"
                   value=""
-                  placeholder="e.g. IT, Healthcare, Education, Finance, etc."
+                  placeholder="example:Adimin@123"
                   required
                   name="ldapadminpassword"
                 />
@@ -69,7 +69,7 @@
                       class="form-control"
                       id="Industry"
                       value=""
-                      placeholder="e.g. IT, Healthcare, Education, Finance, etc."
+                      placeholder="example:ldap://20.168.243.12:389"
                       required
                       name="connection_url"
                     />
@@ -82,7 +82,7 @@
                         class="form-control"
                         id="Industry"
                         value=""
-                        placeholder="OU=Mumbai,DC=demodc,DC=local"
+                        placeholder="expamle:OU=Mumbai,DC=demodc,DC=local"
                         required
                         name="users_dn"
                       />
