@@ -12,6 +12,9 @@ services:
       - 5000:5000
     volumes:
       - ./backend:/app
+      - ./var/www/Quickmate/storage/app/public/logos
+      - ./var/www/Quickmate/storage/app/public/uploads/tickets
+      - ./var/www/Quickmate/storage/app/public/excelsheet  
     depends_on:
       - db
     environment:

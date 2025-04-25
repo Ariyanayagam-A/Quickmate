@@ -218,89 +218,104 @@ class UserController extends Controller
     return redirect('login')->with('success', 'Logged out successfully.');
   }
 
-  public function import(Request $request)
-  {
-      $request->validate([
-          'file' => 'required|mimes:xlsx,xls'
-      ]);
+public function import(Request $request)
+{
+    $request->validate([
+        'file' => 'required|mimes:xlsx,xls'
+    ]);
   
-      $import = new ExcelImport();
-      Excel::import($import, $request->file('file'));
-  
-      $data = $import->data;
-      $org = Session::get('organization');
-      $org_name = $org->organization_name;
-      $org_id = $org->id;
-      $organizationDomain = $org->domain_name;
-  
-      $errors = [];
-  
-      // First: validate all rows before inserting
-      foreach ($data as $index => $row) {
-          $email = $row['email'] ?? '';
-          $emailDomain = substr(strrchr($email, "@"), 1);
-          if ($emailDomain !== "{$organizationDomain}.com") {
-              $errors[] = "Row " . ($index + 1) . ": Email domain must be {$organizationDomain}.com";
-              continue;
-          }
-  
-          $validator = Validator::make($row, [
-              'name' => 'required|string|max:255',
-              'email' => 'required|email',
-              'password' => 'required|min:6',
-          ]);
-  
-          if ($validator->fails()) {
-              $errorMessages = implode(', ', $validator->errors()->all());
-              $errors[] = "Row " . ($index + 1) . ": " . $errorMessages;
-          }
-      }
-  
-      // If any errors, return without inserting
-      if (count($errors)) {
-          return redirect()->route('import-user')
-              ->with('error', 'Import failed. Please fix the errors and try again.')
-              ->with('import_errors', $errors);
-      }
-  
-      // Now: insert users only if all data is valid
-      foreach ($data as $row) {
-          try {
-              $user = User::create([
-                  'name' => $row['name'],
-                  'fname' => $row['fname'] ?? '',
-                  'lname' => $row['lname'] ?? '',
-                  'email' => $row['email'],
-                  'password' => Hash::make($row['password']),
-                  'role' => null,
-                  'realm_id' => null,
-                  'email_verified_at' => now(),
-              ]);
-  
-              if ($user) {
-                  $user['org_password'] = $row['password'];
-                  $user['organization_id'] = $org_id;
-  
-                  $userCreated = $this->authService->createUser($user);
-  
-                  if ($userCreated) {
-                      unset($user['org_password']);
-                      $user->update([
-                          'organization_id' => $org_id,
-                          'realm' => $org_name
-                      ]);
-                  } else {
-                      return redirect()->route('import-user')->with('error', 'Import failed.')->with('import_errors', ['External authService failed for ' . $row['email']]);
-                  }
-              }
-  
-          } catch (\Exception $e) {
-              return redirect()->route('import-user')->with('error', 'Import failed.')->with('import_errors', [$e->getMessage()]);
-          }
-      }
-  
-      return redirect()->route('import-user')->with('success', 'Users imported successfully!');
-  }
+    // Save the uploaded Excel file to storage/app/public/logos
+    $file = $request->file('file');
+    $path = $file->store('excelsheet', 'public'); // optional: store original file if needed
+
+    $import = new ExcelImport();
+    Excel::import($import, $request->file('file'));
+
+    $data = $import->data;
+    $org = Session::get('organization');
+    $org_name = $org->organization_name;
+    $org_id = $org->id;
+    $organizationDomain = $org->domain_name;
+
+    $errors = [];
+
+    // First: validate all rows before inserting
+    foreach ($data as $index => $row) {
+        // Skip rows that are completely empty
+        if (empty(array_filter($row))) {
+            continue;
+        }
+
+        $email = $row['email'] ?? '';
+        $emailDomain = substr(strrchr($email, "@"), 1);
+        if ($emailDomain !== "{$organizationDomain}.com") {
+            $errors[] = "Row " . ($index + 1) . ": Email domain must be {$organizationDomain}.com";
+            continue;
+        }
+
+        $validator = Validator::make($row, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ]);
+
+        if ($validator->fails()) {
+            $errorMessages = implode(', ', $validator->errors()->all());
+            $errors[] = "Row " . ($index + 1) . ": " . $errorMessages;
+        }
+    }
+
+    // If any errors, return without inserting
+    if (count($errors)) {
+        return redirect()->route('import-user')
+            ->with('error', 'Import failed. Please fix the errors and try again.')
+            ->with('import_errors', $errors);
+    }
+
+    // Now: insert users only if all data is valid
+    foreach ($data as $row) {
+        // Skip empty rows
+        if (empty(array_filter($row))) {
+            continue;
+        }
+
+        try {
+            $user = User::create([
+                'name' => $row['name'],
+                'fname' => $row['fname'] ?? '',
+                'lname' => $row['lname'] ?? '',
+                'email' => $row['email'],
+                'password' => Hash::make($row['password']),
+                'role' => null,
+                'realm_id' => null,
+                'email_verified_at' => now(),
+            ]);
+
+            if ($user) {
+                $user['org_password'] = $row['password'];
+                $user['organization_id'] = $org_id;
+
+                $userCreated = $this->authService->createUser($user);
+
+                if ($userCreated) {
+                    unset($user['org_password']);
+                    $user->update([
+                        'organization_id' => $org_id,
+                        'realm' => $org_name
+                    ]);
+                } else {
+                    return redirect()->route('import-user')->with('error', 'Import failed.')->with('import_errors', ['External authService failed for ' . $row['email']]);
+                }
+            }
+
+        } catch (\Exception $e) {
+            return redirect()->route('import-user')->with('error', 'Import failed.')->with('import_errors', [$e->getMessage()]);
+        }
+    }
+
+    return redirect()->route('import-user')->with('success', 'Users imported successfully!');
+}
+
   
   
 
