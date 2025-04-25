@@ -204,10 +204,12 @@ $(document).on('click', '.delete-btn', function() {
     
     let organizationId = $(this).data('id');
 
-    if (!confirm("Are you sure you want to delete this organization?")) return;
+    if (!confirm("Are you sure you want to delete this organization from the here?")) return;
+    const deleteOrganizationUrlTemplate = "{{ route('organizations.delete', ['id' => '__ID__']) }}";
+    const deleteOrganizationUrl = deleteOrganizationUrlTemplate.replace('__ID__', organizationId);
 
     $.ajax({
-        url: "/quickmate/organizations/delete/" + organizationId, // Correct URL format
+        url: deleteOrganizationUrl, // Correct URL format
         type: 'DELETE',
         data: {
             _token: $('meta[name="csrf-token"]').attr('content')
@@ -229,8 +231,10 @@ $(document).ready(function() {
     // Open update modal and fetch data from server
     $(document).on('click', '.update-btn', function () {
     let organizationId = $(this).data('id'); // Get the ID from data-id attribute
+    const editOrganizationUrlTemplate = "{{ route('organizations.edit', ['id' => '__ID__']) }}";
+    let editUrl = editOrganizationUrlTemplate.replace('__ID__', organizationId);
      $.ajax({
-            url: '/quickmate/organizations/' + organizationId + '/edit',
+            url: editUrl,
             type: 'GET',
             success: function(response) {  // "response" contains the full object
     let orgData = response.data; // Extract the actual organization data
@@ -270,9 +274,11 @@ $(document).ready(function() {
         e.preventDefault();
         let formData = new FormData(this);
         let id = $('#org_id').val();
-
+        const updateOrganizationUrlTemplate = "{{ route('organization.update', ['id' => '__ID__']) }}";
+        let updateUrl = updateOrganizationUrlTemplate.replace('__ID__', id);
+        
         $.ajax({
-            url: '/quickmate/organization/update/' + id,
+            url: updateUrl,
             type: 'POST',
             data: formData,
             contentType: false,

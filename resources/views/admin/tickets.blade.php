@@ -336,8 +336,10 @@ $('.close').click(function(){
         $('#assignee').empty().append('<option selected disabled>Loading...</option>');
 
         // Fetch engineers dynamically
+        const getEngineersUrlTemplate = "{{ route('get.engineers', ['ticketId' => '__TICKET_ID__']) }}";
+        const getEngineersUrl = getEngineersUrlTemplate.replace('__TICKET_ID__', ticketId);
         $.ajax({
-            url: `/get-engineers/${ticketId}`,
+            url: getEngineersUrl,
             type: 'GET',
             success: function (response) {
                 if (response.status) {

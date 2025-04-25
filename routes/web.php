@@ -117,6 +117,7 @@ Route::middleware('admin')->prefix('admin')->group(function () {
         })->name('import-user');
         Route::post('/import-excel', [UserController::class, 'import'])->name('import-excel');
 
+        Route::get('/get-engineers/{ticketId}', [TicketController::class, 'getEngineers'])->name('get.engineers');
 });
 
 Route::middleware('superadmin')->prefix('quickmate')->group(function () {
@@ -133,7 +134,7 @@ Route::middleware('superadmin')->prefix('quickmate')->group(function () {
     Route::get('/org/list', [OrganizationController::class, 'getLisenseOrganizations'])->name('org.list');
     Route::get('/organizations/lisense/{id}', [OrganizationController::class, 'lisenseshow'])->name('lisenseorganizations.show');
     Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy'])->name('organizations.delete');
-    Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy']);
+    // Route::delete('/organizations/delete/{id}', [OrganizationController::class, 'destroy']);
 
     Route::get('/organizations/{id}', [OrganizationController::class, 'show'])->name('organizations.show');
     Route::post('/organizations/approve/{id}', [OrganizationController::class, 'approve'])->name('organizations.approve');
@@ -189,4 +190,3 @@ Route::get('/dummy', function () {
     return view('pages.dummy');
 })->name('dummy');
 
-Route::get('/get-engineers/{ticketId}', [TicketController::class, 'getEngineers'])->name('get.engineers');

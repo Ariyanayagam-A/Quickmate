@@ -140,9 +140,10 @@ $(document).on('click', '.delete-btn', function() {
         let organizationId = $(this).data('id');
 
         if (!confirm("Are you sure you want to delete this organization?")) return;
-
+        const deleteOrganizationUrlTemplate = "{{ route('organizations.delete', ['id' => '__ID__']) }}";
+        const deleteOrganizationUrl = deleteOrganizationUrlTemplate.replace('__ID__', organizationId);
         $.ajax({
-            url: "/superadmin/organizations/delete/" + organizationId, 
+            url: deleteOrganizationUrl, 
             type: 'DELETE',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content')
