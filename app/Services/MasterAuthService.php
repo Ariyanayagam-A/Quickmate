@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\Organization;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 class MasterAuthService
 {
     protected $connection;
@@ -106,6 +107,8 @@ class MasterAuthService
 
     public function createUser($userData)
     {
+        Log::info('Entered createUser function', ['userData' => $userData]);
+
         $org = Organization::find($userData->organization_id);
 
        $endpoint = "https://sso.kloudstacks.com/api/v1/auth/user/create";
@@ -121,9 +124,17 @@ class MasterAuthService
 
         $headers = [ 'Content-Type: application/json'];
 
+        Log::info('About to send cURL request', ['payload' => $payload]);
+
+
         $realmResponse =  $this->cURLHttpClient('POST',$endpoint,$payload,'application/json',$headers);
 
         // dd($realmResponse);
+
+        Log::info('SSO response details', [
+            'realmResponse' => $realmResponse,
+            'accessObjectResponse' => $getAccessObject['response'] ?? 'not set'
+        ]);
 
         if($realmResponse['status_code'] == '200' || isset($getAccessObject['response']['status']))
         {
@@ -135,10 +146,8 @@ class MasterAuthService
 
     public function sendLdapDetails($ldapData)
     {
-         set_time_limit(300);
-
-        $endpoint = "https://sso.kloudstacks.com/api/v1//ldapConnection";
-
+        $endpoint = "https://sso.kloudstacks.com/api/v1/ldapConnection"; // Fixed URL
+    
         $payload = [
             "ldap_id" => $ldapData['ldap_id'],
             "ldap_password" => $ldapData['ldap_password'],
@@ -146,15 +155,35 @@ class MasterAuthService
             "connection_url" => $ldapData['connection_url'],
             "users_dn" => $ldapData['users_dn'],
         ];
-
+    
         $headers = ['Content-Type: application/json'];
-
+    
+        Log::info("Attempting LDAP API request", ['endpoint' => $endpoint, 'payload' => $payload]);
+    
         $response = $this->cURLHttpClient('POST', $endpoint, $payload, 'application/json', $headers);
-
-        // Don't just return true/false, return the full response
+    
+        // 1. Log invalid response structure
+        if (!isset($response['status_code'])) {
+            Log::error("Invalid API response: No status code", ['response' => $response]);
+            return [
+                'status_code' => 500,
+                'error' => 'Malformed API response',
+                'response' => null
+            ];
+        }
+    
+        // 2. Log non-200 responses
+        if ($response['status_code'] !== 200) {
+            Log::error("LDAP API Error", [
+                'status_code' => $response['status_code'],
+                'error' => $response['error'] ?? 'No error message',
+                'full_response' => $response
+            ]);
+        }
+    
+        Log::info("LDAP API request completed", ['status_code' => $response['status_code']]);
         return $response;
     }
-
 
     private function cURLHttpClient($method, $url, $data = [], $contentType, $headers = [],$type=null)
    {

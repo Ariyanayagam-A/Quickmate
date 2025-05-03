@@ -15,6 +15,7 @@ use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
+use App\Jobs\SyncLdapUsers;
 // use Illuminate\Support\Facades\DB;
 
 
@@ -106,7 +107,7 @@ class OrganizationController extends Controller
             'designation' => $request->designation,
             'domain_name' => $request->domain_name,
             'password' => $password,
-            'realm_id' => "QUID".Organization::count()+5,
+            'realm_id' => "QUID".Organization::count()+112,
             'realm' => $request->domain_name,
             'logo' => $logoPath,
         ]);
@@ -318,68 +319,35 @@ public function updateLdap(Request $request)
         'users_dn' => 'required|string',
     ]);
 
-    // dd($request->all());
-
     $organization = Organization::findOrFail($request->organization_id);
 
     DB::beginTransaction();
 
     try {
-        // 1. Update organization with LDAP info
+        // Save org's LDAP credentials
         $organization->ldap_url = $request->connection_url;
         $organization->ldap_user = $request->ldapadminname;
         $organization->ldap_password = $request->ldapadminpassword;
         $organization->save();
 
-        // 2. Call MasterAuthService to send LDAP info
-        $ldapResponse = $this->masterAuthService->sendLdapDetails([
+        DB::commit();
+
+        // Dispatch Job (queue it)
+        SyncLdapUsers::dispatch([
             'ldap_id' => $request->ldapadminname,
             'ldap_password' => $request->ldapadminpassword,
             'domain_name' => $organization->domain_name,
             'connection_url' => $request->connection_url,
-            'users_dn' => $request->users_dn
+            'users_dn' => $request->users_dn,
+            'organization_id' => $organization->id
         ]);
 
-        // Check if response is valid and has expected structure
-        if (!is_array($ldapResponse) ||
-            !isset($ldapResponse['status_code']) ||
-            $ldapResponse['status_code'] !== 200 ||
-            !isset($ldapResponse['response']['data'])) {
-
-            Log::error("Invalid LDAP response or sync failure.", ['response' => $ldapResponse]);
-            DB::rollBack();
-            return redirect()->back()->with('error', 'Saved, but failed to sync LDAP users.');
-        }
-
-        // 3. Extract and store users
-        $counter = 1;
-        $ldapUsers = $ldapResponse['response']['data'];
-
-        $counter = 1;
-
-        foreach ($ldapUsers as $ldapUser) {
-            $username = $ldapUser['username'] ?? 'user' . $counter;
-            $email = $ldapUser['email'] ?? $username . $counter . '@example.com';
-
-            User::create([
-                'name' => $username,
-                'realm' => $organization->organization_name,
-                'email' => $email,
-                'password' => Hash::make('1234'), // Or whatever default password you want
-                'organization_id' => $organization->id
-            ]);
-
-            $counter++;
-        }
-
-
-        DB::commit();
-        return redirect()->back()->with('success', 'LDAP settings updated and users synced successfully.');
+        return redirect()->back()->with('success', 'LDAP settings updated. Sync is in progress.');
 
     } catch (\Exception $e) {
         DB::rollBack();
         Log::error("LDAP Update Error: " . $e->getMessage());
-        return redirect()->back()->with('error', 'Something went wrong during LDAP sync.');
+        return redirect()->back()->with('error', 'Something went wrong while saving LDAP settings.');
     }
 }
 

@@ -282,4 +282,49 @@
     });
 </script>
 
+<!-- SweetAlert2 CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{{-- Pass the route template to JavaScript --}}
+<script>
+  // Route template with placeholder
+  const batchStatusUrlTemplate = "{{ route('batch.status', ['id' => '__BATCH_ID__']) }}";
+
+  console.log("Enter into the sweet alert");
+
+  document.addEventListener('DOMContentLoaded', () => {
+      const batchId = '{{ session('batch_id') }}';
+
+      if (batchId) {
+          // Replace placeholder with actual batch ID
+          const url = batchStatusUrlTemplate.replace('__BATCH_ID__', batchId);
+
+          const interval = setInterval(() => {
+              fetch(url)
+                  .then(response => response.json())
+                  .then(data => {
+                      if (data.status === 'completed') {
+                          clearInterval(interval);
+
+                          Swal.fire({
+                              title: 'Import Completed!',
+                              icon: 'success',
+                              html: `<b>Total:</b> ${data.total}<br>
+                                     <b>Completed:</b> ${data.completed}<br>
+                                     <b>Failed:</b> ${data.failed}`,
+                          });
+                      }
+                  })
+                  .catch(err => {
+                      console.error('Error polling batch status', err);
+                      clearInterval(interval);
+                  });
+          }, 5000);
+      }
+  });
+</script>
+
+
+
+
 @endsection

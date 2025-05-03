@@ -18,10 +18,6 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ExcelImport;
 
 
-
-
-
-
 Route::get('/quickmate/kloudstack/authenticate', [AuthenticationController::class, 'showSuccessPage'])
     ->middleware('role.auth')
     ->name('auth.success');
@@ -85,6 +81,7 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('login', [AuthController::class,'orgAdminLoginPage'])->name('admin.loginform')->withoutMiddleware('admin');
     Route::post('login', [AuthController::class,'orgAdminLogin'])->name('admin.login')->withoutMiddleware('admin');
     Route::post('/logout/admin', [AuthController::class, 'orgAdminLogout'])->name('logout.admin');
+    Route::get('/batch-status/{id}', [UserController::class, 'checkBatchStatus'])->name('batch.status');
     Route::post('/user/create', [UserController::class, 'newuserstore'])->name('user.create');
     Route::get('dashboard', [AdminController::class,'index'])->name('admin.dashboard');
     Route::get('configurations', [AdminController::class,'configurations'])->name('admin.configurations');
@@ -93,8 +90,12 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('tickets/list', [TicketController::class,'adminTicketsList'])->name('tickets.adminlist');
     Route::get('reports/list', [TicketController::class,'adminreportList'])->name('tickets.reprotslist');
     Route::get('categories', [CategoryController::class,'index'])->name('admin.categories');
+    Route::post('/categories/update/{id}', [CategoryController::class, 'categoriesupdate'])->name('categories.update');
     Route::get('category/list',[CategoryController::class,'list'])->name('categories.list');
+    Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
     Route::post('category/add', [CategoryController::class,'store'])->name('add.category');
+    Route::get('/categories/edit/{id}', [CategoryController::class, 'categoriesedit'])->name('categories.edit');
+    Route::delete('/categories/delete/{id}', [CategoryController::class, 'categoriesDelete'])->name('categories.delete');
     Route::get('ticket/view/{id}', [TicketController::class,'getTicketById'])->name('admin.ticket.view');
     Route::post('category/edit', [CategoryController::class,'update'])->name('edit.category');
     Route::post('category/delete',[CategoryController::class,'destroy'])->name('delete.category');
@@ -179,12 +180,12 @@ Route::get('/auth/azure/callback', [AzureAuthController::class, 'handleAzureCall
 Route::get('/ldap/users', [LdapController::class, 'getUsers']);
 
 //Categories Store Route
-Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+// Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
-Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
-Route::get('/categories/edit/{id}', [CategoryController::class, 'categoriesedit'])->name('categories.edit');
-Route::post('/categories/update/{id}', [CategoryController::class, 'categoriesupdate'])->name('categories.update');
-Route::delete('/categories/delete/{id}', [CategoryController::class, 'categoriesDelete'])->name('categories.delete');
+// Route::post('/categories/store', [CategoryController::class, 'store'])->name('categories.store');
+// Route::get('/categories/edit/{id}', [CategoryController::class, 'categoriesedit'])->name('categories.edit');
+// Route::post('/categories/update/{id}', [CategoryController::class, 'categoriesupdate'])->name('categories.update');
+// Route::delete('/categories/delete/{id}', [CategoryController::class, 'categoriesDelete'])->name('categories.delete');
 
 Route::get('/dummy', function () {
     return view('pages.dummy');
