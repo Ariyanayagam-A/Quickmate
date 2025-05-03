@@ -1,4 +1,23 @@
 <IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        Options -MultiViews -Indexes
+    </IfModule>
+
+
     RewriteEngine On
-    RewriteRule ^(.*)$ public/$1 [L]
+    RewriteBase /
+
+    # Redirect to remove index.php from URLs (optional, but good for cleaner URLs)
+    RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php(.*)\ HTTP/
+    RewriteRule ^index\.php(.*)$ /$1 [R=301,L]
+
+    # Ensure requests go through index.php if the requested file or directory doesn't exist
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php/$1 [L,QSA]
+
+    # Optional: Remove trailing slashes (if desired)
+    # RewriteCond %{REQUEST_URI} (.+)/$
+    # RewriteCond %{REQUEST_URI} !/$
+    # RewriteRule ^(.+)/$ /$1 [R=301,L]
 </IfModule>
