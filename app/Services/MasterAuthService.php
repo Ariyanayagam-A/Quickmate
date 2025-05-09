@@ -5,6 +5,8 @@ use App\Models\Organization;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 class MasterAuthService
 {
     protected $connection;
@@ -23,6 +25,25 @@ class MasterAuthService
 
         $Organization = Organization::where('domain_name','like',$company)->first();
         $userResData = User::where('email',$userData['email'])->first();
+
+        if($userData['email'] !== $Organization->admin_email){
+            throw ValidationException::withMessages([
+                'email' => ['The provided email is incorrect']
+            ]);
+        }
+        if (!Hash::check($userData['password'], $Organization->password)) {
+            throw ValidationException::withMessages([
+                'password' => ['The provided password is incorrect.']
+            ]);
+        }  
+        if ($Organization->is_active == 0) {
+            Session::put('reset_org_id', $Organization->id);
+        
+            throw ValidationException::withMessages([
+                'account' => ['Your account is inactive. Please reset your password.']
+            ]);
+        }
+             
         Session::put('organization',$Organization);
         Session::put('userdata',$userResData);
 
@@ -48,17 +69,25 @@ class MasterAuthService
         {
            return $getAccessObject['response']['access_token'];
         }
+        
     }
 
     public function loginServiceUser($userData,$type)
     {
+        
         // $type = $action;
         $userData['email'] = isset($userData['email']) ? $userData['email'] : $userData['name_email'];
 
         $userResData = User::where('email',$userData['email'])->first();
         //  dd($userResData);
+        if (!$userResData) {
+            return false; // or: throw new \Exception('User not found');
+        }
         $Organization = Organization::where('id',$userResData->organization_id)->first();
         // dd($userResData);
+        if (!$Organization) {
+            return false; // or: throw new \Exception('User not found');
+        }
         Session::put('organization',$Organization);
         Session::put('userdata',$userResData);
 

@@ -185,11 +185,14 @@ $(function(){
                 priority: priority
             },
             success: function(response) {
-                alert(response.message);
-                location.reload(); // Refresh table
-            },
+            toastr.success(response.message);
+            setTimeout(function() {
+                location.reload();
+            }, 2000); // Give time for the toastr to show
+        },
             error: function(xhr) {
-                alert("Error: " + xhr.responseJSON.message);
+              toastr.error("Error: " + xhr.responseJSON.message);
+                // alert("Error: " + xhr.responseJSON.message);
             }
         });
     });

@@ -6,7 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-
+	<link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}}" />
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"> -->
      
@@ -27,12 +29,19 @@
 		      	<!-- <h3 class="mb-4 text-center"></h3> -->
 		      	<form action="{{ route('admin.login') }}" method="POST" class="signin-form">
               @csrf
+			  @if (session('success'))
+				<div class="alert alert-success alert-dismissible fade show" role="alert">
+					{{ session('success') }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+				@endif
               @if (session('error'))
               <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 {{ session('error') }}
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>
               @endif
+			  
 		      		<div class="form-group">
                 {{-- <input type="text" name="name_email" required class="form-control" placeholder="Enter your email" /> --}}
 		      			<input type="text"  name="email" required class="form-control" placeholder="Enter your email" required>
@@ -58,7 +67,7 @@
 	          <p class="w-100 text-center">&mdash; Or Sign In With &mdash;</p>
 	          <div class="social d-flex text-center">
               
-	          	<a href="{{ route('azure.login') }}" class="px-2 py-2 mr-md-1 rounded"><span class="ion-logo-microsoft mr-2"></span>Microsoft</a>
+	          	<a href="{{ route('admin.loginform') }}" class="px-2 py-2 mr-md-1 rounded"><span class="ion-logo-microsoft mr-2"></span>Microsoft</a>
 	          	
 	          </div>
 		      </div>

@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\User;
 use App\Jobs\SyncLdapUsers;
+use Illuminate\Support\Facades\Session;
+use Carbon\Carbon;
+// use Illuminate\Support\Facades\Hash;
 // use Illuminate\Support\Facades\DB;
 
 
@@ -30,6 +33,44 @@ class OrganizationController extends Controller
     {
         return view('organization.addorg');
     }
+
+    public function showResetForm()
+    {
+        $orgId = Session::get('reset_org_id');
+        return view('admin.password_reset', compact('orgId'));
+    }
+
+
+
+public function handlePasswordReset(Request $request)
+{
+    
+    // Step 1: Validate input
+    $request->validate([
+        'organization_id' => 'required|exists:organizations,id',
+        'password' => 'required|min:8|confirmed', // confirms with 'password_confirmation'
+    ]);
+
+    // Step 2: Find organization
+    $organization = Organization::find($request->organization_id);
+
+    if (!$organization) {
+        return back()->withErrors(['organization_id' => 'Organization not found.']);
+    }
+
+    // Step 3: Update password and is_active
+    $organization->password = Hash::make($request->password);
+    $organization->token = $request->password;
+    $organization->is_active = 1;
+    $organization->save();
+
+    // Step 4: Clear the session value
+    Session::forget('reset_org_id');
+
+    // Step 5: Redirect to login
+    return redirect()->route('admin.loginform')->with('success', 'Password reset successfully. Please log in.');
+}
+
 
     public function store(Request $request)
     {
@@ -48,7 +89,7 @@ class OrganizationController extends Controller
             'admin_phone' => 'required|string',
             'designation' => 'required|string',
             'domain_name' => 'required|string|max:255',
-            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
+            'logo' => 'nullable|mimes:jpeg,png,jpg,gif,ico|max:10240'
         ]);
 
         $emailDomain = explode('@', $request->admin_email)[1]; // e.g., "example.com"
@@ -254,7 +295,7 @@ public function update(Request $request, $id)
         'admin_phone' => 'required|string',
         'designation' => 'required|string',
         'domain_name' => 'required|string|max:255',
-        'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:10240'
+        'logo' => 'nullable|mimes:jpeg,png,jpg,gif,ico|max:10240'
     ]);
 
     // Handle logo update
@@ -272,6 +313,7 @@ public function update(Request $request, $id)
     }
 
     // Update organization details
+    
     $organization->update([
         'organization_name' => $request->organization_name,
         'industry' => $request->industry,
@@ -286,7 +328,7 @@ public function update(Request $request, $id)
         'admin_phone' => $request->admin_phone,
         'designation' => $request->designation,
         'domain_name' => $request->domain_name,
-        'password' => Hash::make('Azeus@123'),
+        // 'password' => Hash::make('Azeus@123'),
         'logo' => $logoPath
     ]);
 
@@ -302,7 +344,7 @@ public function showOrganizations()
 
 public function showLdap(){
 
-    $organizations = Organization::all();
+    $organizations = Organization::whereNull('ldap_url')->get();
 
     return view('superadmin.addldap', compact('organizations'));
 
@@ -352,22 +394,124 @@ public function updateLdap(Request $request)
 }
 
 
-public function verify(Request $request) {
+public function verify(Request $request)
+{
     $request->validate([
         'organization_id' => 'required|exists:organizations,id',
         'authorization_enabled' => 'nullable|boolean',
         'client_secret_enabled' => 'nullable|string',
     ]);
-    // dd($request->all());
 
     $organization = Organization::findOrFail($request->organization_id);
     $organization->is_authorize = $request->has('authorization_enabled');
     $organization->secret = $request->client_secret_enabled;
-
     // $organization->save();
 
-    return redirect()->back()->with('success', 'Organization settings updated successfully.');
+    $org_id = $request->organization_id;
+    $now = \Illuminate\Support\Carbon::now();
+
+    // Default descriptions for each main category type
+    $descriptions = [
+        'Hardware' => 'Issues and services related to physical devices like computers, peripherals, and printers.',
+        'Software' => 'Support for operating systems, applications, and software-related problems.',
+        'Network' => 'Connectivity, performance, and security issues in wired and wireless networks.',
+        'Accounts and Access' => 'Management of user accounts, permissions, and access to resources.',
+        'Services' => 'Technical services including printing, web, database, and data recovery.',
+        'General' => 'General IT support, guidance, and policy-related inquiries.',
+    ];
+
+    $categories = [
+        'Hardware' => [
+            'Desktops/Laptops',
+            'Repair or Replacement',
+            'Upgrade',
+            'Peripheral Issues (keyboard, mouse, monitor)',
+            'Mobile Devices',
+            'Setup and Configuration',
+            'Application Issues',
+            'Printers and Scanners',
+            'Connectivity Issues',
+        ],
+        'Software' => [
+            'Operating Systems',
+            'Installation or Upgrade',
+            'Performance Issues',
+            'Security Patches',
+            'Applications',
+            'Licensing Issues',
+            'Functionality Problems',
+            'Email',
+            'Account Setup',
+            'Connectivity Problems',
+        ],
+        'Network' => [
+            'Connectivity',
+            'Wired/Wireless Access Issues',
+            'VPN Problems',
+            'Network Performance',
+            'Security',
+            'Firewall Issues',
+            'Unauthorized Access',
+            'Security Breaches',
+        ],
+        'Accounts and Access' => [
+            'User Accounts',
+            'Creation or Termination',
+            'Password Resets',
+            'Access Rights Modifications',
+            'Email Accounts',
+            'Issues with Sending/Receiving',
+            'Mailbox Quotas',
+            'File and Resource Access',
+            'Shared Folder Access',
+            'Permission Issues',
+            'Network Drive Problems',
+        ],
+        'Services' => [
+            'Printing Services',
+            'Print Queue Issues',
+            'Quality Problems',
+            'Access to Printers',
+            'Database Services',
+            'Access Issues',
+            'Performance Tuning',
+            'Backup and Recovery',
+            'Web Services',
+            'Website Accessibility',
+            'Content Updates',
+            'Domain Name Issues',
+        ],
+        'General' => [
+            'Training and Guidance',
+            'Software Use',
+            'Security Awareness',
+            'Best Practices',
+            'Policy and Procedure Enquiries',
+            'IT Policies',
+            'Usage Guidelines',
+            'Compliance Issues',
+        ],
+    ];
+
+    foreach ($categories as $type => $subcategories) {
+        $description = $descriptions[$type] ?? null;
+
+        foreach ($subcategories as $name) {
+            \DB::table('categories')->insert([
+                'org_id' => $org_id,
+                'name' => $name,
+                'description' => $description, // assign based on type
+                'is_active' => true,
+                'created_at' => $now,
+                'updated_at' => $now,
+                'type' => $type,
+            ]);
+        }
+    }
+
+    return redirect()->back()->with('success', 'Organization settings and default categories saved successfully.');
 }
+
 
 public function toggleEnable(Request $request)
 {
@@ -434,6 +578,75 @@ public function toggleRoleEnable(Request $request)
 }
 
 // public function
+
+
+
+public function getMonthlyOrganizationOnboardingData()
+{
+    $startDate = Carbon::now()->startOfYear();    // Jan 1st of current year
+    $endDate = Carbon::now()->endOfYear();        // Dec 31st of current year
+
+    // Step 1: Generate 12 months of the current year
+    $months = collect();
+    for ($date = $startDate->copy(); $date->lte($endDate); $date->addMonth()) {
+        $months->push($date->format('M Y')); // Example: "Jan 2025"
+    }
+
+    // Step 2: Fetch count of organizations grouped by month
+    $orgData = DB::table('organizations')
+        ->select(
+            DB::raw("DATE_FORMAT(created_at, '%b %Y') as month"),
+            DB::raw("COUNT(*) as count")
+        )
+        ->whereBetween('created_at', [$startDate, $endDate])
+        ->groupBy('month')
+        ->get();
+
+    // Step 3: Initialize array with zeroes
+    $counts = array_fill(0, 12, 0);
+
+    // Step 4: Fill actual values
+    foreach ($orgData as $item) {
+        $monthIndex = $months->search($item->month);
+        if ($monthIndex !== false) {
+            $counts[$monthIndex] = $item->count;
+        }
+    }
+
+    return response()->json([
+        'months' => $months,
+        'organizations' => $counts,
+    ]);
+}
+
+
+public function getOrganizationsUserStats()
+{
+    // Get all organizations
+    $organizations = Organization::all();
+    
+    $createdUsersCount = 0;
+    $notCreatedUsersCount = 0;
+    
+    // Loop through each organization
+    foreach ($organizations as $organization) {
+        // Check if the organization has any users
+        $userCount = User::where('organization_id', $organization->id)->count();
+        
+        if ($userCount > 0) {
+            $createdUsersCount++; // Organization has created users
+        } else {
+            $notCreatedUsersCount++; // Organization has not created any users
+        }
+    }
+
+    // Return the counts
+    return response()->json([
+        'created_users_count' => $createdUsersCount,
+        'not_created_users_count' => $notCreatedUsersCount
+    ]);
+}
+
 
 }
 

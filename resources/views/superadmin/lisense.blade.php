@@ -77,7 +77,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Admin Email</label>
-                        <input type="email" class="form-control" id="admin_email" name="admin_email">
+                        <input type="email" class="form-control" id="admin_email" name="admin_email" readonly>
                     </div>
 
                     <div class="mb-3">
@@ -92,7 +92,7 @@
 
                     <div class="mb-3">
                         <label class="form-label">Domain Name</label>
-                        <input type="text" class="form-control" id="domain_name" name="domain_name">
+                        <input type="text" class="form-control" id="domain_name" name="domain_name" readonly>
                     </div>
 
                     <div class="mb-3">
@@ -199,33 +199,46 @@
     });
 });
 });
-
 $(document).on('click', '.delete-btn', function() {
-    
     let organizationId = $(this).data('id');
-
-    if (!confirm("Are you sure you want to delete this organization from the here?")) return;
     const deleteOrganizationUrlTemplate = "{{ route('organizations.delete', ['id' => '__ID__']) }}";
     const deleteOrganizationUrl = deleteOrganizationUrlTemplate.replace('__ID__', organizationId);
 
-    $.ajax({
-        url: deleteOrganizationUrl, // Correct URL format
-        type: 'DELETE',
-        data: {
-            _token: $('meta[name="csrf-token"]').attr('content')
-        },
-        success: function(response) {
-            if (response.success) {
-                alert(response.message);
-                location.reload();
-            }
-        },
-        error: function(xhr) {
-            console.error(xhr.responseText);
-            alert('Error deleting organization.');
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "This will remove the organization permanently!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!',
+        cancelButtonText: 'Cancel',
+        customClass: {
+            popup: 'rounded-lg shadow-lg'
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: deleteOrganizationUrl,
+                type: 'DELETE',
+                data: {
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        setTimeout(() => location.reload(), 2000);
+                    }
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                    toastr.error("Error deleting organization! " + xhr.responseJSON.message);
+                }
+            });
         }
     });
 });
+
 
 $(document).ready(function() {
     // Open update modal and fetch data from server
@@ -284,11 +297,13 @@ $(document).ready(function() {
             contentType: false,
             processData: false,
             success: function(response) {
-                alert(response.message);
+                toastr.success(response.message);
+                setTimeout(function() {
                 location.reload();
-            },
+            }, 2000);            
+        },
             error: function(xhr) {
-                alert("Update failed! " + xhr.responseJSON.message);
+                toastr.error("Update failed! " + xhr.responseJSON.message);
             }
         });
     });

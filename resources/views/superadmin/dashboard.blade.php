@@ -33,12 +33,7 @@
                 <div class="card mb-4">
                   <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
-                      <h3 class="card-title">Requests Last week</h3>
-                      {{-- <a
-                        href="javascript:void(0);"
-                        class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                        >View Report</a
-                      > --}}
+                      <h3 class="card-title">Requests Last Week</h3>
                     </div>
                   </div>
                   <div class="card-body">
@@ -48,10 +43,11 @@
                       <span class="me-2">
                         <i class="bi bi-square-fill text-primary"></i> Inbound
                       </span>
-                      <span> <i class="bi bi-square-fill text-secondary"></i> Complete </span>
+                      <span><i class="bi bi-square-fill text-secondary"></i> Complete</span>
                     </div>
                   </div>
                 </div>
+                
                 <!-- /.card -->
                 <div class="card mb-4">
                   <div class="card-header border-0">
@@ -63,21 +59,7 @@
                   </div>
                   
 
-                   <div id="lticketsPriorityData"></div>
-                   <div class="d-flex justify-content-center gap-4 my-4">
-                    <div class="d-flex align-items-center">
-                      High
-                      <span class="badge rounded-pill ms-2" style="background-color: #E87609;">15</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      Medium
-                      <span class="badge rounded-pill bg-dark ms-2">18</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                      Low
-                      <span class="badge rounded-pill bg-secondary ms-2">21</span>
-                    </div>
-                  </div>
+                  <div id="user-status-chart" class="d-flex justify-content-center"></div> <!-- Center the pie chart -->
                 </div>
                 <!-- /.card -->
               </div>
@@ -90,32 +72,26 @@
                       {{-- <a
                         href="javascript:void(0);"
                         class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover"
-                        >View Report</a
+                      >View Report</a
                       > --}}
                     </div>
                   </div>
                   <div class="card-body">
                 
-                    <div class="position-relative mb-4"><div id="sales-chart"></div></div>
-                    <div class="d-flex flex-row justify-content-end">
-                      <span class="me-2">
-                        <i class="bi bi-square-fill text-primary"></i> This year
-                      </span>
-                      <span> <i class="bi bi-square-fill text-secondary"></i> Last year </span>
-                    </div>
+                    <div class="position-relative mb-4"><div id="orgmonChart"></div></div>
+                    
                   </div>
                 </div>
+                
                 <!-- /.card -->
                 <div class="card mb-4">
                   <div class="card-header border-0">
-                    <h3 class="card-title">Request Complete in Last Week</h3>
-                    <div class="card-tools">
-                      {{-- <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-download"></i> </a>
-                      <a href="#" class="btn btn-sm btn-tool"> <i class="bi bi-list"></i> </a> --}}
-                    </div>
+                    <h3 class="card-title">Top Organizations by User Count</h3>
                   </div>
-                  <div id="avgTimeData"></div>
-                </div>
+                  <div class="card-body">
+                    <div id="orgChart"></div> <!-- Placeholder for ApexCharts -->
+                  </div>
+      
               </div>
               <!-- /.col-md-6 -->
             </div>
@@ -288,4 +264,128 @@
         }] });
       //# sourceURL=pen.js
           </script>
+
+<script>
+  // Fetch the data from the route
+  fetch("{{ route('getTopGorg') }}")
+    .then(response => response.json())
+    .then(data => {
+      // Prepare the chart options for ApexCharts
+      const chartOptions = {
+        series: [{
+          name: 'User Count',
+          data: data.counts
+        }],
+        chart: {
+          type: 'bar',
+          height: 350
+        },
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            endingShape: 'rounded',
+            columnWidth: '50%'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        colors: ['#0d6efd'],  // Customize colors
+        xaxis: {
+          categories: data.organizations,
+          title: {
+            text: 'Organizations'
+          }
+        },
+        yaxis: {
+          title: {
+            text: 'User Count'
+          },
+          min: 0
+        },
+        title: {
+          text: 'Top Organizations by User Count',
+          align: 'center'
+        }
+      };
+
+      // Create the chart
+      const chart = new ApexCharts(document.querySelector("#orgChart"), chartOptions);
+      chart.render();  // Render the chart to the page
+    })
+    .catch(error => {
+      console.error('Error fetching data:', error);
+    });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    fetchOrgChartData();
+  });
+
+  function fetchOrgChartData() {
+    fetch('{{ route('orgpermonth') }}')
+      .then(response => response.json())
+      .then(data => {
+        renderOrgChart(data.months, data.organizations);
+      })
+      .catch(error => {
+        console.error('Error fetching org chart data:', error);
+      });
+  }
+
+  function renderOrgChart(months, organizations) {
+    const options = {
+      chart: {
+        type: 'bar',
+        height: 300
+      },
+      series: [{
+        name: 'Organizations',
+        data: organizations
+      }],
+      xaxis: {
+        categories: months
+      },
+      colors: ['#0d6efd']
+    };
+
+    const chart = new ApexCharts(document.querySelector("#orgmonChart"), options);
+    chart.render();
+  }
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    fetch("{{ route('getOrganizationsUserStatus') }}")
+      .then(response => response.json())
+      .then(data => {
+        // Ensure data is properly structured and accessible
+        if(data && data.created_users_count !== undefined && data.not_created_users_count !== undefined) {
+          const chartOptions = {
+            series: [data.created_users_count, data.not_created_users_count],  // Use the correct keys
+            chart: {
+              type: 'pie',
+              height: 300
+            },
+            labels: ['Created Users', 'No Users'],
+            colors: ['#0d6efd', '#adb5bd'],
+            title: {
+              text: 'Organizations with/without Users',
+              align: 'center'
+            }
+          };
+
+          const chart = new ApexCharts(document.querySelector("#user-status-chart"), chartOptions);
+          chart.render();
+        } else {
+          console.error("Invalid data structure:", data);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
+  });
+</script>
+
+
+
 @endsection

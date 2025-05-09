@@ -21,7 +21,19 @@
       <meta property="og:type" content="Website">
       <meta property="og:site_name" content="Bootstrap Gallery">
       <meta name="csrf-token" content="{{ csrf_token() }}">
-      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.svg')}}" />
+      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}}" />
+      <!-- Toastr CSS -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+      <!-- Toastr JS -->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+      <style>
+        /* Brighter green for success toast */
+        .toast-success {
+            background-color: #28a745 !important; /* Bootstrap success green */
+            color: white !important;
+        }
+        </style>
   
       <!-- *************
         ************ CSS Files *************
@@ -226,6 +238,6 @@ table {
 });
 
     </script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </body>
 </html>

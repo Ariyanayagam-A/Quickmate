@@ -8,6 +8,7 @@
     <!-- Bootstrap & Icons (or other stylesheets) -->
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}}" />
         <title>Agent | Dashboard </title>
         <!--begin::Primary Meta Tags-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -37,7 +38,7 @@
     <link rel="stylesheet" href="{{ asset('assets/dist/css/style.css') }}"> --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{{ asset('assets/dist/css/jquery.dataTables.min.css')}}" />
-
+    
    <!-- DataTables CSS -->
 {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 

@@ -1,3 +1,19 @@
+@php
+      $organization = Session::get('organization');
+      $logoPath = isset($organization['logo']) ? $organization['logo'] : null;
+
+    if ($logoPath) {
+        $folder = dirname($logoPath); // logos
+        $filename = basename($logoPath); // 1744008302_cloud .png
+        $encodedFile = rawurlencode($filename); // encodes space as %20
+        // $organizationLogo = asset("public/storage/{$folder}/{$encodedFile}"); //for ubundu
+        $organizationLogo = asset("storage/{$folder}/{$encodedFile}");
+
+    } else {
+        $organizationLogo = asset('assets/dist/assets/img/AdminLTELogo.png');
+    }
+    // dd($organizationLogo);
+@endphp
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">
@@ -5,9 +21,9 @@
       <a href="{{route('ticketform')}}" class="brand-link"  id="logo-link">
         <!--begin::Brand Image-->
         <img
-        src="{{  asset('assets/dist/assets/img/AdminLTELogo.png') }}"
+        src="{{ $organizationLogo }}"
         alt="AdminLTE Logo"
-        class="brand-image opacity-75 shadow"
+        class="brand-image opacity-75 shadow rounded-circle"
       />
         <!--end::Brand Image-->
         <!--begin::Brand Text-->
@@ -28,7 +44,7 @@
           data-accordion="false"
         >
           <li class="nav-item ">
-            <a href="{{ route('ticketform') }}" class="nav-link">
+            <a href="{{ route('ticketform') }}" class="nav-link {{ Request::routeIs('ticketform') ? 'active' : '' }}">
               <i class="nav-icon bi bi-ui-radios"></i>
               <p>Raise a Ticket</p>
           </a>
@@ -36,7 +52,7 @@
     
 
           <li class="nav-item">
-            <a href="{{ route('customer.tickets') }}"  class="nav-link ">
+            <a href="{{ route('customer.tickets') }}"  class="nav-link {{ Request::routeIs('customer.tickets') ? 'active' : '' }}">
               <i class="nav-icon bi bi-activity"></i>
               <p>
                 Ticket History
@@ -76,7 +92,7 @@
   
         <!-- Image in its own centered block -->
         <div class="pt-3">
-          <img src="{{ asset('assets/dist/assets/img/azeuslogo.png') }}" alt="Icon" width="280" height="110">
+          <img src="{{ asset('assets/dist/assets/img/azeuslogo.png') }}" alt="Icon" width="280">
         </div>
   
         <!-- Close button floated to top right -->

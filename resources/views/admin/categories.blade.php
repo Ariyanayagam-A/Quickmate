@@ -29,6 +29,18 @@
         </div>
       </div>
     </div>
+<!-- Main Category Dropdown -->
+<select id="mainCategoryFilter" style="width: 20%; padding: 10px; margin: 8px; border-radius: 8px;">
+  <option value="">All</option>
+  <option value="Services">Services</option>
+  <option value="Accounts and Access">Accounts and Access</option>
+  <option value="Software">Software</option>
+  <option value="Hardware">Hardware</option>
+  <option value="Network">Network</option>
+  <option value="General">General</option>
+</select>
+
+
     <div class="col-12 mt-2">
       <div class="card mb-2">
         <div class="card-body">
@@ -39,6 +51,7 @@
                   <th>Category</th>
                   <th>Description</th>
                   <th>Status</th>
+                  <th>Type</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -75,6 +88,18 @@
             <div class="form-group mb-3">
               <label class="form-label">Description</label>
               <textarea id="description" name="description" class="form-control"></textarea>
+            </div>
+            <div class="form-group mb-3">
+              <label class="form-label">Type</label>
+              <select id="category_type" name="type" class="form-select" required>
+                <option value="">--Select Status--</option>
+                <option value="Services">Services</option>
+                <option value="Accounts and Access">Accounts and Access</option>
+                <option value="Software">Software</option>
+                <option value="Hardware">Hardware</option>
+                <option value="Network">Network</option>
+                <option value="General">General</option>
+              </select>
             </div>
             <div class="form-group mb-3">
               <label class="form-label">Status</label>
@@ -126,7 +151,12 @@
       }, {
         data: 'status',
         name: 'status'
-      }, {
+      },
+      {
+        data: 'type',
+        name: 'type'
+      },
+       {
         data: 'id',
         name: 'id',
         orderable: false,
@@ -263,6 +293,7 @@ var updateUrl = "{{ route('categories.update', ':id') }}".replace(':id', categor
         },
         success: function(response) {
           console.log('resposne' + response)
+          toastr.success("Category Added Successfully");
           $('#categoryForm')[0].reset();
           // $('#categoryForm').close();
           $('#myModal').css('display', 'none');
@@ -277,23 +308,61 @@ var updateUrl = "{{ route('categories.update', ':id') }}".replace(':id', categor
   });
 
   function deleteCategory(categoryId) {
-    if (confirm("Are you sure you want to delete this category?")) {
+  Swal.fire({
+    title: 'Are you sure?',
+    text: "This will permanently delete the category.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Yes, delete it!',
+    cancelButtonText: 'Cancel',
+    customClass: {
+      popup: 'rounded-lg shadow-lg'
+    }
+  }).then((result) => {
+    if (result.isConfirmed) {
       $.ajax({
-        url:"{{ route('categories.delete', ':id') }}".replace(':id', categoryId),
+        url: "{{ route('categories.delete', ':id') }}".replace(':id', categoryId),
         type: 'DELETE',
         data: {
           _token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
-          alert(response.success);
+          toastr.success("Category Deleted Successfully");
           $('#myModal').hide();
           $('#table').DataTable().ajax.reload(null, false);
-          $('#categoryTable').DataTable().ajax.reload();
+          $('#table').DataTable().ajax.reload();
         },
         error: function() {
-          alert("Error deleting category!");
+          toastr.error("Error deleting category");
         }
       });
     }
-  }
-</script> @endsection
+  });
+}
+
+</script>
+<script>
+$(document).ready(function() {
+    // Initialize DataTable
+    var table = $('.categories').DataTable();
+
+    // Event listener for the dropdown change
+    $('#mainCategoryFilter').on('change', function() {
+        var selectedType = $(this).val(); // Get selected category
+        console.log("Selected Category", selectedType)
+
+        if (selectedType === "") {
+            // If "All" is selected, reset the filter
+            table.column(3).search('').draw(); // column(3) is for the "type" column
+        } else {
+            // Filter DataTable based on the selected category
+            table.column(3).search(selectedType).draw(); // Apply search filter on type column
+        }
+    });
+});
+
+  </script>
+  
+@endsection

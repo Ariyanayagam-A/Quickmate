@@ -19,7 +19,8 @@ class UserMiddlerware
             return redirect()->route('customer.loginform');
         }
     
-        if (auth()->user()->role != 3) { // 1 = User
+        if (auth()->user()->role != 1) { // 1 = User
+            return redirect()->route('customer.loginform');
             abort(403, 'Unauthorized');
         }
     

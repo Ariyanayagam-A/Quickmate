@@ -46,16 +46,29 @@
 
   
               <!-- Category -->
+                          <!-- Main Category Dropdown (hardcoded) -->
               <div class="col-md-6">
-                  <label for="validationCustom04" class="form-label">Category</label>
-                  <select class="form-select" id="validationCustom04" name="category" required>
-                      <option value="" disabled selected>--- Select Category ---</option>
-                      @foreach ($categories as $category)
-                          <option value="{{ $category->id }}">{{ $category->name }}</option>
-                      @endforeach
-                  </select>
-                  <div class="invalid-feedback">Please select a valid category.</div>
+                <label for="mainCategory" class="form-label">Main Category</label>
+                <select class="form-select" id="mainCategory" required>
+                    <option value="" selected disabled>--- Select Main Category ---</option>
+                    <option value="Hardware">Hardware</option>
+                    <option value="Software">Software</option>
+                    <option value="Network">Network</option>
+                    <option value="Services">Services</option>
+                    <option value="Accounts and Access">Accounts and Access</option>
+                    <option value="General">General</option>
+                </select>
               </div>
+
+              <!-- Subcategory Dropdown (dynamic) -->
+              <div class="col-md-6">
+                <label for="subcategory" class="form-label">Subcategory</label>
+                <select class="form-select" id="subcategory" name="category" required>
+                    <option value="" disabled selected>--- Select Subcategory ---</option>
+                </select>
+                <div class="invalid-feedback">Please select a valid subcategory.</div>
+              </div>
+
   
               <!-- File Upload -->
               <div class="col-md-6">
@@ -123,4 +136,27 @@
         })
       })
     </script>
+<script>
+    const getSubcategoriesUrl = "{{ route('get.subcategories') }}";
+
+    document.getElementById('mainCategory').addEventListener('change', function() {
+        const mainCategory = this.value;
+
+        fetch(`${getSubcategoriesUrl}?type=${encodeURIComponent(mainCategory)}`)
+            .then(response => response.json())
+            .then(data => {
+                const subcategorySelect = document.getElementById('subcategory');
+                subcategorySelect.innerHTML = '<option disabled selected>--- Select Subcategory ---</option>';
+
+                data.forEach(subcat => {
+                    subcategorySelect.innerHTML += `<option value="${subcat.id}">${subcat.name}</option>`;
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching subcategories:', error);
+            });
+    });
+</script>
+
+  
 @endsection

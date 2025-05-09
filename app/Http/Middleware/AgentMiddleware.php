@@ -20,6 +20,7 @@ class AgentMiddleware
         }
     
         if (auth()->user()->role != 2) { // 2 = Engineer
+            return redirect()->route('customer.loginform');
             abort(403, 'Unauthorized');
         }
     

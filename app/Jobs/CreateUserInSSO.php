@@ -80,6 +80,7 @@ class CreateUserInSSO implements ShouldQueue
                     'fname' => $this->userData->fname ?? '',
                     'lname' => $this->userData->lname ?? '',
                     'email' => $this->userData->email,
+                    'user_password' =>$this->userData->org_password,
                     'password' => Hash::make($this->userData->org_password),
                     'organization_id' => $this->userData->organization_id,
                     'realm' => $org->realm,

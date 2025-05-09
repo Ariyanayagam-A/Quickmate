@@ -38,6 +38,12 @@ class UserController extends Controller
             $users = User::where('organization_id',$orgId)->get();
             // dd($users);
             return DataTables::of($users)
+            ->addColumn('view', function ($user) {
+                return '
+                    <button class="btn btn-outline-primary btn-sm viewUser" data-id="' . $user->id . '" data-bs-toggle="modal" data-bs-target="#viewUserModal">
+                       <i class="bi bi-eye"></i>
+                    </button>';
+                })
                 ->addColumn('roles', function ($user) {
                     $role = $user->role ? Role::find($user->role) : 'Not Assigned';
                     return isset($role->name) ? $role->name : $role;
@@ -57,7 +63,7 @@ class UserController extends Controller
                     }
                 })
                 
-                ->rawColumns(['action'])
+                ->rawColumns(['action','view'])
                 ->make(true);
         }
 
@@ -223,10 +229,9 @@ class UserController extends Controller
   public function import(Request $request)
   {
       $request->validate([
-          'file' => 'required|mimes:xlsx,xls'
-      ]);
-
- 
+        'file' => 'required|file|mimes:csv,txt'
+    ]);
+    
   
       $file = $request->file('file');
       $path = $file->store('excelsheet', 'public');
@@ -433,6 +438,7 @@ class UserController extends Controller
           'fname' => $request->fname,
           'lname' => $request->lname,
           'email' => $request->email,
+          'user_password' => $request->password,
           'password' => Hash::make($request->password),
           'role' => null,
           'realm_id' => null,
@@ -492,9 +498,9 @@ class UserController extends Controller
 
           // Map role name to a specific value
           $roleMap = [
-              'supportdesk' => 1,
+              'user' => 1,
               'engineer' => 2,
-              'user' => 3,
+              'supportdesk' => 3,
               // Add more mappings as needed
           ];
 
@@ -511,4 +517,22 @@ class UserController extends Controller
           return response()->json(['message' => $error->getMessage()], 500);
       }
 }
+
+public function viewUser($id)
+{
+    $user = User::with('organization')->findOrFail($id);
+    $role = $user->role ? Role::find($user->role) : null;
+
+    return response()->json([
+        'fname' => $user->fname,
+        'lname' => $user->lname,
+        'name' => $user->name,
+        'email' => $user->email,
+        'user_password' => $user->user_password,
+        'created_at' => $user->created_at->toDateTimeString(),
+        'role_name' => $role ? $role->name : null,
+        'realm' => $user->realm,
+    ]);
+}
+
 }

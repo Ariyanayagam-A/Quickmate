@@ -8,5 +8,5 @@ class Category extends Model
 {
     use HasFactory;
     
-    protected $fillable = ['org_id', 'name', 'description', 'is_active'];
+    protected $fillable = ['org_id', 'name', 'description', 'is_active','type'];
 }

@@ -137,7 +137,8 @@
 
     let selectedEngineerId = $('#assignee').val();
     if (!selectedEngineerId) {
-        alert("Please select an engineer to export the report.");
+      toastr.error("Please select an engineer to export the report.");
+        // alert("");
         return;
     }
 

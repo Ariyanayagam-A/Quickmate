@@ -13,7 +13,8 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Session;
 use App\Exports\FilteredTicketsExport;
 use Maatwebsite\Excel\Facades\Excel;
-
+use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Carbon;
 
 class TicketController extends Controller
 {
@@ -24,6 +25,10 @@ class TicketController extends Controller
     {
         return view('customer.tickets');
     }
+
+   
+
+
 
     public function raiseTicket()
     {
@@ -723,7 +728,7 @@ public function export(Request $request)
 
     // dd('Engineernam:',$engineer_name);
 
-    return Excel::download(new FilteredTicketsExport($engineerId), $engineer_name.'_tickets.xlsx');
+    return Excel::download(new FilteredTicketsExport($engineerId), $engineer_name.'_tickets.csv');
 }
 
     public function getagentHoldTickets()
@@ -1224,10 +1229,161 @@ public function export(Request $request)
 
         return response()->json($formattedData);
     }
+    
+    public function getUserRoleData()
+    {
+        $organizationId = Session::get('organization')->id;
+    
+        // Current year range
+        $startDate = Carbon::now()->startOfYear();    // Jan 1st
+        $endDate = Carbon::now()->endOfYear();        // Dec 31st
+    
+        // Generate all 12 months of current year
+        $months = collect();
+        for ($date = $startDate->copy(); $date->lte($endDate); $date->addMonth()) {
+            $months->push($date->format('M Y')); // Example: "Jan 2025"
+        }
+    
+        // Fetch user counts grouped by month and role
+        $users = DB::table('users')
+            ->select(
+                DB::raw("DATE_FORMAT(created_at, '%b %Y') as month"),
+                'role',
+                DB::raw('COUNT(*) as count')
+            )
+            ->where('organization_id', $organizationId)
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('month', 'role')
+            ->get();
+    
+        // Roles mapping
+        $roles = [
+            1 => 'User',
+            2 => 'Engineer',
+            3 => 'Support Team',
+        ];
+    
+        // Initialize data arrays with 0s for 12 months
+        $data = [
+            'months' => $months,
+            'User' => array_fill(0, 12, 0),
+            'Engineer' => array_fill(0, 12, 0),
+            'Support Team' => array_fill(0, 12, 0),
+        ];
+    
+        // Map counts to correct month/role
+        foreach ($users as $user) {
+            $monthIndex = $months->search($user->month);
+            if ($monthIndex !== false) {
+                $roleName = $roles[$user->role] ?? 'Unknown';
+                $data[$roleName][$monthIndex] = $user->count;
+            }
+        }
+    
+        return response()->json([
+            'months' => $data['months'],
+            'user' => $data['User'],
+            'engineer' => $data['Engineer'],
+            'support' => $data['Support Team'],
+        ]);
+    }
+    
+    
 
+    public function getDailySolvedTicketReport()
+    {
+        $organizationId = Session::get('organization')->id;
+    
+        $startDate = Carbon::now()->subDays(6)->startOfDay(); // from 6 days ago
+        $endDate = Carbon::now()->endOfDay(); // until end of today
+    
+        // Query to get solved ticket counts grouped by exact day (e.g., Mon, Tue)
+        $tickets = DB::table('tickets')
+            ->select(
+                DB::raw("DATE_FORMAT(created_at, '%W') as day_name"),
+                DB::raw('COUNT(*) as count')
+            )
+            ->where('organization_id', $organizationId)
+            ->where('status', 2) // solved status
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy(DB::raw("DAYOFWEEK(created_at)"), DB::raw("DATE_FORMAT(created_at, '%W')"))
+            ->orderBy(DB::raw("DAYOFWEEK(created_at)"))
+            ->get();
+    
+        // Create default 7-day array (to avoid missing days)
+        $daysOfWeek = [
+            'Sunday' => 0,
+            'Monday' => 0,
+            'Tuesday' => 0,
+            'Wednesday' => 0,
+            'Thursday' => 0,
+            'Friday' => 0,
+            'Saturday' => 0,
+        ];
+    
+        // Fill actual data into array
+        foreach ($tickets as $ticket) {
+            $daysOfWeek[$ticket->day_name] = $ticket->count;
+        }
+    
+        return response()->json([
+            'days' => array_keys($daysOfWeek),
+            'counts' => array_values($daysOfWeek),
+        ]);
+    }
 
+//superadmin
+    public function getTopOrganizationsByUserCount()
+    {
+        $topOrganizations = DB::table('users')
+            ->join('organizations', 'users.realm', '=', 'organizations.organization_name')
+            ->select('organizations.organization_name', DB::raw('count(users.id) as user_count'))
+            ->groupBy('organizations.organization_name')
+            ->orderByDesc('user_count')
+            ->limit(5)
+            ->get();
+    
+        return response()->json([
+            'organizations' => $topOrganizations->pluck('organization_name'),
+            'counts' => $topOrganizations->pluck('user_count')
+        ]);
+    }
 
+    
 
+public function getMonthlyTicketsCount()
+{
+    $organizationId = Session::get('organization')->id;
+    // Step 1: Get ticket counts grouped by month number (1-12)
+    $ticketData = DB::table('tickets')
+        ->select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('COUNT(*) as count')
+        )
+        ->where('organization_id', $organizationId)
+        ->groupBy('month')
+        ->pluck('count', 'month') // [month => count]
+        ->toArray();
+
+    // Step 2: Build full 12-month result with 0 for missing months
+    $months = [
+        1 => 'January', 2 => 'February', 3 => 'March', 4 => 'April',
+        5 => 'May', 6 => 'June', 7 => 'July', 8 => 'August',
+        9 => 'September', 10 => 'October', 11 => 'November', 12 => 'December'
+    ];
+
+    $result = [];
+    foreach ($months as $monthNum => $monthName) {
+        $result[] = [
+            'month' => $monthName,
+            'count' => $ticketData[$monthNum] ?? 0
+        ];
+    }
+
+    return response()->json($result);
+}
+
+    
 }
 
 

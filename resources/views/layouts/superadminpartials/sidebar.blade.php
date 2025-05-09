@@ -29,7 +29,7 @@
           data-accordion="false"
         >
           <li class="nav-item ">
-            <a href="{{ route('super.admin.dashboard') }}" class="nav-link ">
+            <a href="{{ route('super.admin.dashboard') }}" class="nav-link {{ Request::routeIs('super.admin.dashboard') ? 'active' : '' }}">
 
               <i class="nav-icon bi bi-speedometer"></i>
               <p>
@@ -41,14 +41,6 @@
 
 
 
-            <li class="nav-item ">
-              <a href="#" class="nav-link">
-                <i class="bi bi-person nav-icon "></i>
-                <p>
-                  Organisation Details
-                </p>
-              </a>
-              <ul class="nav ">
                 {{-- <li class="nav-item">
                   <a href="{{ route('super.admin.org') }}" class="nav-link">
                     <i class="nav-icon bi bi-clipboard2-check"></i>
@@ -56,41 +48,29 @@
                   </a>
                 </li> --}}
                 <li class="nav-item">
-                  <a href="{{ route('super.admin.neworg') }}" class="nav-link">
-                    <i class="nav-icon bi bi-clipboard2-check"></i>
+                  <a href="{{ route('super.admin.neworg') }}"  class="nav-link {{ Request::routeIs('super.admin.neworg') ? 'active' : '' }}">
+                    <i class="nav-icon bi bi-person-plus"></i>
                     <p>Add New Organisation</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ route('companies.list') }}" class="nav-link">
-                    <i class="nav-icon bi  bi-clipboard2-check"></i>
+                  <a href="{{ route('companies.list') }}"  class="nav-link {{ Request::routeIs('companies.list') ? 'active' : '' }}">
+                    <i class="nav-icon bi bi-list-task"></i>
                     <p>List Organizations</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="{{ route('organization.list') }}" class="nav-link">
-                    <i class="nav-icon bi  bi-clipboard2-check"></i>
+                  <a href="{{ route('organization.list') }}"  class="nav-link {{ Request::routeIs('organization.list') ? 'active' : '' }}">
+                    <i class="nav-icon bi bi-patch-check"></i>
                     <p>Verify Organisation</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{ route('organization.ldap') }}" class="nav-link">
+                    <a href="{{ route('organization.ldap') }}" class="nav-link {{ Request::routeIs('organization.ldap') ? 'active' : '' }}">
                       <i class="nav-icon bi  bi-clipboard2-check"></i>
                       <p>LDAP Organization</p>
                     </a>
                   </li>
-              </ul>
-            </li>
-
-
-
-
-
-
-
-
-
-
 
       </ul>
 
@@ -107,7 +87,7 @@
 
       <!-- Image in its own centered block -->
       <div class="pt-3">
-        <img src="{{ asset('assets/dist/assets/img/azeuslogo.png') }}" alt="Icon" width="280" height="110">
+        <img src="{{ asset('assets/dist/assets/img/azeuslogo.png') }}" alt="Icon" width="280" >
       </div>
 
       <!-- Close button floated to top right -->

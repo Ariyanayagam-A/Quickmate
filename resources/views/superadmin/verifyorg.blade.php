@@ -127,7 +127,7 @@
                     <div class="col-md-12">
                       <label>Enable Roles :  </label>
                       <label class="switch">
-                        <input type="checkbox" class="toggleOptionRole" name="secretEnabled" id="role" value="1">
+                        <input type="checkbox" class="toggleOptionRole" name="secretEnabled" id="role" required value="1">
                         <span class="slider"></span>
                       </label>
                     </div>

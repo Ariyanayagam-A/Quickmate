@@ -1,3 +1,20 @@
+@php
+      $organization = Session::get('organization');
+      $logoPath = isset($organization['logo']) ? $organization['logo'] : null;
+
+    if ($logoPath) {
+        $folder = dirname($logoPath); // logos
+        $filename = basename($logoPath); // 1744008302_cloud .png
+        $encodedFile = rawurlencode($filename); // encodes space as %20
+        // $organizationLogo = asset("public/storage/{$folder}/{$encodedFile}"); //for ubundu
+        $organizationLogo = asset("storage/{$folder}/{$encodedFile}");
+
+    } else {
+        $organizationLogo = asset('assets/dist/assets/img/AdminLTELogo.png');
+    }
+    // dd($organizationLogo);
+@endphp
+
 <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">
@@ -5,9 +22,9 @@
       <a href="" class="brand-link" id="logo-link">
         <!--begin::Brand Image-->
         <img
-        src="{{ asset('assets/dist/assets/img/AdminLTELogo.png') }}"
+        src="{{ $organizationLogo }}"
         alt="AdminLTE Logo"
-        class="brand-image opacity-75 shadow"
+        class="brand-image opacity-75 shadow rounded-circle"
       />
 
         <!--end::Brand Image-->
@@ -30,7 +47,7 @@
         >
         
           <li class="nav-item">
-            <a href="{{ route('agenttickets.view') }}" class="nav-link ">
+            <a href="{{ route('agenttickets.view') }}" class="nav-link {{ Request::routeIs('agenttickets.view') ? 'active' : '' }}">
               <i class="nav-icon bi bi-ticket-perforated"></i>
               <p>
                 New Tickets
@@ -39,7 +56,7 @@
 
           </li>
           <li class="nav-item">
-            <a href="{{ route('agentholdedtickets.view') }}" class="nav-link">
+            <a href="{{ route('agentholdedtickets.view') }}" class="nav-link {{ Request::routeIs('agentholdedtickets.view') ? 'active' : '' }}">
               <i class="nav-icon bi-ticket-perforated-fill"></i>
               <p>
                 Onhold Tickets
@@ -47,8 +64,8 @@
             </a>
           </li>
           <li class="nav-item">
-            <a href="{{ route('agenthistoryestickets.view') }}" class="nav-link ">
-              <i class="nav-icon bi bi-activity"></i>
+            <a href="{{ route('agenthistoryestickets.view') }}" class="nav-link {{ Request::routeIs('agenthistoryestickets.view') ? 'active' : '' }}">
+              <i class="nav-icon bi bi-hourglass-split"></i>
               <p>
                 Tickets History
               </p>
@@ -70,7 +87,7 @@
   
         <!-- Image in its own centered block -->
         <div class="pt-3">
-          <img src="{{ asset('assets/dist/assets/img/azeuslogo.png') }}" alt="Icon" width="280" height="110">
+          <img src="{{ asset('assets/dist/assets/img/azeuslogo.png') }}" alt="Icon" width="280" >
         </div>
   
         <!-- Close button floated to top right -->

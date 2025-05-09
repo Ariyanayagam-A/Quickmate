@@ -30,7 +30,11 @@
         {{ session('error') }}
     </div>
 @endif
-
+@php
+$organization = Session::get('organization');
+$org_domain = $organization['domain_name'] ?? 'yourdomain.com';
+// dd($org_domain);
+@endphp
 
   <style>
     main{
@@ -150,6 +154,7 @@
                       class="form-control"
                       id="User-Name"
                       value=""
+                      placeholder="Username must be unique"
                       required
                       name="username"                    />
 
@@ -161,6 +166,7 @@
                       class="form-control"
                       id="Email"
                       value=""
+                      placeholder="example'@'{{ $org_domain }}"
                       required
                       name="email"
                       />
@@ -212,7 +218,7 @@
                 <div class="col-md-6">
                   <form action="{{route('import-excel')}}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <label for="validationCustom01" class="form-label">Upload Users Using Excel File</label>
+                    <label for="validationCustom01" class="form-label">Upload Users Using Excel File (Only csv format)</label>
             
                     <!-- Form elements in a row -->
                     <div class="d-flex align-items-center gap-2">
@@ -224,8 +230,11 @@
                         name="file" />
                       
                       <button type="submit" class="btn btn-info">Upload</button>
+                      <a href="{{ asset('assets/excel/demo_users.csv') }}" download class="btn btn-sm btn-primary d-inline-flex align-items-center gap-1 ">
+                        <i class="bi bi-download"></i> Demo Excel Sheet
+                    </a>                    
                     </div>
-                    
+                                     
                   </form>
                 </div>
               </div>

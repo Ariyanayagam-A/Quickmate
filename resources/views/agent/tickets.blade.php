@@ -250,12 +250,17 @@
               console.log('response : ',response);
               if(response.status == 'success')
               {
-                alert(response.message);
+                // alert(response.message);
+                toastr.success(response.message);
+                  setTimeout(function() {
+                      // location.reload();
+                  }, 2000);
                 $('#myModal').hide();
                 setTimeout(()=> $('#table').DataTable().ajax.reload(),1000);
               }
               else{
-                alert('Something went wrong');
+                toastr.error("Error: " + xhr.responseJSON.message);
+                // alert('Something went wrong');
               }
 
             },
@@ -303,30 +308,37 @@
         }
     });
 }
-        function closeRejectTicket(object,ticketId)
-        {
-          // console.log('type : ',);
-          var ticketStatus = $(object).attr('data-type') == 'close' ? '2' : ($(object).attr('data-type') == 'hold' ? '4' : '3');
-          var message = `Are you sure you want to ${$(object).attr('data-type')} this ticket`;
+function closeRejectTicket(object, ticketId) {
+    let ticketType = $(object).attr('data-type'); // close, reject, hold
+    let ticketStatus = ticketType === 'close' ? '2' : (ticketType === 'hold' ? '4' : '3');
+    let message = `Are you sure you want to ${ticketType} this ticket?`;
 
-          if(!$(object).attr('data-hasfeedback'))
-          {
-            alert(`Please Open the Ticket and fill a feedback`)
-            return;
-          }
+    // Check for feedback
+    if (!$(object).attr('data-hasfeedback')) {
+        toastr.warning("Please open the ticket and fill in the feedback.");
+        return;
+    }
 
-          if(confirm(message)){
-            var payload = {
-              ticketId : ticketId,
-              status : ticketStatus
-            }
-            commonAjax(payload);
-          }
-          else{
-            return;
-          }
-
+    // Show SweetAlert2 confirmation
+    Swal.fire({
+        title: 'Confirm Action',
+        text: message,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, proceed!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let payload = {
+                ticketId: ticketId,
+                status: ticketStatus
+            };
+            commonAjax(payload); // Your existing AJAX handler
         }
+    });
+}
+
 
     </script>
  @endsection

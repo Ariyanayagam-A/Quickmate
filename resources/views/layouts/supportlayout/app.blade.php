@@ -10,7 +10,8 @@
       <meta charset="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
       <title>Bootstrap Gallery - Support Desk Admin Template</title>
-  
+      <!-- SweetAlert2 -->
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
       <!-- Meta -->
       <meta name="description" content="Marketplace for Bootstrap Admin Dashboards" />
       <meta name="author" content="Bootstrap Gallery" />
@@ -21,7 +22,8 @@
       <meta property="og:type" content="Website">
       <meta property="og:site_name" content="Bootstrap Gallery">
       <meta name="csrf-token" content="{{ csrf_token() }}">
-      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.svg')}}" />
+      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}}" />
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
   
       <!-- *************
         ************ CSS Files *************
@@ -29,7 +31,13 @@
       <!-- Icomoon Font Icons css -->
       <link rel="stylesheet" href="{{ asset('assets/fonts/icomoon/style.css') }}" />
       <script src="{{ asset('assets/dist/js/adminlte.js') }} "defer></script>
-
+      <style>
+        /* Brighter green for success toast */
+        .toast-success {
+            background-color: #28a745 !important; /* Bootstrap success green */
+            color: white !important;
+        }
+        </style>
   
       <!-- Main CSS -->
       {{-- <link rel="stylesheet" href="{{ asset('assets/css/main.min.css')}}" /> --}}
@@ -203,5 +211,6 @@
     </script>
 
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </body>
 </html>

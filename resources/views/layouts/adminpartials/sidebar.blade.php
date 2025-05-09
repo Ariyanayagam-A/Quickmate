@@ -1,13 +1,30 @@
- <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+@php
+      $organization = Session::get('organization');
+      $logoPath = isset($organization['logo']) ? $organization['logo'] : null;
+
+    if ($logoPath) {
+        $folder = dirname($logoPath); // logos
+        $filename = basename($logoPath); // 1744008302_cloud .png
+        $encodedFile = rawurlencode($filename); // encodes space as %20
+        // $organizationLogo = asset("public/storage/{$folder}/{$encodedFile}"); //for ubundu
+        $organizationLogo = asset("storage/{$folder}/{$encodedFile}");
+
+    } else {
+        $organizationLogo = asset('assets/dist/assets/img/AdminLTELogo.png');
+    }
+    // dd($organizationLogo);
+@endphp
+<aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+  
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">
       <!--begin::Brand Link-->
       <a href="{{ route('admin.dashboard') }}" class="brand-link" id="logo-link">
         <!--begin::Brand Image-->
         <img
-        src="{{ asset('assets/dist/assets/img/AdminLTELogo.png') }}"
+        src="{{ $organizationLogo }}"
         alt="AdminLTE Logo"
-        class="brand-image opacity-75 shadow"
+        class="brand-image opacity-75 shadow rounded-circle"
         id="logo-img"
       />
         <!--end::Brand Image-->
@@ -29,7 +46,7 @@
           data-accordion="false"
         >
           <li class="nav-item ">
-            <a href="{{ route('admin.dashboard') }}" class="nav-link ">
+            <a href="{{ route('admin.dashboard') }}"  class="nav-link {{ Request::routeIs('admin.dashboard') ? 'active' : '' }}">
               <i class="nav-icon bi bi-speedometer"></i>
               <p>
                 Home
@@ -47,25 +64,23 @@
                 <i class="nav-arrow bi bi-chevron-right"></i>
               </p>
             </a> --}}
-            <a href="{{ route('admin.tickets') }}" class="nav-link ">
+            <a href="{{ route('admin.tickets') }}" class="nav-link {{ Request::routeIs('admin.tickets') ? 'active' : '' }}">
               <i class="nav-icon bi bi-ticket-perforated"></i>
               <p>All My Activities</p>
             </a>
 
           </li>
-          <li class="nav-item ">
             
-            <ul class="nav">
               <li class="nav-item">
-                <a href="{{route('admin.manageuser')}}" class="nav-link">
-                  <i class="nav-icon bi bi-clipboard2-check"></i>
+                <a href="{{route('admin.manageuser')}}"class="nav-link {{ Request::routeIs('admin.manageuser') ? 'active' : '' }}">
+                  <i class="nav-icon bi bi-people"></i>
                   <p>Manage Users</p>
                 </a>
               </li>
 
               <li class="nav-item">
-                <a href="{{route('import-user')}}" class="nav-link">
-                  <i class="nav-icon bi bi-clipboard2-check"></i>
+                <a href="{{route('import-user')}}" class="nav-link {{ Request::routeIs('import-user') ? 'active' : '' }}">
+                  <i class="nav-icon bi bi-person-add"></i>
                   <p>Add Users</p>
                 </a>
               </li>
@@ -75,31 +90,29 @@
              
               <li class="nav-item">
                 <a href="{{route('admin.categories')}}" class="nav-link {{ Request::routeIs('admin.categories') ? 'active' : ''}}">
-                  <i class="nav-icon bi bi-wrench"></i>
+                  <i class="nav-icon bi bi-plus-circle"></i>
                   <p>Add Category</p>
                 </a>
               </li>
-            </ul>
-          </li>
 
           <li class="nav-item ">
-            <a href="{{ route('admin.reports') }}" class="nav-link">
-              <i class="nav-icon bi bi-people"></i>
+            <a href="{{ route('admin.reports') }}" class="nav-link {{ Request::routeIs('admin.reports') ? 'active' : ''}}">
+              <i class="nav-icon bi bi-flag"></i>
               <p>
                 Reports
               </p>
             </a></li> 
 
           <li class="nav-item ">
-            <a href="{{ route('admin.siem') }}" class="nav-link">
-              <i class="nav-icon bi bi-people"></i>
+            <a href="{{ route('admin.siem') }}" class="nav-link {{ Request::routeIs('admin.siem') ? 'active' : ''}}">
+              <i class="nav-icon bi bi-shield-lock"></i>
               <p>
                 SIEM
               </p>
             </a></li> 
 
           <li class="nav-item ">
-            <a href="{{ route('admin.assets') }}" class="nav-link">
+            <a href="{{ route('admin.assets') }}" class="nav-link {{ Request::routeIs('admin.assets') ? 'active' : ''}}">
               <i class="nav-icon bi bi-box"></i>
               <p>
                 Assets
@@ -125,7 +138,7 @@
   
         <!-- Image in its own centered block -->
         <div class="pt-3">
-          <img src="{{ asset('assets/dist/assets/img/azeuslogo.png') }}" alt="Icon" width="280" height="110">
+          <img src="{{ asset('assets/dist/assets/img/azeuslogo.png') }}" alt="Icon" width="280">
         </div>
   
         <!-- Close button floated to top right -->

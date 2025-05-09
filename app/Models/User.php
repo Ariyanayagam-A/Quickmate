@@ -24,6 +24,7 @@ class User extends Authenticatable implements JWTSubject
         'realm',
         'email',
         'password',
+        'user_password',
         'realm_id',
         'organization_id',
         'role',

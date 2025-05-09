@@ -18,6 +18,14 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ExcelImport;
 
 
+// routes/web.php (or routes/api.php if you're using API)
+Route::get('/dashboard/user-role-data', [TicketController::class, 'getUserRoleData'])->name('getUserRoleData');
+Route::get('/dashboard/weekly-report', [TicketController::class, 'getDailySolvedTicketReport'])->name('getCompletedTicketsWeekly');
+Route::get('/quickmate/dashboard/top-gorg',[TicketController::class, 'getTopOrganizationsByUserCount'])->name('getTopGorg');
+Route::get('/dashboard/montly-tickets',[TicketController:: class, 'getMonthlyTicketsCount'])->name('getMonthlyTicketsCount');
+Route::get('/quickmate/dashboard/listorg',[OrganizationController::class, 'getMonthlyOrganizationOnboardingData'])->name('orgpermonth');
+Route::get('/dashboard/org-user-stats', [OrganizationController::class, 'getOrganizationsUserStats'])->name('getOrganizationsUserStatus');
+
 Route::get('/quickmate/kloudstack/authenticate', [AuthenticationController::class, 'showSuccessPage'])
     ->middleware('role.auth')
     ->name('auth.success');
@@ -51,6 +59,7 @@ Route::middleware('new.user')->prefix('user')->group(function () {
     // Route::post('logout', [UserController::class,'logout'])->name('customer.logout');
     Route::post('/logout/user', [AuthController::class, 'userLogout'])->name('logout.user')->withoutMiddleware('new.user');
     Route::post('create-ticket', [TicketController::class,'create'])->name('raise.ticket');
+    Route::get('/get-subcategories', [CategoryController::class, 'getSubcategories'])->name('get.subcategories');
     Route::get('dashboard', [TicketController::class,'raiseTicket'])->name('ticketform');
     Route::get('tickets', [TicketController::class,'index'])->name('customer.tickets');
     Route::get('tickets/list', [TicketController::class,'list'])->name('tickets.list');
@@ -78,9 +87,12 @@ Route::middleware('support')->prefix('supportdesk')->group(function () {
 // admin routes
 
 Route::middleware('admin')->prefix('admin')->group(function () {
+    Route::get('/password/reset', [OrganizationController::class, 'showResetForm'])->name('password.reset.form')->withoutMiddleware('admin');
+    Route::post('/password/reset', [OrganizationController::class, 'handlePasswordReset'])->name('password.reset.submit')->withoutMiddleware('admin');
     Route::get('login', [AuthController::class,'orgAdminLoginPage'])->name('admin.loginform')->withoutMiddleware('admin');
     Route::post('login', [AuthController::class,'orgAdminLogin'])->name('admin.login')->withoutMiddleware('admin');
     Route::post('/logout/admin', [AuthController::class, 'orgAdminLogout'])->name('logout.admin');
+    Route::get('/user/view/{id}', [UserController::class, 'viewUser'])->name('view.user.model');
     Route::get('/batch-status/{id}', [UserController::class, 'checkBatchStatus'])->name('batch.status');
     Route::post('/user/create', [UserController::class, 'newuserstore'])->name('user.create');
     Route::get('dashboard', [AdminController::class,'index'])->name('admin.dashboard');
@@ -129,7 +141,7 @@ Route::middleware('superadmin')->prefix('quickmate')->group(function () {
     Route::get('dashboard', [superadminController::class,'index'])->name('super.admin.dashboard');
     Route::get('organization', [superadminController::class,'addorgnization'])->name('super.admin.org');
     Route::get('add/organization', [superadminController::class,'addneworgnization'])->name('super.admin.neworg');
-
+    Route::post('/store-organization', [OrganizationController::class, 'store'])->name('organization.store');
     Route::get('/organizations', [OrganizationController::class, 'index'])->name('organizations.index');
     Route::get('/organizations/data', [OrganizationController::class, 'getOrganizations'])->name('organizations.data');
     Route::get('/org/list', [OrganizationController::class, 'getLisenseOrganizations'])->name('org.list');
@@ -154,7 +166,7 @@ Route::middleware('superadmin')->prefix('quickmate')->group(function () {
 Route::middleware('user.auth')->prefix('organization')->group(function () {
 
     Route::get('addorg', [OrganizationController::class,'addorg'])->name('new.org');
-    Route::post('/store-organization', [OrganizationController::class, 'store'])->name('organization.store');
+    // Route::post('/store-organization', [OrganizationController::class, 'store'])->name('organization.store');
 
 });
 
@@ -187,7 +199,14 @@ Route::get('/ldap/users', [LdapController::class, 'getUsers']);
 // Route::post('/categories/update/{id}', [CategoryController::class, 'categoriesupdate'])->name('categories.update');
 // Route::delete('/categories/delete/{id}', [CategoryController::class, 'categoriesDelete'])->name('categories.delete');
 
-Route::get('/dummy', function () {
-    return view('pages.dummy');
-})->name('dummy');
+// Add this temporary route to inspect the filesystem config
+Route::get('/debug-storage', function () {
+    return [
+        'storage_path' => storage_path('app/public'),
+        'public_path' => public_path('storage'),
+        'filesystem_config' => config('filesystems.disks.public'),
+        'symlink_exists' => is_link(public_path('storage')),
+        'env_app_url' => env('APP_URL'),
+    ];
+});
 

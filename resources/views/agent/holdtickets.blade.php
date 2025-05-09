@@ -235,12 +235,12 @@
               console.log('response : ',response);
               if(response.status == 'success')
               {
-                alert(response.message);
+                toastr.success(response.message);
                 $('#myModal').hide();
                 setTimeout(()=> $('#table').DataTable().ajax.reload(),1000);
               }
               else{
-                alert('Something went wrong');
+                toastr.error('Something went wrong');
               }
 
             },
@@ -280,30 +280,36 @@
 
         }
 
-        function closeRejectTicket(object,ticketId)
-        {
-          // console.log('type : ',);
-          var ticketStatus = $(object).attr('data-type') == 'close' ? '2' : ($(object).attr('data-type') == 'hold' ? '4' : '3');
-          var message = `Are you sure you want to ${$(object).attr('data-type')} this ticket`;
+        function closeRejectTicket(object, ticketId) {
+    const ticketType = $(object).attr('data-type');
+    const ticketStatus = ticketType === 'close' ? '2' : (ticketType === 'hold' ? '4' : '3');
+    const message = `Are you sure you want to ${ticketType} this ticket?`;
 
-          if(!$(object).attr('data-hasfeedback'))
-          {
-            alert(`Please Open the Ticket and fill a feedback`)
-            return; 
-          }
-          
-          if(confirm(message)){
-            var payload = {
-              ticketId : ticketId,
-              status : ticketStatus
-            }
+    if (!$(object).attr('data-hasfeedback')) {
+        toastr.warning("Please open the ticket and fill in the feedback.");
+        return;
+    }
+
+    // SweetAlert2 confirmation
+    Swal.fire({
+        title: 'Confirm Action',
+        text: message,
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#d33',
+        confirmButtonText: `Yes, ${ticketType} it`
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const payload = {
+                ticketId: ticketId,
+                status: ticketStatus
+            };
             commonAjax(payload);
-          }
-          else{
-            return;
-          }
-
         }
+    });
+}
+
         
     </script>
  @endsection

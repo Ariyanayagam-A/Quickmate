@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\User;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -25,7 +27,7 @@ class AuthController extends Controller
             'name_email' => 'required',
             'password' => 'required',
         ]);
-
+        
         // Step 1: Call your custom auth service
         $token = $this->authService->loginServiceUser($credentials, 'user');
 
@@ -41,20 +43,19 @@ class AuthController extends Controller
             Session::put('engineer_id', $user->id);
             // dd($user->id);
             // dd($user->organization_id);
-
+            Log::error("Log User Data :", ['data' => $user]);
             if ($user) {
                 // Step 3: Manually log the user in
                 Auth::login($user);
-
                 // Step 4: Check role and redirect
-                if ($user->role == 1) {
+                if ($user->role == 3) {
                     return redirect()->route('supporttickets.view')->with('success', 'Logged in successfully.');
-                } elseif ($user->role == 3) {
+                } elseif ($user->role == 1) {
                     return redirect()->route('customer.tickets')->with('success', 'Logged in successfully.');
                 } elseif ($user->role == 2) {
                     return redirect()->route('agenttickets.view')->with('success', 'Logged in successfully.');
                 } else {
-                    return redirect()->route('admin.dashboard')->with('success', 'Logged in successfully.');
+                    return back()->with('error', 'Role not assigned.')->withInput();
                 }
             } else {
                 return back()->with('error', 'User not found in database.')->withInput();
@@ -77,7 +78,19 @@ class AuthController extends Controller
             'password' => 'required',
         ]);
 
-        $token = $this->authService->loginService($credentials, 'org');
+        try {
+
+            $token = $this->authService->loginService($credentials, 'org');
+           
+        } catch (ValidationException $e) {
+            if ($e->errors()['account'] ?? false) {
+                return redirect()->route('password.reset.form')->with('warning', 'Please reset your password.')->withInput();
+            }
+        
+            return back()->with('error', 'Invalid credentials.')->withInput();
+        }
+
+       
 
         if ($token) {
             Session::put('access_token', $token);

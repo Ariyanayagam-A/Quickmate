@@ -15,7 +15,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="title" content="Admin | Dashboard" />
         <meta name="author" content="ColorlibHQ" />
-        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.svg')}}" />
+        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}}" />
+        
         <meta
           name="description"
           content="Admin is a Free Bootstrap 5 Admin Dashboard"
@@ -24,7 +25,7 @@
           name="keywords"
           content="bootstrap 5"
         />
-    
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"

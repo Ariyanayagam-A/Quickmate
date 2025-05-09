@@ -19,7 +19,8 @@ class SupportMiddleware
             return redirect()->route('customer.loginform');
         }
     
-        if (auth()->user()->role != 1) { // 1 = support team
+        if (auth()->user()->role != 3) { // 1 = support team
+            return redirect()->route('customer.loginform');
             abort(403, 'Unauthorized');
         }
     

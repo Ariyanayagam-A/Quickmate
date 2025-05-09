@@ -18,6 +18,14 @@ class CategoryController extends Controller
         return view('admin.categories')->with('activeLink','categories');
     }
 
+
+    public function getSubcategories(Request $request)
+        {
+            $type = $request->query('type');
+            $subcategories = Category::where('type', $type)->get();
+            return response()->json($subcategories);
+        }
+
     /**
      * Show the form for creating a new resource.
      */
@@ -31,9 +39,11 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
 {
+    // dd($request->all());
     $request->validate([
         'name' => 'required|string|max:255',
         'description' => 'nullable|string',
+        'type' => 'required|string|max:255',
         'is_active' => 'required|in:0,1',
     ]);
     // dd($request->all());
@@ -44,6 +54,7 @@ class CategoryController extends Controller
         'org_id' => $request->org_id, // Dynamically set the organization ID
         'name' => $request->name,
         'description' => $request->description,
+        'type' => $request->type,
         'is_active' => $request->is_active ?? 1,
     ]);
 
@@ -63,10 +74,12 @@ class CategoryController extends Controller
   // Update function
   public function categoriesupdate(Request $request, $id)
   {
+    // dd($request->all());
       // Validate and update your category
       $data = $request->validate([
           'name' => 'required|string|max:255',
           'description' => 'nullable|string',
+          'type' => 'required|string|max:255',
           'is_active' => 'required|boolean',
       ]);
 
@@ -145,7 +158,7 @@ class CategoryController extends Controller
                 ->addIndexColumn()
                 ->addColumn('category', function($row){
                     return $row->name;
-                })
+                })               
                 ->addColumn('status', function($row){
                     if ($row->is_active == 0) {
                         $status_btn = '<span class="badge bg-danger">Inactive</span>';
@@ -154,6 +167,9 @@ class CategoryController extends Controller
                         $status_btn = '<span class="badge bg-primary">Active</span>';
                     }
                     return $status_btn;
+                })
+                ->addColumn('type', function($row){
+                    return $row->type;
                 })
                 ->addColumn('action', function($row){
 
