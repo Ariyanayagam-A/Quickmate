@@ -122,6 +122,7 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::post('/users/assign-role', [UserController::class, 'assignRole'])->name('users.assignRole');
     Route::get('/get-engineers',[TicketController::class,'getengineersreport'])->name('engineers.list.report');
     Route::get('/reports/export', [TicketController::class, 'export'])->name('tickets.reports.export');
+    Route::post('/admin/tickets/approve/{id}', [TicketController::class, 'approveTicket'])->name('admin.ticket.approve');
 
 
 

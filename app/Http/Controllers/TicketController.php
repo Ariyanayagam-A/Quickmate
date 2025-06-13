@@ -40,63 +40,58 @@ class TicketController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(Request $request)
-    {
-        try {
-            // Validate input
-            $validator = Validator::make($request->all(), [
-                'title' => 'required',
-                'desc' => 'required',
-                'category' => 'required',
-                'ticket_file' => 'nullable|mimes:jpg,jpeg,png,pdf|max:2048', // Limit file type & size
-            ]);
 
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
+public function create(Request $request)
+{
+    try {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'desc' => 'required',
+            'category' => 'required|exists:categories,id',
+            'ticket_file' => 'nullable|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
 
-            // Retrieve user_id and organization_id from session
-            // $organizationId = session('organization_id');
-            // $userId = session('user_id');
-
-
-            // if (!$userId) {
-            //     return redirect()->back()->with('error', 'User ID not found in session.');
-            // }
-
-            // Debugging: Check if session values are set
-            // dd(session()->all());
-
-            // Create new ticket
-            $ticket = new Ticket();
-            $ticket->subject = $request->title;
-            $ticket->ticket_id = 'TKT' . rand(100000, 999999);
-            $ticket->category = $request->category;
-            $ticket->summary = $request->desc;
-            $ticket->status = 0;
-            $ticket->raised_by = 1; // Store the logged-in user's ID
-            $ticket->organization_id = Session::get('organization_id');
-            $ticket->user_mail = Session::get('name_email');
-
-
-            // Handle file upload
-            if ($request->hasFile('ticket_file')) {
-                $file = $request->file('ticket_file');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $filePath = $file->storeAs('uploads/tickets', $fileName, 'public');
-                $ticket->image = $filePath;
-            }
-
-            // Save ticket
-            if ($ticket->save()) {
-                return redirect('/user/tickets')->with('success', 'Ticket created successfully.');
-            } else {
-                return redirect()->back()->with('error', 'Ticket creation failed.');
-            }
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
         }
+
+        // Get the category name from the ID
+        $category = Category::find($request->category);
+        if (!$category) {
+            return redirect()->back()->with('error', 'Invalid category.');
+        }
+
+        // Check if it needs approval
+        $requiresApproval = in_array(strtolower($category->name), ['repair', 'replacement', 'repair or replacement']);
+
+        $ticket = new Ticket();
+        $ticket->subject = $request->title;
+        $ticket->ticket_id = 'TKT' . rand(100000, 999999);
+        $ticket->category = $request->category;
+        $ticket->summary = $request->desc;
+        $ticket->status = 0;
+        $ticket->raised_by = 1;
+        $ticket->organization_id = Session::get('organization_id');
+        $ticket->user_mail = Session::get('name_email');
+        $ticket->is_approved = $requiresApproval ? 0 : 1; // Require approval if Repair or Replacement
+
+        if ($request->hasFile('ticket_file')) {
+            $file = $request->file('ticket_file');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $filePath = $file->storeAs('uploads/tickets', $fileName, 'public');
+            $ticket->image = $filePath;
+        }
+
+        if ($ticket->save()) {
+            return redirect('/user/tickets')->with('success', 'Ticket created successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Ticket creation failed.');
+        }
+
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Error: ' . $e->getMessage());
     }
+}
 
 
     /**
@@ -241,6 +236,15 @@ class TicketController extends Controller
                 ->addColumn('category', function($row){
                         return !is_null($row->Category) && isset($row->Category) ? $row->Category->name : '-';
                 })
+                ->addColumn('approve', function($row){
+                    if ($row->is_approved) {
+                        return '<span class="badge bg-success" data-search="1">Approved</span>';
+                    } else {
+                        return '<span class="badge bg-danger" data-search="0">Not Approved</span>';
+                    }
+                })
+
+
                 ->addColumn('assigned_to', function($row) {
                     $engineer = \App\Models\User::where('id', $row->assignee)->where('role', 2)->first();
                     return $engineer ? $engineer->name : '-';
@@ -281,35 +285,59 @@ class TicketController extends Controller
                 ->addColumn('created_at', function($row){
                     return $row->created_at ?? '-';
                 })
-                ->addColumn('action', function($row) {
+               ->addColumn('action', function($row) {
                     $btn = '<button class="btn btn-outline-primary btn-sm" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-primary" title="View Ticket" onclick="viewTicket('.$row->id.')">
                                 <i class="bi bi-eye"></i>
                             </button>';
 
-                    // Show Assign and Reject buttons only if status is not 2 (Assigned) or 3 (Rejected)
-                    if ($row->status != 2 && $row->status != 3) {
-                        // Check if 'assignee' is NULL or empty before showing the Assign button
-                        if (empty($row->assignee)) {
-                            $btn .= '<br/>
-                                     <button class="btn btn-outline-warning btn-sm assign-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-warning" title="Assign Ticket">
+                    // If ticket is not approved
+                    if ($row->is_approved == 0) {
+                        $btn .= '
+                            <button class="btn btn-outline-success btn-sm mt-1 approve-ticket-btn" data-id="'.$row->id.'" title="Approve Ticket">
+                                <i class="bi bi-check-circle"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm mt-1 delete-ticket-btn" data-id="'.$row->id.'" title="Reject Ticket">
+                                <i class="bi bi-x-circle"></i>
+                            </button>';
+                    } else {
+                        // If ticket is approved and not solved or rejected
+                        if ($row->status != 2 && $row->status != 3) {
+                            if (empty($row->assignee)) {
+                                $btn .= '<br/>
+                                    <button class="btn btn-outline-warning btn-sm assign-ticket-btn mt-1" data-id="'.$row->id.'" title="Assign Ticket">
                                         <i class="bi bi-pencil-square"></i>
-                                     </button>';
-                        }
+                                    </button>';
+                            }
 
-                        $btn .= '<br/>
-                                 <button class="btn btn-outline-danger btn-sm delete-ticket-btn" data-id="'.$row->id.'" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-custom-class="custom-tooltip-danger" title="Reject Ticket">
+                            $btn .= '<br/>
+                                <button class="btn btn-outline-danger btn-sm delete-ticket-btn mt-1" data-id="'.$row->id.'" title="Reject Ticket">
                                     <i class="bi bi-x-circle"></i>
-                                 </button>';
+                                </button>';
+                        }
                     }
 
-                    return $btn ?? '-';
+                    return $btn;
                 })
 
 
-                ->rawColumns(['action','status','level','indicator'])
+
+                ->rawColumns(['action','status','level','indicator','approve'])
                 ->make(true);
     }
+        public function approveTicket($id)
+    {
+        $ticket = Ticket::find($id);
 
+        if (!$ticket) {
+            return response()->json(['message' => 'Ticket not found.'], 404);
+        }
+
+        // Approve the ticket
+        $ticket->is_approved = true;
+        $ticket->save();
+
+        return response()->json(['message' => 'Ticket approved successfully.']);
+    }
     public function adminreportList()
     {
         $orgId = session('organization')->id;
@@ -926,6 +954,11 @@ public function export(Request $request)
             ->addColumn('users_mail', function($row) {
                 return $row->user_mail ?? '-';
             })
+             ->addColumn('approve', function($row) {
+            return $row->is_approved
+                ? '<span class="badge bg-success">Approved</span>'
+                : '<span class="badge bg-danger">Not Approved</span>';
+             })
             ->addColumn('engineers', function($row) use ($orgId) {
                 $engineers = \App\Models\User::where('organization_id', $orgId)
                                              ->where('role', 2)
@@ -957,7 +990,7 @@ public function export(Request $request)
                             <i class="bi bi-check-circle"></i> Update
                         </button>';
             })
-            ->rawColumns(['engineers', 'level', 'action'])
+            ->rawColumns(['engineers', 'level', 'action','approve'])
             ->make(true);
     }
 
@@ -969,7 +1002,9 @@ public function export(Request $request)
         if (!$ticket) {
             return response()->json(['message' => 'Ticket not found'], 404);
         }
-
+        if(!$ticket->is_approved){
+            return response()->json(['message' => 'Ticket is not approved yet!'], 400);
+        }
          // Check if assignee or priority is changing
     if ($ticket->assignee !== $request->assignee || $ticket->priority !== $request->priority) {
         $ticket->assigned_at = now(); // Set assigned_at only when these fields change

@@ -21,7 +21,7 @@
       <meta property="og:type" content="Website">
       <meta property="og:site_name" content="Bootstrap Gallery">
       <meta name="csrf-token" content="{{ csrf_token() }}">
-      <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}}" />
+      <link rel="shortcut icon" href="{{ asset('assets/dist/assets/img/favicon/favicon.ico')}}" />
       <!-- Toastr CSS -->
       <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
@@ -183,6 +183,10 @@ table {
 
         table tr:nth-child(even) {
             background-color: #f9f9f9;
+        }
+        .toast-error {
+            background-color: #dc3545 !important; /* Bootstrap danger red */
+            color: white !important;
         }
 
 </style>

@@ -25,6 +25,7 @@
                       <th>Description</th>
                       <th>Category</th>
                       <th>Users Mail</th>
+                      <th>Approve</th>
                       <th>Engineers</th>
                       <th>level</th>
                       <th>Assign</th>
@@ -154,6 +155,7 @@ $(function(){
         {data: 'description', name: 'description'},
         {data: 'category', name: 'category'},
         {data: 'users_mail', name: 'users_mail'},
+        {data: 'approve', name: 'approve', orderable: false, searchable: false },
         {data: 'engineers', name: 'engineers'},
         {data: 'level', name: 'level'},
         {data: 'action', name: 'action', orderable: false, searchable: false},

@@ -26,6 +26,16 @@
         <option value="Rejected">Rejected</option>
         <option value="Solved">Solved</option>
     </select>
+    <select id="approveFilter" style="
+    width: 20%;
+    padding: 10px;
+    margin: 8px;
+    border-radius: 8px;">
+    <option value="">All</option>
+    <option value="1">Approved</option>
+    <option value="0">Not Approved</option>
+</select>
+
 
        <div class="row">
         <div class="col-12 col-xl-6">
@@ -176,6 +186,7 @@
                       <th>Email</th>
                       <th>Subject</th>
                       <th>Category </th>
+                      <th>Approve</th> <!-- ✅ Make sure this is present -->
                       <th>Engineer</th>
                       <th>Indicator</th>
                       <th>Level</th>
@@ -218,12 +229,13 @@
         "ordering": false,
         ajax: "{{ route('tickets.adminlist') }}",
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
+            {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false },
             {data : 'ticket_no', name: 'ticket_no'},
             {data : 'requested_by', name: 'requested_by'},
             {data : 'email', name: 'email'},
             {data: 'title', name: 'title'},
             {data: 'category', name: 'category'},
+            {data: 'approve', name: 'approve', orderable: false }, // ✅ THIS
             {data: 'assigned_to', name: 'assigned_to'},
             {data: 'indicator', name: 'indicator'},
             {data: 'level', name: 'level'},
@@ -438,13 +450,50 @@ $('#statusFilter').on('change', function () {
     var status = $(this).val(); // Get selected status
 
     if (status === "") {
-        table.column(9).search('').draw(); // Show all tickets
+        table.column(10).search('').draw(); // Show all tickets
     } else {
-        table.column(9).search(status).draw(); // Filter by status
+        table.column(10).search(status).draw(); // Filter by status
     }
 });
 
+$('#approveFilter').on('change', function () {
+    var approval = $(this).val(); // Will be "1", "0", or ""
+    table.column(6).search(approval).draw(); // Column index 6 is "approve"
+});
+
   });
+   $(document).on('click', '.approve-ticket-btn', function () {
+    const ticketId = $(this).data('id');
+
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You are about to approve this ticket.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, approve it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "{{ route('admin.ticket.approve', ':id') }}".replace(':id', ticketId),
+                type: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function (res) {
+                    toastr.success(res.message);
+                    $('.ticketstable').DataTable().ajax.reload(); // Make sure .ticketstable is your actual table class
+                },
+                error: function () {
+                    toastr.error('Something went wrong while approving the ticket.');
+                }
+            });
+        }
+    });
+});
+
+
 
 
 </script>

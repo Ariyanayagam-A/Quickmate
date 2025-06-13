@@ -19,6 +19,7 @@ class Ticket extends Model
         'organization_id',
         'closed_at',
         'category',
+        'is_approved',
     ];
 
 

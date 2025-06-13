@@ -20,9 +20,11 @@ class CategoryController extends Controller
 
 
     public function getSubcategories(Request $request)
-        {
+       {
+            $organizationId = session('organization_id');
+            // dd($organizationId);
             $type = $request->query('type');
-            $subcategories = Category::where('type', $type)->get();
+            $subcategories = Category::where('type', $type)->where('org_id', $organizationId)->get();
             return response()->json($subcategories);
         }
 

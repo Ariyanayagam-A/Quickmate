@@ -8,7 +8,7 @@
     <!-- Bootstrap & Icons (or other stylesheets) -->
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <link rel="shortcut icon" href="{{ asset('assets/images/favicon.ico')}}" />
+        <link rel="shortcut icon" href="{{ asset('assets/dist/assets/img/favicon/favicon.ico')}}" />
         <title>Agent | Dashboard </title>
         <!--begin::Primary Meta Tags-->
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />

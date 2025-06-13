@@ -1,0 +1,3 @@
+name,fname,lname,email,password
+sanjay,anna,sanjay,sanjayanna@testorg.com,password@123
+sabari,sabari,anna,sabari@testorg.com,password@123

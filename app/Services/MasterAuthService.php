@@ -24,6 +24,12 @@ class MasterAuthService
         $company = explode(".", $domain)[0];
 
         $Organization = Organization::where('domain_name','like',$company)->first();
+        // ✅ Handle the case where no organization is found
+        if (!$Organization) {
+            throw ValidationException::withMessages([
+                'email' => ['No organization found for this email.']
+            ]);
+        }
         $userResData = User::where('email',$userData['email'])->first();
 
         if($userData['email'] !== $Organization->admin_email){

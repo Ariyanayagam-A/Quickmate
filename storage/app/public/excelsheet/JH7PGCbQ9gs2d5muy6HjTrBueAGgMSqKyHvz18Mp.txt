@@ -1,0 +1,3 @@
+name,fname,lname,email,password
+mihawk,anna,sanjay,mihawk@tamil.com,password@123
+shanks,sabari,anna,shanks@tamil.com,password@123
